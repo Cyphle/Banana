@@ -1,0 +1,51 @@
+# Keep the connection alive if idle for a long time (needed in production)
+spring:
+  datasource:
+    testWhileIdle: true
+    validationQuery: SELECT 1
+# JPA
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+# Upload
+  http:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+# Thymeleaf
+  thymeleaf:
+    cache: false
+
+bonecp:
+  driverClass: com.mysql.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/banana_spring?useUnicode=yes&characterEncoding=UTF-8
+  username: root
+  password: root
+  idleMaxAgeInMinutes: 240
+  idleConnectionTestPeriodInMinutes: 60
+  maxConnectionsPerPartition: 10
+  minConnectionsPerPartition: 1
+  partitionCount: 2
+  acquireIncrement: 5
+  statementsCacheSize: 100
+
+# Upload parameters
+upload:
+  path: upload-dir
+
+# Mail
+mail:
+  protocol: smtp
+  host: SSL0.OVH.NET
+  port: 587
+  smtp:
+    auth: false
+    starttls:
+      enable: true
+  from: me@localhost
+  username: cyril.phamle@magelbe.com
+  password: joesong1805
