@@ -10,7 +10,7 @@ import java.util.List;
 public class AccountPivot {
   public static Account fromInfrastructureToDomain(SAccount sAccount) {
     User user = new User(sAccount.getUser().getLastname(), sAccount.getUser().getFirstname(), sAccount.getUser().getUsername());
-    return new Account(sAccount.getId(), user, sAccount.getName(), sAccount.getInitialAmount());
+    return new Account(sAccount.getId(), user, sAccount.getName(), sAccount.getSlug(), sAccount.getInitialAmount());
   }
 
   public static List<Account> fromInfrastructureToDomain(List<SAccount> sAccounts) {

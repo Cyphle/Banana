@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layout">
+<head>
+    <title>Profil utilisateur</title>
+</head>
+<body>
+<div layout:fragment="content" class="page-profile">
+    <div class="profile-infos">
+        <div><b>Nom :</b> <span th:text="${user.lastname}"></span></div>
+        <div><b>Prénom :</b> <span th:text="${user.firstname}"></span></div>
+        <div><b>E-mail :</b> <span th:text="${user.email}"></span></div>
+    </div>
+    <div class="profile-picture">
+        <img th:src="${picture}"/>
+    </div>
+</div>
+</body>
+</html>

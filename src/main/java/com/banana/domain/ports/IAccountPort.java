@@ -5,6 +5,8 @@ import com.banana.domain.models.User;
 
 import java.util.List;
 
-public interface IBanker {
+public interface IAccountPort {
   List<Account> getAccountsOfUser(User user);
+  Account getAccountByUserAndAccountName(User user, String accountName);
+  Account getAccountByUserAndAccountSlug(User user, String accountSlug);
 }

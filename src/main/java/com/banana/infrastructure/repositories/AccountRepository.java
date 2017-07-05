@@ -25,4 +25,18 @@ public class AccountRepository implements IAccountRepository {
     // from infra to domain
     return AccountPivot.fromInfrastructureToDomain(sAccounts);
   }
+
+  public Account getAccountByUserAndAccountName(User user, String accountName) {
+    // get account
+    SAccount account = this.accountRepository.findByUserUsernameAndName(user.getUsername(), accountName);
+    // from intra to domain
+    return AccountPivot.fromInfrastructureToDomain(account);
+  }
+
+  public Account getAccountByUserAndAccountSlug(User user, String accountSlug) {
+    // get account
+    SAccount account = this.accountRepository.findByUserUsernameAndSlug(user.getUsername(), accountSlug);
+    // from intra to domain
+    return AccountPivot.fromInfrastructureToDomain(account);
+  }
 }

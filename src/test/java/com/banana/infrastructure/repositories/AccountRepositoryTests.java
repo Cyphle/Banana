@@ -33,6 +33,7 @@ public class AccountRepositoryTests {
   private AccountRepository accountRepository;
   private SUser sUser;
   private List<SAccount> sAccounts;
+  private SAccount sAccount;
 
   @Before
   public void setup() {
@@ -43,6 +44,8 @@ public class AccountRepositoryTests {
     this.sAccounts.add(new SAccount("Account two", 200));
     this.sAccounts.get(0).setUser(this.sUser);
     this.sAccounts.get(1).setUser(this.sUser);
+    this.sAccount = new SAccount("Account three", 300);
+    this.sAccount.setUser(this.sUser);
 
     this.accountRepository = new AccountRepository(sAccountRepository);
   }
@@ -59,5 +62,27 @@ public class AccountRepositoryTests {
     assertThat(fetchedAccounts.get(0).getInitialAmount()).isEqualTo(100);
     assertThat(fetchedAccounts.get(1).getName()).isEqualTo("Account two");
     assertThat(fetchedAccounts.get(1).getInitialAmount()).isEqualTo(200);
+  }
+
+  @Test
+  public void should_get_account_of_user_from_account_name_in_domain_format() {
+    given(this.sAccountRepository.findByUserUsernameAndName(any(String.class), any(String.class))).willReturn(this.sAccount);
+
+    User user = new User("Doe", "John", "johndoe");
+    Account fetchedAccount = this.accountRepository.getAccountByUserAndAccountName(user, "Account three");
+
+    assertThat(fetchedAccount.getName()).isEqualTo("Account three");
+    assertThat(fetchedAccount.getInitialAmount()).isEqualTo(300);
+  }
+
+  @Test
+  public void should_get_account_of_user_from_account_slug_in_domain_format() {
+    given(this.sAccountRepository.findByUserUsernameAndSlug(any(String.class), any(String.class))).willReturn(this.sAccount);
+
+    User user = new User("Doe", "John", "johndoe");
+    Account fetchedAccount = this.accountRepository.getAccountByUserAndAccountSlug(user, "Account three");
+
+    assertThat(fetchedAccount.getName()).isEqualTo("Account three");
+    assertThat(fetchedAccount.getInitialAmount()).isEqualTo(300);
   }
 }

@@ -8,4 +8,6 @@ import java.util.List;
 public interface SAccountRepository extends CrudRepository<SAccount, Long> {
   List<SAccount> findByUserId(long userId);
   List<SAccount> findByUserUsername(String username);
+  SAccount findByUserUsernameAndName(String username, String name);
+  SAccount findByUserUsernameAndSlug(String username, String slug);
 }

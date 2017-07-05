@@ -34,6 +34,7 @@ public class SAccountRepositoryTests {
     this.entityManager.persist(fakeUser);
 
     this.accountOne = new SAccount("Account one", 100);
+    this.accountOne.setSlug("account-one");
     this.accountOne.setUser(this.fakeUser);
     this.accountTwo = new SAccount("Account two", 200);
     this.accountTwo.setUser(this.fakeUser);
@@ -65,5 +66,23 @@ public class SAccountRepositoryTests {
     assertThat(accounts.get(0).getInitialAmount()).isEqualTo(100);
     assertThat(accounts.get(1).getName()).isEqualTo("Account two");
     assertThat(accounts.get(1).getInitialAmount()).isEqualTo(200);
+  }
+
+  @Test
+  public void should_get_account_of_user_by_username_and_account_name() {
+    SAccount account = this.accountRepository.findByUserUsernameAndName(this.fakeUser.getUsername(), "Account one");
+
+    assertThat(account.getName()).isEqualTo("Account one");
+    assertThat(account.getInitialAmount()).isEqualTo(100);
+    assertThat(account.getUser().getUsername()).isEqualTo("john@doe.fr");
+  }
+
+  @Test
+  public void should_get_account_of_user_by_username_and_account_slug() {
+    SAccount account = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "account-one");
+
+    assertThat(account.getName()).isEqualTo("Account one");
+    assertThat(account.getInitialAmount()).isEqualTo(100);
+    assertThat(account.getUser().getUsername()).isEqualTo("john@doe.fr");
   }
 }

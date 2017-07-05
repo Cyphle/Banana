@@ -15,6 +15,7 @@ public class AccountPivotTests {
   public void should_pivot_infrastructure_account_to_domain_account() {
     SUser sUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     SAccount sAccount = new SAccount("Account one", 100);
+    sAccount.setSlug("account-one");
     sAccount.setId(1);
     sAccount.setUser(sUser);
 
@@ -22,6 +23,7 @@ public class AccountPivotTests {
 
     assertThat(account.getId()).isEqualTo(1);
     assertThat(account.getName()).isEqualTo("Account one");
+    assertThat(account.getSlug()).isEqualTo("account-one");
     assertThat(account.getInitialAmount()).isEqualTo(100);
   }
 

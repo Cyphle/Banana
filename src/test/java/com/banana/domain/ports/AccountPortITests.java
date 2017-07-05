@@ -26,7 +26,7 @@ import static org.mockito.Matchers.any;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes={BananaApplication.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class BankerITests {
+public class AccountPortITests {
   @MockBean
   private SAccountRepository sAccountRepository;
 
@@ -56,7 +56,7 @@ public class BankerITests {
     given(this.sAccountRepository.findByUserUsername(any(String.class))).willReturn(this.accounts);
     IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
 
-    IBanker banker = new Banker(accountFetcher);
+    IAccountPort banker = new AccountPort(accountFetcher);
 
     List<Account> fetchedAccounts = banker.getAccountsOfUser(this.user);
     assertThat(fetchedAccounts.size()).isEqualTo(2);

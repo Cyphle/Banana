@@ -51,8 +51,8 @@ public class AccountControllerTests {
 
     this.user = new User("John", "Doe", "john@doe.fr");
     this.accounts = new ArrayList<>();
-    this.accounts.add(new Account(1, this.user, "Account one", 1000.0));
-    this.accounts.add(new Account(2, this.user, "Account two", 2000.0));
+    this.accounts.add(new Account(1, this.user, "Account one", "account-one", 1000.0));
+    this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0));
   }
 
   @Test
