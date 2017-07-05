@@ -53,6 +53,9 @@ public class UserServiceTests {
   private SAccountRepository accountRepository;
 
   private UserService userService;
+  private SUser user;
+  private SUserRole role;
+  private MockMultipartFile profilePicture;
 
   @Configuration
   @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -84,13 +87,13 @@ public class UserServiceTests {
   public void setUp() {
     this.userService = new UserService(this.storageService, this.userRepository, this.userRoleRepository);
 
-//    this.profilePicture = new MockMultipartFile("file", "test.jpg", "text/plain", "Spring Framework".getBytes());
-//    this.user = new SUser("Moi", "Cyril", "john@doe.fr", "test");
-//    this.user.setId(1);
-//
-//    this.role = new SUserRole();
-//    this.role.setUserId(this.user.getId());
-//    this.role.setRole(Roles.ROLE_USER.toString());
+    this.profilePicture = new MockMultipartFile("file", "test.jpg", "text/plain", "Spring Framework".getBytes());
+    this.user = new SUser("Moi", "Cyril", "john@doe.fr", "test");
+    this.user.setId(1);
+
+    this.role = new SUserRole();
+    this.role.setUserId(this.user.getId());
+    this.role.setRole(Roles.ROLE_USER.toString());
   }
 
   @Test
@@ -100,41 +103,24 @@ public class UserServiceTests {
     assertThat(authenticatedUser.getUsername()).isEqualTo("john@doe.fr");
   }
 
-  /*
-
-
-
-
-  private SUser user;
-  private SUserRole role;
-  private MockMultipartFile profilePicture;
-
-
-
-
-
-
-
-
-
   @Test
-  public void shouldNotGetNullWhenNotAuthenticated() {
+  public void should_not_get_null_when_not_authenticated() {
     assertThat(this.userService.getAuthenticatedUser()).isNull();
   }
 
   @Test
   @WithMockUser(username = "John")
-  public void shouldCheckUserIsNotAnonymous() {
+  public void should_check_user_is_not_anonymous() {
     assertThat(this.userService.isAuthenticated()).isTrue();
   }
 
   @Test
-  public void shouldCheckUserIsAnonymous() {
+  public void should_check_user_is_anonymous() {
     assertThat(this.userService.isAuthenticated()).isFalse();
   }
 
   @Test
-  public void shouldCreateUser() {
+  public void should_create_user() {
     // GIVEN
     given(this.storageService.store(this.profilePicture)).willReturn("profilepicture.jpg");
     given(this.userRepository.save(this.user)).willReturn(this.user);
@@ -149,7 +135,7 @@ public class UserServiceTests {
   }
 
   @Test
-  public void shouldCreateUserRole() {
+  public void should_create_user_role() {
     // GIVEN
     given(this.userRoleRepository.save(any(SUserRole.class))).willReturn(this.role);
     // WHEN
@@ -169,5 +155,4 @@ public class UserServiceTests {
     // THEN
     assertThat(isCreated).isTrue();
   }
-  */
 }

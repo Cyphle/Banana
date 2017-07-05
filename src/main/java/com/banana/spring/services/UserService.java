@@ -46,43 +46,11 @@ public class UserService {
       return null;
   }
 
-  /*
-
-
-  public String getUserPicture() {
-    SUser user = this.getAuthenticatedUser();
-    if (user != null)
-      return MvcUriComponentsBuilder.fromMethodName(FileUploadController.class, "serveFile", this.storageService.load(user.getPicture()).getFileName().toString()).build().toString();
-    else
-      return "";
-  }
-
-
-
-  public boolean createUserWithUserRole(SUser user, MultipartFile profilePicture) {
-    SUser createdUser = this.createUser(user, profilePicture);
-    SUserRole createdRole = this.createUserRoleUser(createdUser);
-    if (createdUser != null && createdRole != null)
-      return true;
-    else
-      return false;
-  }
-
-  public SUser createUser(SUser user, MultipartFile profilePicture) {
-    try {
-      String profilePictureName = this.storageService.store(profilePicture);
-      user = this.setAttributes(user, profilePictureName);
-      return this.userRepository.save(user);
-    } catch (StorageException e) {
-      return null;
-    }
-  }
-
-  public SUserRole createUserRoleUser(SUser user) {
-    SUserRole role = new SUserRole();
-    role.setUserId(user.getId());
-    role.setRole(Roles.ROLE_USER.toString());
-    return this.userRoleRepository.save(role);
+  public SUser createUser(SUser user, MultipartFile profilePicture) throws StorageException {
+    System.out.println(user);
+    String profilePictureName = this.storageService.store(profilePicture);
+    user = this.setAttributes(user, profilePictureName);
+    return this.userRepository.save(user);
   }
 
   private SUser setAttributes(SUser user, String profilePictureName) {
@@ -107,5 +75,28 @@ public class UserService {
     user.setSlug(userSlug);
     return user;
   }
-  */
+
+  public SUserRole createUserRoleUser(SUser user) {
+    SUserRole role = new SUserRole();
+    role.setUserId(user.getId());
+    role.setRole(Roles.ROLE_USER.toString());
+    return this.userRoleRepository.save(role);
+  }
+
+  public boolean createUserWithUserRole(SUser user, MultipartFile profilePicture) {
+    SUser createdUser = this.createUser(user, profilePicture);
+    SUserRole createdRole = this.createUserRoleUser(createdUser);
+    if (createdUser != null && createdRole != null)
+      return true;
+    else
+      return false;
+  }
+
+  public String getUserPicture() {
+    SUser user = this.getAuthenticatedUser();
+    if (user != null)
+      return MvcUriComponentsBuilder.fromMethodName(FileUploadController.class, "serveFile", this.storageService.load(user.getPicture()).getFileName().toString()).build().toString();
+    else
+      return "";
+  }
 }
