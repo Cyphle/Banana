@@ -1,0 +1,15 @@
+package com.banana.infrastructure.orm.repositories;
+
+import com.banana.infrastructure.orm.models.SAccount;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+
+public interface SAccountRepository extends CrudRepository<SAccount, Long> {
+  List<SAccount> findByUserId(long userId);
+  List<SAccount> findByUserUsername(String username);
+  SAccount findByUserUsernameAndName(String username, String name);
+  @Query("Select a from SAccount a where a.user.username = ?1 and a.slug like %?2%")
+  SAccount findByUserUsernameAndSlug(String username, String slug);
+}

@@ -1,6 +1,6 @@
 package com.banana.domain.ports;
 
-import com.banana.infrastructure.adapters.AccountFetcher;
+import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;

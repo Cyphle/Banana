@@ -9,4 +9,5 @@ public interface IAccountPort {
   List<Account> getAccountsOfUser(User user);
   Account getAccountByUserAndAccountName(User user, String accountName);
   Account getAccountByUserAndAccountSlug(User user, String accountSlug);
+  Account createAccount(User user, Account account);
 }

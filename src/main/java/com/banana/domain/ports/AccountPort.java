@@ -29,6 +29,17 @@ public class AccountPort implements IAccountPort {
     return this.accountFetcher.getAccountByUserAndAccountSlug(user, accountSlug);
   }
 
+  public Account createAccount(User user, Account account) {
+    // LOGIC SHOULD GO ELSEWHERE !!! (like validation and in fact all the steps below)
+
+    // get account by slug
+
+    // if not exists and valid (positive amount, etc...), create
+
+    // if exists, throw CreationException, message = "Account already exists, cannot create"
+    return null;
+  }
+
   private class FakeAccountFetcher implements IAccountFetcher {
     public List<Account> getAccountsOfUser(User user) {
       List<Account> accounts = new ArrayList<>();

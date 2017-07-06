@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
 
-import com.banana.spring.user.CustomUserDetailsService;
+import com.banana.infrastructure.user.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
