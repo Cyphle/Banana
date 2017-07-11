@@ -1,7 +1,5 @@
 package com.banana.infrastructure.connector.repositories;
 
-import com.banana.domain.models.Account;
-import com.banana.domain.models.User;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
@@ -51,7 +49,7 @@ public class AccountRepositoryTests {
   }
 
   @Test
-  public void should_get_accounts_of_user_in_domain_format() {
+  public void should_get_accounts_of_user() {
     given(this.sAccountRepository.findByUserUsername(any(String.class))).willReturn(this.sAccounts);
 
     SUser user = new SUser("Doe", "John", "johndoe");
@@ -65,7 +63,7 @@ public class AccountRepositoryTests {
   }
 
   @Test
-  public void should_get_account_of_user_from_account_name_in_domain_format() {
+  public void should_get_account_of_user_from_account_name() {
     given(this.sAccountRepository.findByUserUsernameAndName(any(String.class), any(String.class))).willReturn(this.sAccount);
 
     SUser user = new SUser("Doe", "John", "johndoe");
@@ -76,7 +74,7 @@ public class AccountRepositoryTests {
   }
 
   @Test
-  public void should_get_account_of_user_from_account_slug_in_domain_format() {
+  public void should_get_account_of_user_from_account_slug() {
     given(this.sAccountRepository.findByUserUsernameAndSlug(any(String.class), any(String.class))).willReturn(this.sAccount);
 
     SUser user = new SUser("Doe", "John", "johndoe");
@@ -84,5 +82,20 @@ public class AccountRepositoryTests {
 
     assertThat(fetchedAccount.getName()).isEqualTo("Account three");
     assertThat(fetchedAccount.getInitialAmount()).isEqualTo(300);
+  }
+
+  @Test
+  public void should_create_account_of_user() {
+    SUser user = new SUser("Doe", "John", "johndoe");
+    SAccount sAccount = new SAccount("Account", 1000.0);
+    sAccount.setUser(user);
+    sAccount.setSlug("account");
+
+    given(this.sAccountRepository.save(any(SAccount.class))).willReturn(sAccount);
+
+    SAccount createdAccount = this.accountRepository.createAccount(sAccount);
+
+    assertThat(createdAccount.getName()).isEqualTo("Account");
+    assertThat(createdAccount.getInitialAmount()).isEqualTo(1000.0);
   }
 }

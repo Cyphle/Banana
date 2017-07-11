@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserPivotTests {
   @Test
   public void should_pivot_user_from_domain_format_to_infrastructure() {
-    User user = new User("Doe", "John", "john@doe.fr");
+    User user = new User(1, "Doe", "John", "john@doe.fr");
 
     SUser sUser = UserPivot.fromDomainToInfrastructure(user);
 

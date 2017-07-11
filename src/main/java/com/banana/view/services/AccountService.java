@@ -1,9 +1,9 @@
 package com.banana.view.services;
 
 import com.banana.domain.adapters.IAccountFetcher;
+import com.banana.domain.calculators.AccountCalculator;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
-import com.banana.domain.ports.AccountPort;
 import com.banana.domain.ports.IAccountPort;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.infrastructure.connector.repositories.AccountRepository;
@@ -25,11 +25,11 @@ public class AccountService {
     this.sAccountRepository = sAccountRepository;
     this.accountRepository = new AccountRepository(this.sAccountRepository);
     this.accountFetcher = new AccountFetcher(accountRepository);
-    this.banker = new AccountPort(this.accountFetcher);
+    this.banker = new AccountCalculator(this.accountFetcher);
   }
 
   public List<Account> getAccountsOfUser() {
-    User user = new User("John", "Doe", "john@doe.fr");
+    User user = new User(1, "John", "Doe", "john@doe.fr");
 
     return this.banker.getAccountsOfUser(user);
   }

@@ -10,7 +10,7 @@ public class UserPivot {
   }
 
   public static User fromInfrastructureToDomain(SUser sUser) {
-    User user = new User(sUser.getLastname(), sUser.getFirstname(), sUser.getUsername());
+    User user = new User(sUser.getId(), sUser.getLastname(), sUser.getFirstname(), sUser.getUsername());
     return user;
   }
 }

@@ -1,6 +1,7 @@
 package com.banana.domain.ports;
 
 import com.banana.BananaApplication;
+import com.banana.domain.calculators.AccountCalculator;
 import com.banana.domain.models.Account;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.domain.adapters.IAccountFetcher;
@@ -38,7 +39,7 @@ public class AccountPortITests {
 
   @Before
   public void setup() {
-    this.user = new User("Doe", "John", "john@doe.fr");
+    this.user = new User(1, "Doe", "John", "john@doe.fr");
     this.suser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.accounts = new ArrayList<>();
     SAccount accountOne = new SAccount("Account one", 1000.0);
@@ -60,7 +61,7 @@ public class AccountPortITests {
     given(this.sAccountRepository.findByUserUsername(any(String.class))).willReturn(this.accounts);
     IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
 
-    IAccountPort banker = new AccountPort(accountFetcher);
+    IAccountPort banker = new AccountCalculator(accountFetcher);
 
     List<Account> fetchedAccounts = banker.getAccountsOfUser(this.user);
     assertThat(fetchedAccounts.size()).isEqualTo(2);
@@ -76,7 +77,7 @@ public class AccountPortITests {
     given(this.sAccountRepository.findByUserUsernameAndSlug(any(String.class), any(String.class))).willReturn(this.account);
     IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
 
-    IAccountPort aPort = new AccountPort(accountFetcher);
+    IAccountPort aPort = new AccountCalculator(accountFetcher);
 
     Account fetchedAccount = aPort.getAccountByUserAndAccountSlug(this.user, "account-three");
     assertThat(fetchedAccount.getName()).isEqualTo("Account three");
@@ -89,14 +90,30 @@ public class AccountPortITests {
     given(this.sAccountRepository.findByUserUsernameAndSlug("john@doe.fr", "account-three")).willReturn(this.account);
     IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
 
-    IAccountPort aPort = new AccountPort(accountFetcher);
-    User badUser = new User("Hello", "World", "hello@world.fr");
+    IAccountPort aPort = new AccountCalculator(accountFetcher);
+    User badUser = new User(1, "Hello", "World", "hello@world.fr");
 
     try {
       Account fetchedAccount = aPort.getAccountByUserAndAccountSlug(badUser, "account-three");
-      fail("Should throw exception when charge has negative amount");
+      fail("Should throw exception when cannot find account");
     } catch (NullPointerException e) {
       assertThat(e).isNotNull();
     }
   }
+
+  /*@Test
+  public void should_create_account() {
+    AccountRepository accountRepository = new AccountRepository(sAccountRepository);
+    given(this.sAccountRepository.findByUserUsernameAndName(any(String.class), any(String.class))).willReturn(null);
+    IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
+
+    Account accountToCreate = new Account(1, this.user, "Account create", "account-create", 1500.0);
+    IAccountPort aPort = new AccountCalculator(accountFetcher);
+
+    Account createdAccount = aPort.createAccount(accountToCreate);
+
+    assertThat(createdAccount).isNotNull();
+    assertThat(createdAccount.getName()).isEqualTo("Account create");
+    assertThat(createdAccount.getInitialAmount()).isEqualTo(1500.0);
+  }*/
 }

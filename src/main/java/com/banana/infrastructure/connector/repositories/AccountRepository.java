@@ -26,4 +26,10 @@ public class AccountRepository implements IAccountRepository {
   public SAccount getAccountByUserAndAccountSlug(SUser user, String accountSlug) {
     return this.accountRepository.findByUserUsernameAndSlug(user.getUsername(), accountSlug);
   }
+
+  public SAccount createAccount(SAccount account) {
+    // Set created date and update date
+
+    return this.accountRepository.save(account);
+  }
 }

@@ -3,6 +3,7 @@ package com.banana.infrastructure.connector.pivots;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.orm.models.SAccount;
+import com.banana.infrastructure.orm.models.SUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,5 +21,14 @@ public class AccountPivot {
       accounts.add(account);
     }
     return accounts;
+  }
+
+  public static SAccount fromDomainToInfrastructure(Account account) {
+    SUser sUser = new SUser(account.getUser().getLastname(), account.getUser().getFirstname(), account.getUser().getUsername());
+    SAccount sAccount = new SAccount(account.getName(), account.getInitialAmount());
+    sAccount.setSlug(account.getSlug());
+    sAccount.setUser(sUser);
+    sAccount.setId(account.getId());
+    return sAccount;
   }
 }

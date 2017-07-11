@@ -9,4 +9,5 @@ public interface IAccountRepository {
   List<SAccount> getAccountsOfUser(SUser user);
   SAccount getAccountByUserAndAccountName(SUser user, String accountName);
   SAccount getAccountByUserAndAccountSlug(SUser user, String accountSlug);
+  SAccount createAccount(SAccount account);
 }
