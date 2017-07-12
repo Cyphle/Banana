@@ -6,6 +6,7 @@ import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.pivots.AccountPivot;
 import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
+import com.banana.infrastructure.connector.repositories.IUserRepository;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 
@@ -13,8 +14,10 @@ import java.util.List;
 
 public class AccountFetcher implements IAccountFetcher {
   private IAccountRepository accountRepository;
+  private IUserRepository userRepository;
 
-  public AccountFetcher(IAccountRepository accountRepository) {
+  public AccountFetcher(IUserRepository userRepository, IAccountRepository accountRepository) {
+    this.userRepository = userRepository;
     this.accountRepository = accountRepository;
   }
 
@@ -42,6 +45,9 @@ public class AccountFetcher implements IAccountFetcher {
   public Account createAccount(Account account) {
     // from domain to infra
     SAccount sAccount = AccountPivot.fromDomainToInfrastructure(account);
+    // Fetched user
+    SUser user = this.userRepository.getUserByUsername(account.getUser().getUsername());
+    sAccount.setUser(user);
     // create account with repository
     SAccount createdAccount = this.accountRepository.createAccount(sAccount);
     // from infra to domain

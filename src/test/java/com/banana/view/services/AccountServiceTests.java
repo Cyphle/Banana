@@ -4,6 +4,7 @@ import com.banana.domain.models.Account;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
+import com.banana.infrastructure.orm.repositories.SUserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,13 +23,16 @@ public class AccountServiceTests {
   @MockBean
   private SAccountRepository sAccountRepository;
 
+  @MockBean
+  private SUserRepository sUserRepository;
+
   private AccountService accountService;
   private SUser suser;
   private List<SAccount> accounts;
 
   @Before
   public void setup() {
-    this.accountService = new AccountService(this.sAccountRepository);
+    this.accountService = new AccountService(this.sUserRepository, this.sAccountRepository);
     this.suser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.accounts = new ArrayList<>();
     SAccount accountOne = new SAccount("Account one", 1000.0);

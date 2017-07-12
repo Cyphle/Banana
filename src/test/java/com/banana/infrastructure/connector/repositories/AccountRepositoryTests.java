@@ -3,6 +3,7 @@ package com.banana.infrastructure.connector.repositories;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
+import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.banana.BananaApplication;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -90,12 +92,24 @@ public class AccountRepositoryTests {
     SAccount sAccount = new SAccount("Account", 1000.0);
     sAccount.setUser(user);
     sAccount.setSlug("account");
+    Moment today = new Moment();
 
     given(this.sAccountRepository.save(any(SAccount.class))).willReturn(sAccount);
 
     SAccount createdAccount = this.accountRepository.createAccount(sAccount);
 
+    Calendar creationDateCalendar = Calendar.getInstance();
+    creationDateCalendar.setTime(createdAccount.getCreationDate());
+    Calendar updateDateCalendar = Calendar.getInstance();
+    updateDateCalendar.setTime(createdAccount.getUpdateDate());
+
     assertThat(createdAccount.getName()).isEqualTo("Account");
     assertThat(createdAccount.getInitialAmount()).isEqualTo(1000.0);
+    assertThat(creationDateCalendar.get(Calendar.DAY_OF_MONTH)).isEqualTo(today.getDayOfMonth());
+    assertThat(creationDateCalendar.get(Calendar.MONTH) + 1).isEqualTo(today.getMonthNumber());
+    assertThat(creationDateCalendar.get(Calendar.YEAR)).isEqualTo(today.getYear());
+    assertThat(updateDateCalendar.get(Calendar.DAY_OF_MONTH)).isEqualTo(today.getDayOfMonth());
+    assertThat(updateDateCalendar.get(Calendar.MONTH) + 1).isEqualTo(today.getMonthNumber());
+    assertThat(updateDateCalendar.get(Calendar.YEAR)).isEqualTo(today.getYear());
   }
 }

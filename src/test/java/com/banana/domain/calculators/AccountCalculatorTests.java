@@ -45,7 +45,7 @@ public class AccountCalculatorTests {
 
   @Test
   public void should_get_accounts_of_user_from_fake_account_library() {
-    IAccountFetcher accountFetcher = new AccountFetcher(null);
+    IAccountFetcher accountFetcher = new AccountFetcher(null, null);
     accountFetcher = Mockito.spy(accountFetcher);
     Mockito.doReturn(this.accounts).when(accountFetcher).getAccountsOfUser(this.user);
 
@@ -62,7 +62,7 @@ public class AccountCalculatorTests {
 
   @Test
   public void should_get_an_account_of_user_by_name() {
-    IAccountFetcher accountFetcher = new AccountFetcher(null);
+    IAccountFetcher accountFetcher = new AccountFetcher(null,null);
     accountFetcher = Mockito.spy(accountFetcher);
     Mockito.doReturn(this.account).when(accountFetcher).getAccountByUserAndAccountName(this.user, "Account test");
 
@@ -76,7 +76,7 @@ public class AccountCalculatorTests {
 
   @Test
   public void should_get_an_account_of_user_by_account_slug() {
-    IAccountFetcher accountFetcher = new AccountFetcher(null);
+    IAccountFetcher accountFetcher = new AccountFetcher(null,null);
     accountFetcher = Mockito.spy(accountFetcher);
     Mockito.doReturn(this.account).when(accountFetcher).getAccountByUserAndAccountSlug(this.user, "account-test");
 
@@ -90,7 +90,7 @@ public class AccountCalculatorTests {
 
   @Test
   public void should_create_and_account_for_user() {
-    IAccountFetcher accountFetcher = new AccountFetcher(null);
+    IAccountFetcher accountFetcher = new AccountFetcher(null, null);
     accountFetcher = Mockito.spy(accountFetcher);
 
     Account accountToCreate = new Account(this.user, "Account create", 1500.0);
@@ -109,7 +109,7 @@ public class AccountCalculatorTests {
 
   @Test
   public void should_throw_creation_exception_if_account_already_exists() {
-    IAccountFetcher accountFetcher = new AccountFetcher(null);
+    IAccountFetcher accountFetcher = new AccountFetcher(null, null);
     accountFetcher = Mockito.spy(accountFetcher);
 
     Account accountToCreate = new Account(1, this.user, "Account create", "account-create", 1500.0);

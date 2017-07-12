@@ -99,6 +99,9 @@ public class SAccountRepositoryTests {
     newAccount.setUser(this.fakeUser);
     newAccount.setSlug("account-created");
 
-    assertThat(false).isTrue();
+    SAccount createdAccount = this.accountRepository.save(newAccount);
+    SAccount savedAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "account-created");
+
+    assertThat(savedAccount.getId()).isGreaterThan(0);
   }
 }

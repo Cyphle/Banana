@@ -10,8 +10,11 @@ import java.util.List;
 
 public class AccountPivot {
   public static Account fromInfrastructureToDomain(SAccount sAccount) {
-    User user = UserPivot.fromInfrastructureToDomain(sAccount.getUser());
-    return new Account(sAccount.getId(), user, sAccount.getName(), sAccount.getSlug(), sAccount.getInitialAmount());
+    if (sAccount != null) {
+      User user = UserPivot.fromInfrastructureToDomain(sAccount.getUser());
+      return new Account(sAccount.getId(), user, sAccount.getName(), sAccount.getSlug(), sAccount.getInitialAmount());
+    } else
+      return null;
   }
 
   public static List<Account> fromInfrastructureToDomain(List<SAccount> sAccounts) {
@@ -24,11 +27,14 @@ public class AccountPivot {
   }
 
   public static SAccount fromDomainToInfrastructure(Account account) {
-    SUser sUser = new SUser(account.getUser().getLastname(), account.getUser().getFirstname(), account.getUser().getUsername());
-    SAccount sAccount = new SAccount(account.getName(), account.getInitialAmount());
-    sAccount.setSlug(account.getSlug());
-    sAccount.setUser(sUser);
-    sAccount.setId(account.getId());
-    return sAccount;
+    if (account != null) {
+      SUser sUser = new SUser(account.getUser().getLastname(), account.getUser().getFirstname(), account.getUser().getUsername());
+      SAccount sAccount = new SAccount(account.getName(), account.getInitialAmount());
+      sAccount.setSlug(account.getSlug());
+      sAccount.setUser(sUser);
+      sAccount.setId(account.getId());
+      return sAccount;
+    } else
+      return null;
   }
 }

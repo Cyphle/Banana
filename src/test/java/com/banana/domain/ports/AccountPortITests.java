@@ -1,119 +1,103 @@
 package com.banana.domain.ports;
 
-import com.banana.BananaApplication;
 import com.banana.domain.calculators.AccountCalculator;
 import com.banana.domain.models.Account;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.repositories.AccountRepository;
+import com.banana.infrastructure.connector.repositories.IAccountRepository;
+import com.banana.infrastructure.connector.repositories.IUserRepository;
+import com.banana.infrastructure.connector.repositories.UserRepository;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
+import com.banana.infrastructure.orm.repositories.SUserRepository;
+import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes={BananaApplication.class})
-@TestPropertySource(locations = "classpath:application-test.properties")
+@DataJpaTest
 public class AccountPortITests {
-  @MockBean
+  @Autowired
+  private TestEntityManager entityManager;
+
+  @Autowired
   private SAccountRepository sAccountRepository;
 
-  private List<SAccount> accounts;
-  private SAccount account;
-  private SUser suser;
+  @Autowired
+  private SUserRepository sUserRepository;
+
+  private IAccountRepository accountRepository;
+  private IUserRepository userRepository;
+  private IAccountFetcher accountFetcher;
+  private IAccountPort accountPort;
   private User user;
+  private SUser fakeUser;
+  private SAccount accountOne;
+  private SAccount accountTwo;
 
   @Before
-  public void setup() {
+  public void setUp() {
     this.user = new User(1, "Doe", "John", "john@doe.fr");
-    this.suser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
-    this.accounts = new ArrayList<>();
-    SAccount accountOne = new SAccount("Account one", 1000.0);
-    accountOne.setId(1);
-    accountOne.setUser(this.suser);
-    this.accounts.add(accountOne);
-    SAccount accountTwo = new SAccount("Account two", 2000.0);
-    accountTwo.setId(2);
-    accountTwo.setUser(this.suser);
-    this.accounts.add(accountTwo);
-    this.account = new SAccount("Account three", 3000.0);
-    this.account.setSlug("account-three");
-    this.account.setUser(this.suser);
+    this.fakeUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
+    this.entityManager.persist(fakeUser);
+
+    Moment today = new Moment();
+
+    this.accountOne = new SAccount("Account one", 100);
+    this.accountOne.setSlug("account-one");
+    this.accountOne.setUser(this.fakeUser);
+    this.accountOne.setCreationDate(today.getDate());
+    this.accountOne.setUpdateDate(today.getDate());
+    this.accountTwo = new SAccount("Account two", 200);
+    this.accountTwo.setUser(this.fakeUser);
+    this.accountTwo.setCreationDate(today.getDate());
+    this.accountTwo.setUpdateDate(today.getDate());
+    this.entityManager.persist(this.accountOne);
+    this.entityManager.persist(this.accountTwo);
+
+    this.accountRepository = new AccountRepository(this.sAccountRepository);
+    this.userRepository = new UserRepository(this.sUserRepository);
+    this.accountFetcher = new AccountFetcher(this.userRepository, this.accountRepository);
+    this.accountPort = new AccountCalculator(this.accountFetcher);
   }
 
   @Test
   public void should_get_accounts_of_user_from_fake_repository() {
-    AccountRepository accountRepository = new AccountRepository(sAccountRepository);
-    given(this.sAccountRepository.findByUserUsername(any(String.class))).willReturn(this.accounts);
-    IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
+    List<Account> fetchedAccounts = this.accountPort.getAccountsOfUser(this.user);
 
-    IAccountPort banker = new AccountCalculator(accountFetcher);
-
-    List<Account> fetchedAccounts = banker.getAccountsOfUser(this.user);
     assertThat(fetchedAccounts.size()).isEqualTo(2);
     assertThat(fetchedAccounts.get(0).getName()).isEqualTo("Account one");
-    assertThat(fetchedAccounts.get(0).getInitialAmount()).isEqualTo(1000.0);
+    assertThat(fetchedAccounts.get(0).getInitialAmount()).isEqualTo(100.0);
     assertThat(fetchedAccounts.get(1).getName()).isEqualTo("Account two");
-    assertThat(fetchedAccounts.get(1).getInitialAmount()).isEqualTo(2000.0);
+    assertThat(fetchedAccounts.get(1).getInitialAmount()).isEqualTo(200.0);
   }
 
   @Test
-  public void should_get_an_account_of_user_by_slug_from_fake_repository() {
-    AccountRepository accountRepository = new AccountRepository(sAccountRepository);
-    given(this.sAccountRepository.findByUserUsernameAndSlug(any(String.class), any(String.class))).willReturn(this.account);
-    IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
-
-    IAccountPort aPort = new AccountCalculator(accountFetcher);
-
-    Account fetchedAccount = aPort.getAccountByUserAndAccountSlug(this.user, "account-three");
-    assertThat(fetchedAccount.getName()).isEqualTo("Account three");
-    assertThat(fetchedAccount.getInitialAmount()).isEqualTo(3000.0);
-  }
-
-  @Test
-  public void should_not_get_account_if_user_and_slug_do_not_match() {
-    AccountRepository accountRepository = new AccountRepository(sAccountRepository);
-    given(this.sAccountRepository.findByUserUsernameAndSlug("john@doe.fr", "account-three")).willReturn(this.account);
-    IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
-
-    IAccountPort aPort = new AccountCalculator(accountFetcher);
-    User badUser = new User(1, "Hello", "World", "hello@world.fr");
-
-    try {
-      Account fetchedAccount = aPort.getAccountByUserAndAccountSlug(badUser, "account-three");
-      fail("Should throw exception when cannot find account");
-    } catch (NullPointerException e) {
-      assertThat(e).isNotNull();
-    }
-  }
-
-  /*@Test
   public void should_create_account() {
-    AccountRepository accountRepository = new AccountRepository(sAccountRepository);
-    given(this.sAccountRepository.findByUserUsernameAndName(any(String.class), any(String.class))).willReturn(null);
-    IAccountFetcher accountFetcher = new AccountFetcher(accountRepository);
+    Account accountToCreate = new Account(this.user, "Account create", 1000.0);
 
-    Account accountToCreate = new Account(1, this.user, "Account create", "account-create", 1500.0);
-    IAccountPort aPort = new AccountCalculator(accountFetcher);
-
-    Account createdAccount = aPort.createAccount(accountToCreate);
+    Account createdAccount = this.accountPort.createAccount(accountToCreate);
+    SAccount sCreatedAccount = this.sAccountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "account-create");
 
     assertThat(createdAccount).isNotNull();
+    assertThat(createdAccount.getId()).isGreaterThan(0);
     assertThat(createdAccount.getName()).isEqualTo("Account create");
-    assertThat(createdAccount.getInitialAmount()).isEqualTo(1500.0);
-  }*/
+    assertThat(createdAccount.getSlug()).isEqualTo("account-create");
+    assertThat(createdAccount.getInitialAmount()).isEqualTo(1000.0);
+    assertThat(createdAccount.getUser().getUsername()).isEqualTo("john@doe.fr");
+    assertThat(sCreatedAccount.getId()).isEqualTo(createdAccount.getId());
+    assertThat(sCreatedAccount.getInitialAmount()).isEqualTo(createdAccount.getInitialAmount());
+    assertThat(sCreatedAccount.getSlug()).isEqualTo(createdAccount.getSlug());
+  }
 }

@@ -3,6 +3,7 @@ package com.banana.infrastructure.connector.repositories;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
+import com.banana.utils.Moment;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -24,12 +25,14 @@ public class AccountRepository implements IAccountRepository {
   }
 
   public SAccount getAccountByUserAndAccountSlug(SUser user, String accountSlug) {
-    return this.accountRepository.findByUserUsernameAndSlug(user.getUsername(), accountSlug);
+    SAccount fetchedAccount = this.accountRepository.findByUserUsernameAndSlug(user.getUsername(), accountSlug);
+    return fetchedAccount;
   }
 
   public SAccount createAccount(SAccount account) {
-    // Set created date and update date
-
+    Moment today = new Moment();
+    account.setCreationDate(today.getDate());
+    account.setUpdateDate(today.getDate());
     return this.accountRepository.save(account);
   }
 }

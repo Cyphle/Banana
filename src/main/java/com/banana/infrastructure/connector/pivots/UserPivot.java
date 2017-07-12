@@ -5,12 +5,18 @@ import com.banana.infrastructure.orm.models.SUser;
 
 public class UserPivot {
   public static SUser fromDomainToInfrastructure(User user) {
-    SUser sUser = new SUser(user.getLastname(), user.getFirstname(), user.getUsername());
-    return sUser;
+    if (user != null) {
+      SUser sUser = new SUser(user.getLastname(), user.getFirstname(), user.getUsername());
+      return sUser;
+    } else
+      return null;
   }
 
   public static User fromInfrastructureToDomain(SUser sUser) {
-    User user = new User(sUser.getId(), sUser.getLastname(), sUser.getFirstname(), sUser.getUsername());
-    return user;
+    if (sUser != null) {
+      User user = new User(sUser.getId(), sUser.getLastname(), sUser.getFirstname(), sUser.getUsername());
+      return user;
+    } else
+      return null;
   }
 }
