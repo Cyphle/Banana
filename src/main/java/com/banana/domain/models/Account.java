@@ -29,6 +29,8 @@ public class Account {
     return this.name;
   }
 
+  public void setName(String name) { this.name = name; }
+
   public String getSlug() { return this.slug; }
 
   public void setSlug(String slug) { this.slug = slug; }
@@ -36,4 +38,6 @@ public class Account {
   public double getInitialAmount() {
     return this.initialAmount;
   }
+
+  public void setInitialAmount(double initialAmount) { this.initialAmount = initialAmount; }
 }

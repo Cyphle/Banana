@@ -6,6 +6,7 @@ import com.banana.domain.calculators.AccountCalculator;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
+import com.banana.infrastructure.connector.pivots.AccountPivot;
 import com.banana.infrastructure.connector.repositories.AccountRepository;
 import com.banana.infrastructure.connector.repositories.UserRepository;
 import com.banana.infrastructure.orm.models.SAccount;
@@ -69,7 +70,7 @@ public class AccountPortTests {
   public void should_get_accounts_of_user_from_fake_repository() {
     given(this.sAccountRepository.findByUserUsername(any(String.class))).willReturn(this.accounts);
 
-    IAccountPort banker = new AccountCalculator(this.accountFetcher);
+    AccountPort banker = new AccountCalculator(this.accountFetcher);
 
     List<Account> fetchedAccounts = banker.getAccountsOfUser(this.user);
     assertThat(fetchedAccounts.size()).isEqualTo(2);
@@ -83,7 +84,7 @@ public class AccountPortTests {
   public void should_get_an_account_of_user_by_slug_from_fake_repository() {
     given(this.sAccountRepository.findByUserUsernameAndSlug(any(String.class), any(String.class))).willReturn(this.account);
 
-    IAccountPort aPort = new AccountCalculator(this.accountFetcher);
+    AccountPort aPort = new AccountCalculator(this.accountFetcher);
 
     Account fetchedAccount = aPort.getAccountByUserAndAccountSlug(this.user, "account-three");
     assertThat(fetchedAccount.getName()).isEqualTo("Account three");
@@ -94,7 +95,7 @@ public class AccountPortTests {
   public void should_not_get_account_if_user_and_slug_do_not_match() {
     given(this.sAccountRepository.findByUserUsernameAndSlug("john@doe.fr", "account-three")).willReturn(this.account);
 
-    IAccountPort aPort = new AccountCalculator(this.accountFetcher);
+    AccountPort aPort = new AccountCalculator(this.accountFetcher);
     User badUser = new User(1, "Hello", "World", "hello@world.fr");
 
     Account fetchedAccount = aPort.getAccountByUserAndAccountSlug(badUser, "account-three");
@@ -110,13 +111,35 @@ public class AccountPortTests {
     given(this.sAccountRepository.findByUserUsernameAndSlug(any(String.class), any(String.class))).willReturn(null);
     given(this.sAccountRepository.save(any(SAccount.class))).willReturn(sAccount);
 
-    Account accountToCreate = new Account(1, this.user, "Account create", "account-create", 1500.0);
-    IAccountPort aPort = new AccountCalculator(this.accountFetcher);
+    Account accountToCreate = new Account(this.user, "Account create", 1500.0);
+    AccountPort aPort = new AccountCalculator(this.accountFetcher);
 
     Account createdAccount = aPort.createAccount(accountToCreate);
 
     assertThat(createdAccount).isNotNull();
     assertThat(createdAccount.getName()).isEqualTo("Account create");
+    assertThat(createdAccount.getSlug()).isEqualTo("account-create");
     assertThat(createdAccount.getInitialAmount()).isEqualTo(1500.0);
+  }
+
+  @Test
+  public void should_update_account() {
+    SAccount sAccount = new SAccount("My Account", 2000);
+    sAccount.setId(1);
+    sAccount.setSlug("my-account");
+    sAccount.setUser(this.suser);
+    given(this.sAccountRepository.findByUserUsernameAndId("john@doe.fr", 1)).willReturn(sAccount);
+
+    AccountPort aPort = new AccountCalculator(this.accountFetcher);
+
+    Account accountToUpdate = new Account(this.user, "Account update", 1500.0);
+    accountToUpdate.setId(1);
+    given(this.sAccountRepository.save(any(SAccount.class))).willReturn(AccountPivot.fromDomainToInfrastructure(accountToUpdate));
+
+    Account updatedAccount = aPort.updateAccount(accountToUpdate);
+
+    assertThat(updatedAccount).isNotNull();
+    assertThat(updatedAccount.getName()).isEqualTo("Account update");
+    assertThat(updatedAccount.getInitialAmount()).isEqualTo(1500.0);
   }
 }

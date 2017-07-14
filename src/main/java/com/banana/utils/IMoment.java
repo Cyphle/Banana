@@ -9,4 +9,5 @@ public interface IMoment {
   String getMonthName();
   int getYear();
   int getHour();
+  Moment getFirstDateOfMonth();
 }

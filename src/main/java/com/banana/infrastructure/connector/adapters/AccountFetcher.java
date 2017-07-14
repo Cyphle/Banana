@@ -30,6 +30,12 @@ public class AccountFetcher implements IAccountFetcher {
     return AccountPivot.fromInfrastructureToDomain(sAccounts);
   }
 
+  public Account getAccountByUserAndId(User user, long accountId) {
+    SUser sUser = UserPivot.fromDomainToInfrastructure(user);
+    SAccount sAccount = this.accountRepository.getAccountByUserAndId(sUser, accountId);
+    return AccountPivot.fromInfrastructureToDomain(sAccount);
+  }
+
   public Account getAccountByUserAndAccountName(User user, String accountName) {
     SUser sUser = UserPivot.fromDomainToInfrastructure(user);
     SAccount sAccount = this.accountRepository.getAccountByUserAndAccountName(sUser, accountName);
@@ -43,14 +49,25 @@ public class AccountFetcher implements IAccountFetcher {
   }
 
   public Account createAccount(Account account) {
+    SAccount sAccount = this.fromDomainToInfrastructure(account);
+    // create account with repository
+    SAccount createdAccount = this.accountRepository.createAccount(sAccount);
+    // from infra to domain
+    return AccountPivot.fromInfrastructureToDomain(createdAccount);
+  }
+
+  public Account updateAccount(Account account) {
+    SAccount sAccount = this.fromDomainToInfrastructure(account);
+    SAccount updatedAccount = this.accountRepository.updateAccount(sAccount);
+    return AccountPivot.fromInfrastructureToDomain(updatedAccount);
+  }
+
+  private SAccount fromDomainToInfrastructure(Account account) {
     // from domain to infra
     SAccount sAccount = AccountPivot.fromDomainToInfrastructure(account);
     // Fetched user
     SUser user = this.userRepository.getUserByUsername(account.getUser().getUsername());
     sAccount.setUser(user);
-    // create account with repository
-    SAccount createdAccount = this.accountRepository.createAccount(sAccount);
-    // from infra to domain
-    return AccountPivot.fromInfrastructureToDomain(createdAccount);
+    return sAccount;
   }
 }

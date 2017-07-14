@@ -32,7 +32,8 @@ public class AccountPivot {
       SAccount sAccount = new SAccount(account.getName(), account.getInitialAmount());
       sAccount.setSlug(account.getSlug());
       sAccount.setUser(sUser);
-      sAccount.setId(account.getId());
+      if (account.getId() > 0)
+        sAccount.setId(account.getId());
       return sAccount;
     } else
       return null;

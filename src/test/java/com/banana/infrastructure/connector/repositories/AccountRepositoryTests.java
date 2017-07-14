@@ -65,6 +65,17 @@ public class AccountRepositoryTests {
   }
 
   @Test
+  public void should_get_account_of_user_from_account_id() {
+    given(this.sAccountRepository.findByUserUsernameAndId(any(String.class), any(long.class))).willReturn(this.sAccount);
+
+    SUser user = new SUser("Doe", "John", "johndoe");
+    SAccount fetchedAccount = this.accountRepository.getAccountByUserAndId(user, 1);
+
+    assertThat(fetchedAccount.getName()).isEqualTo("Account three");
+    assertThat(fetchedAccount.getInitialAmount()).isEqualTo(300);
+  }
+
+  @Test
   public void should_get_account_of_user_from_account_name() {
     given(this.sAccountRepository.findByUserUsernameAndName(any(String.class), any(String.class))).willReturn(this.sAccount);
 
@@ -108,6 +119,28 @@ public class AccountRepositoryTests {
     assertThat(creationDateCalendar.get(Calendar.DAY_OF_MONTH)).isEqualTo(today.getDayOfMonth());
     assertThat(creationDateCalendar.get(Calendar.MONTH) + 1).isEqualTo(today.getMonthNumber());
     assertThat(creationDateCalendar.get(Calendar.YEAR)).isEqualTo(today.getYear());
+    assertThat(updateDateCalendar.get(Calendar.DAY_OF_MONTH)).isEqualTo(today.getDayOfMonth());
+    assertThat(updateDateCalendar.get(Calendar.MONTH) + 1).isEqualTo(today.getMonthNumber());
+    assertThat(updateDateCalendar.get(Calendar.YEAR)).isEqualTo(today.getYear());
+  }
+
+  @Test
+  public void should_update_account_of_user() {
+    SUser user = new SUser("Doe", "John", "johndoe");
+    SAccount sAccount = new SAccount("Account", 1000.0);
+    sAccount.setUser(user);
+    sAccount.setSlug("account");
+    Moment today = new Moment();
+
+    given(this.sAccountRepository.save(any(SAccount.class))).willReturn(sAccount);
+
+    SAccount updatedAccount = this.accountRepository.updateAccount(sAccount);
+
+    Calendar updateDateCalendar = Calendar.getInstance();
+    updateDateCalendar.setTime(updatedAccount.getUpdateDate());
+
+    assertThat(updatedAccount.getName()).isEqualTo("Account");
+    assertThat(updatedAccount.getInitialAmount()).isEqualTo(1000.0);
     assertThat(updateDateCalendar.get(Calendar.DAY_OF_MONTH)).isEqualTo(today.getDayOfMonth());
     assertThat(updateDateCalendar.get(Calendar.MONTH) + 1).isEqualTo(today.getMonthNumber());
     assertThat(updateDateCalendar.get(Calendar.YEAR)).isEqualTo(today.getYear());

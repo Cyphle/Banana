@@ -2,14 +2,15 @@ package com.banana.domain.calculators;
 
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.exceptions.CreationException;
+import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
-import com.banana.domain.ports.IAccountPort;
+import com.banana.domain.ports.AccountPort;
 import com.github.slugify.Slugify;
 
 import java.util.List;
 
-public class AccountCalculator implements IAccountPort {
+public class AccountCalculator implements AccountPort {
   private IAccountFetcher accountFetcher;
 
   public AccountCalculator(IAccountFetcher accountFetcher) {
@@ -37,6 +38,20 @@ public class AccountCalculator implements IAccountPort {
       String accountSlug = slg.slugify(account.getName());
       account.setSlug(accountSlug);
       return this.accountFetcher.createAccount(account);
+    }
+  }
+
+  public Account updateAccount(Account account) {
+    Account accountToUpdate = this.accountFetcher.getAccountByUserAndId(account.getUser(), account.getId());
+    if (accountToUpdate == null) {
+      throw new NoElementFoundException("No account found to update at id : " + account.getId());
+    } else {
+      accountToUpdate.setInitialAmount(account.getInitialAmount());
+      accountToUpdate.setName(account.getName());
+      Slugify slg = new Slugify();
+      String accountSlug = slg.slugify(account.getName());
+      accountToUpdate.setSlug(accountSlug);
+      return this.accountFetcher.updateAccount(accountToUpdate);
     }
   }
 }

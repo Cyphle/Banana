@@ -40,7 +40,7 @@ public class AccountPortITests {
   private IAccountRepository accountRepository;
   private IUserRepository userRepository;
   private IAccountFetcher accountFetcher;
-  private IAccountPort accountPort;
+  private AccountPort accountPort;
   private User user;
   private SUser fakeUser;
   private SAccount accountOne;
@@ -99,5 +99,20 @@ public class AccountPortITests {
     assertThat(sCreatedAccount.getId()).isEqualTo(createdAccount.getId());
     assertThat(sCreatedAccount.getInitialAmount()).isEqualTo(createdAccount.getInitialAmount());
     assertThat(sCreatedAccount.getSlug()).isEqualTo(createdAccount.getSlug());
+  }
+
+  @Test
+  public void should_update_account() {
+    SAccount accountToUpdate = this.sAccountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "account-one");
+
+    Account accountWithNewData = new Account(this.user, "New account name", 2000.0);
+    accountWithNewData.setId(accountToUpdate.getId());
+
+    Account updatedAccount = this.accountPort.updateAccount(accountWithNewData);
+
+    assertThat(updatedAccount.getId()).isEqualTo(accountToUpdate.getId());
+    assertThat(updatedAccount.getName()).isEqualTo("New account name");
+    assertThat(updatedAccount.getSlug()).isEqualTo("new-account-name");
+    assertThat(updatedAccount.getInitialAmount()).isEqualTo(2000.0);
   }
 }

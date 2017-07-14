@@ -20,6 +20,10 @@ public class AccountRepository implements IAccountRepository {
     return this.accountRepository.findByUserUsername(user.getUsername());
   }
 
+  public SAccount getAccountByUserAndId(SUser user, long accountId) {
+    return this.accountRepository.findByUserUsernameAndId(user.getUsername(), accountId);
+  }
+
   public SAccount getAccountByUserAndAccountName(SUser user, String accountName) {
     return this.accountRepository.findByUserUsernameAndName(user.getUsername(), accountName);
   }
@@ -32,6 +36,12 @@ public class AccountRepository implements IAccountRepository {
   public SAccount createAccount(SAccount account) {
     Moment today = new Moment();
     account.setCreationDate(today.getDate());
+    account.setUpdateDate(today.getDate());
+    return this.accountRepository.save(account);
+  }
+
+  public SAccount updateAccount(SAccount account) {
+    Moment today = new Moment();
     account.setUpdateDate(today.getDate());
     return this.accountRepository.save(account);
   }

@@ -7,15 +7,14 @@ import com.banana.infrastructure.connector.repositories.IAccountRepository;
 import com.banana.infrastructure.connector.repositories.IUserRepository;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
+import com.banana.utilities.FakeAccountRepository;
+import com.banana.utilities.FakeUserRepository;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 
 public class AccountFetcherTests {
   private IAccountFetcher accountFetcher;
@@ -33,8 +32,18 @@ public class AccountFetcherTests {
   }
 
   @Test
+  public void should_get_account_by_user_and_account_id() {
+    Account account = this.accountFetcher.getAccountByUserAndId(this.user, 1);
+
+    assertThat(account.getName()).isEqualTo("Account test");
+    assertThat(account.getSlug()).isEqualTo("account-test");
+    assertThat(account.getInitialAmount()).isEqualTo(3000.0);
+  }
+
+  @Test
   public void should_return_account_after_its_creation() {
-    Account account = new Account(1, this.user, "Account test", "account-test", 3000.0);
+    Account account = new Account(this.user, "Account test", 3000.0);
+    account.setSlug("account-test");
     Account createdAccount = this.accountFetcher.createAccount(account);
 
     assertThat(createdAccount.getName()).isEqualTo("Account test");
@@ -42,22 +51,13 @@ public class AccountFetcherTests {
     assertThat(createdAccount.getSlug()).isEqualTo("account-test");
   }
 
-  private class FakeAccountRepository implements IAccountRepository {
-    public List<SAccount> getAccountsOfUser(SUser user) { return null; }
-    public SAccount getAccountByUserAndAccountName(SUser user, String accountName) { return null; }
-    public SAccount getAccountByUserAndAccountSlug(SUser user, String accountSlug) { return null; }
-    public SAccount createAccount(SAccount account) {
-      if (account.getInitialAmount() < 0)
-        return null;
-      else
-        return account;
-    }
-  }
+  @Test
+  public void should_return_account_after_its_update() {
+    Account accountToUpdate = new Account(1, this.user, "Account update", "account-update", 3000.0);
+    Account updatedAccount = this.accountFetcher.updateAccount(accountToUpdate);
 
-  private class FakeUserRepository implements IUserRepository {
-    public SUser getUserByUsername(String username) {
-      SUser user = new SUser("Doe", "John", "john@doe.fr");
-      return user;
-    }
+    assertThat(updatedAccount.getName()).isEqualTo("Account update");
+    assertThat(updatedAccount.getInitialAmount()).isEqualTo(3000.0);
+    assertThat(updatedAccount.getSlug()).isEqualTo("account-update");
   }
 }

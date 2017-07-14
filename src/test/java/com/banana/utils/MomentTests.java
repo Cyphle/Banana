@@ -1,15 +1,47 @@
 package com.banana.utils;
 
 import org.junit.Test;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MomentTests {
+  @Test
+  public void should_build_moment_from_date_object() {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    formatter = formatter.withLocale(Locale.FRANCE);
+    LocalDate localDate = LocalDate.parse("2017-11-12", formatter);
+    Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+    Moment myMoment = new Moment(date);
+
+    assertThat(myMoment.getDayOfMonth()).isEqualTo(localDate.getDayOfMonth());
+    assertThat(myMoment.getMonthNumber()).isEqualTo(localDate.getMonth().getValue());
+    assertThat(myMoment.getYear()).isEqualTo(localDate.getYear());
+  }
+
+  @Test
+  public void should_build_moment_from_string() {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    formatter = formatter.withLocale(Locale.FRANCE);
+    LocalDate localDate = LocalDate.parse("2017-07-14", formatter);
+
+    Moment myMoment = new Moment("2017-07-14");
+
+    assertThat(myMoment.getDayOfMonth()).isEqualTo(localDate.getDayOfMonth());
+    assertThat(myMoment.getMonthNumber()).isEqualTo(localDate.getMonth().getValue());
+    assertThat(myMoment.getMonthName()).isEqualTo("juillet");
+    assertThat(myMoment.getYear()).isEqualTo(localDate.getYear());
+  }
+
   @Test
   public void should_get_today_date() {
     LocalDateTime localDate = LocalDateTime.now();
@@ -70,5 +102,15 @@ public class MomentTests {
     Moment moment = new Moment();
 
     assertThat(moment.getHour()).isEqualTo(localTime.getHour());
+  }
+
+  @Test
+  public void should_get_first_day_of_month() {
+    Moment myMoment = new Moment("2017-07-14");
+    Moment firstDayOfMonth = myMoment.getFirstDateOfMonth();
+
+    assertThat(firstDayOfMonth.getDayOfMonth()).isEqualTo(1);
+    assertThat(firstDayOfMonth.getMonthNumber()).isEqualTo(myMoment.getMonthNumber());
+    assertThat(firstDayOfMonth.getYear()).isEqualTo(myMoment.getYear());
   }
 }

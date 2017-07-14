@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface IAccountRepository {
   List<SAccount> getAccountsOfUser(SUser user);
+  SAccount getAccountByUserAndId(SUser user, long accountId);
   SAccount getAccountByUserAndAccountName(SUser user, String accountName);
   SAccount getAccountByUserAndAccountSlug(SUser user, String accountSlug);
   SAccount createAccount(SAccount account);
+  SAccount updateAccount(SAccount account);
 }

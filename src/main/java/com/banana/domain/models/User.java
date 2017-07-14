@@ -6,11 +6,15 @@ public class User {
   private String firstname;
   private String username;
 
-  public User(long id, String lastname, String firstname, String username) {
-    this.id = id;
+  public User(String lastname, String firstname, String username) {
     this.lastname = lastname;
     this.firstname = firstname;
     this.username = username;
+  }
+
+  public User(long id, String lastname, String firstname, String username) {
+    this(lastname, firstname, username);
+    this.id = id;
   }
 
   public long getId() { return this.id; }

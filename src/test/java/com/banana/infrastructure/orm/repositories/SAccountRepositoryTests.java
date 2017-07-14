@@ -69,6 +69,16 @@ public class SAccountRepositoryTests {
   }
 
   @Test
+  public void should_get_account_of_user_by_username_and_account_id() {
+    SAccount tempAccount = this.accountRepository.findByUserUsernameAndName(this.fakeUser.getUsername(), "Account one");
+    SAccount account = this.accountRepository.findByUserUsernameAndId(this.fakeUser.getUsername(), tempAccount.getId());
+
+    assertThat(account.getName()).isEqualTo("Account one");
+    assertThat(account.getInitialAmount()).isEqualTo(100);
+    assertThat(account.getUser().getUsername()).isEqualTo("john@doe.fr");
+  }
+
+  @Test
   public void should_get_account_of_user_by_username_and_account_name() {
     SAccount account = this.accountRepository.findByUserUsernameAndName(this.fakeUser.getUsername(), "Account one");
 
