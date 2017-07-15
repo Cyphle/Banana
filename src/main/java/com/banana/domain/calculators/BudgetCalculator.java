@@ -39,7 +39,7 @@ public class BudgetCalculator implements BudgetPort {
 
   public Budget updateBudget(User user, long accountId, Budget budget) throws CreationException {
     List<Budget> budgets = this.budgetFetcher.getBudgetsOfUserAndAccount(user, accountId);
-    
+
   /*
     First check that there is an existing budget for user and account id with this id
     Should update budget
