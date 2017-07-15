@@ -115,4 +115,9 @@ public class AccountPortITests {
     assertThat(updatedAccount.getSlug()).isEqualTo("new-account-name");
     assertThat(updatedAccount.getInitialAmount()).isEqualTo(2000.0);
   }
+
+  /*
+    - delete account
+      -> set is_deleted to true for account and its budgets, its expenses, ...
+   */
 }

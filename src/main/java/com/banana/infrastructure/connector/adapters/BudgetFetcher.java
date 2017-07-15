@@ -9,6 +9,7 @@ import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
 import com.banana.infrastructure.connector.repositories.IBudgetRepository;
 import com.banana.infrastructure.connector.repositories.IUserRepository;
+import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SBudget;
 import com.banana.infrastructure.orm.models.SUser;
 
@@ -32,6 +33,12 @@ public class BudgetFetcher implements IBudgetFetcher {
   }
 
   public Budget createBudget(Account account, Budget budget) {
-    return null;
+    SUser user = this.userRepository.getUserByUsername(account.getUser().getUsername());
+    SAccount sAccount = this.accountRepository.getAccountByUserAndId(user, account.getId());
+    sAccount.setUser(user);
+    SBudget sBudget = BudgetPivot.fromDomainToInfrastructure(budget);
+    sBudget.setAccount(sAccount);
+    SBudget createdBudget = this.budgetRepository.createBudget(sBudget);
+    return BudgetPivot.fromInfrastructureToDomain(createdBudget);
   }
 }

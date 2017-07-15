@@ -1,18 +1,20 @@
 package com.banana.domain.ports;
 
 import com.banana.domain.adapters.IAccountFetcher;
+import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.calculators.AccountCalculator;
+import com.banana.domain.calculators.BudgetCalculator;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
-import com.banana.infrastructure.connector.repositories.AccountRepository;
-import com.banana.infrastructure.connector.repositories.IAccountRepository;
-import com.banana.infrastructure.connector.repositories.IUserRepository;
-import com.banana.infrastructure.connector.repositories.UserRepository;
+import com.banana.infrastructure.connector.adapters.BudgetFetcher;
+import com.banana.infrastructure.connector.repositories.*;
 import com.banana.infrastructure.orm.models.SAccount;
+import com.banana.infrastructure.orm.models.SBudget;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
+import com.banana.infrastructure.orm.repositories.SBudgetRepository;
 import com.banana.infrastructure.orm.repositories.SUserRepository;
 import com.banana.utils.Moment;
 import org.junit.Before;
@@ -23,7 +25,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -34,16 +39,21 @@ public class BudgetPivotITests {
   private SAccountRepository sAccountRepository;
   @Autowired
   private SUserRepository sUserRepository;
+  @Autowired
+  private SBudgetRepository sBudgetRepository;
 
   private IAccountRepository accountRepository;
   private IUserRepository userRepository;
   private IAccountFetcher accountFetcher;
+  private IBudgetRepository budgetRepository;
+  private IBudgetFetcher budgetFetcher;
   private AccountPort accountPort;
   private BudgetPort budgetPort;
 
   private User user;
   private SUser fakeUser;
   private SAccount accountOne;
+  private SBudget budget;
 
   @Before
   public void setup() {
@@ -51,17 +61,24 @@ public class BudgetPivotITests {
     this.fakeUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.entityManager.persist(fakeUser);
     Moment today = new Moment();
-    this.accountOne = new SAccount("Account one", 100);
-    this.accountOne.setSlug("account-one");
+    this.accountOne = new SAccount("My Account", 100);
+    this.accountOne.setSlug("my-account");
     this.accountOne.setUser(this.fakeUser);
     this.accountOne.setCreationDate(today.getDate());
     this.accountOne.setUpdateDate(today.getDate());
     this.entityManager.persist(this.accountOne);
+    this.budget = new SBudget("Budget one", 300, (new Moment()).getFirstDateOfMonth().getDate());
+    this.budget.setAccount(this.accountOne);
+    this.entityManager.persist(this.budget);
 
     this.accountRepository = new AccountRepository(this.sAccountRepository);
     this.userRepository = new UserRepository(this.sUserRepository);
     this.accountFetcher = new AccountFetcher(this.userRepository, this.accountRepository);
     this.accountPort = new AccountCalculator(this.accountFetcher);
+
+    this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
+    this.budgetFetcher = new BudgetFetcher(this.userRepository, this.accountRepository, this.budgetRepository);
+    this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher);
   }
 
   @Test
@@ -70,7 +87,7 @@ public class BudgetPivotITests {
     Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
     Budget newBudget = new Budget("My budget", 200, today.getFirstDateOfMonth().getDate());
 
-    Budget createdBudget = this.budgetPort.createBudget(myAccount, newBudget);
+    Budget createdBudget = this.budgetPort.createBudget(this.user, myAccount.getId(), newBudget);
     Moment startDate = new Moment(createdBudget.getStartDate());
 
     assertThat(createdBudget.getId()).isGreaterThan(0);
@@ -79,15 +96,39 @@ public class BudgetPivotITests {
     assertThat(startDate.getYear()).isEqualTo(today.getYear());
   }
 
-  /*
-    Should add budget
-    -> check that budget initial amount is not negative
-    -> Get all budgets of account Id and User user
-    -> check if budget name does not already exists
-    -> if not, add budget
-   */
+  @Test
+  public void should_update_a_budget() {
+    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    List<Budget> existingBudgets = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId());
+    Budget budgetToUpdate = null;
+    for (Budget tempBudget : existingBudgets) {
+      if (tempBudget.getName() == "Budget one")
+        budgetToUpdate = tempBudget;
+    }
 
+    if (budgetToUpdate != null) {
+      budgetToUpdate.setName("Budget updated");
+      budgetToUpdate.setInitialAmount(500);
+      budgetToUpdate.setStartDate((new Moment("2017-06-01")).getDate());
+      budgetToUpdate.setEndDate((new Moment("2017-10-31")).getDate());
+      Budget updatedBudget = this.budgetPort.updateBudget(this.user, myAccount.getId(), budgetToUpdate);
 
+      Moment startDate = new Moment(updatedBudget.getStartDate());
+      Moment endDate = new Moment(updatedBudget.getEndDate());
+
+      assertThat(updatedBudget.getId()).isEqualTo(budgetToUpdate.getId());
+      assertThat(updatedBudget.getName()).isEqualTo("Budget updated");
+      assertThat(updatedBudget.getInitialAmount()).isEqualTo(500);
+      assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+      assertThat(startDate.getMonthNumber()).isEqualTo(6);
+      assertThat(startDate.getYear()).isEqualTo(2017);
+      assertThat(endDate.getDayOfMonth()).isEqualTo(31);
+      assertThat(endDate.getMonthNumber()).isEqualTo(10);
+      assertThat(endDate.getYear()).isEqualTo(2017);
+    } else {
+      fail("No budget has been found in this test");
+    }
+  }
   /*
     Should update budget
     -> check that budget initial amount is not negative
@@ -104,6 +145,6 @@ public class BudgetPivotITests {
 
   /*
     Should delete budget
-    -> modify endDate in infrastructure
+    -> modify endDate to end at given date
    */
 }

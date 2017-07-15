@@ -11,6 +11,8 @@ public class BudgetPivot {
     Budget budget = new Budget(sBudget.getName(), sBudget.getInitialAmount(), sBudget.getStartDate());
     if (sBudget.getId() > 0)
       budget.setId(sBudget.getId());
+    if (sBudget.getEndDate() != null)
+      budget.setEndDate(sBudget.getEndDate());
     return budget;
   }
 
@@ -21,5 +23,14 @@ public class BudgetPivot {
       budgets.add(budget);
     }
     return budgets;
+  }
+
+  public static SBudget fromDomainToInfrastructure(Budget budget) {
+    SBudget sBudget = new SBudget(budget.getName(), budget.getInitialAmount(), budget.getStartDate());
+    if (budget.getEndDate() != null)
+      sBudget.setEndDate(budget.getEndDate());
+    if (budget.getId() > 0)
+      sBudget.setId(budget.getId());
+    return sBudget;
   }
 }

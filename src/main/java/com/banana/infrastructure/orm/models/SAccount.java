@@ -47,6 +47,12 @@ public class SAccount implements Serializable {
     this.isDeleted = false;
   }
 
+  public SAccount(SUser user, String name, String slug, double initialAmount) {
+    this(name, initialAmount);
+    this.user = user;
+    this.slug = slug;
+  }
+
   public long getId() {
     return this.id;
   }

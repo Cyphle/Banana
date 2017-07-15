@@ -64,4 +64,16 @@ public class BudgetPivotTests {
     assertThat(budgets.get(1).getName()).isEqualTo("Budget two");
     assertThat(budgets.get(1).getInitialAmount()).isEqualTo(300);
   }
+
+  @Test
+  public void should_pivot_budget_from_domain_to_infrastructure() {
+    Moment beginningOfMonth = new Moment().getFirstDateOfMonth();
+    Budget budget = new Budget("My budget", 200, beginningOfMonth.getDate());
+
+    SBudget sBudget = BudgetPivot.fromDomainToInfrastructure(budget);
+
+    assertThat(sBudget.getName()).isEqualTo("My budget");
+    assertThat(sBudget.getInitialAmount()).isEqualTo(200);
+    assertThat(sBudget.getStartDate()).isEqualTo(beginningOfMonth.getDate());
+  }
 }

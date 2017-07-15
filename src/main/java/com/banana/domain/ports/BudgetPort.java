@@ -1,8 +1,9 @@
 package com.banana.domain.ports;
 
-import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
+import com.banana.domain.models.User;
 
 public interface BudgetPort {
-  Budget createBudget(Account account, Budget budget);
+  Budget createBudget(User user, long accountId, Budget budget);
+  Budget updateBudget(User user, long accountId, Budget budget);
 }

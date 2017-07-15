@@ -16,4 +16,9 @@ public class FakeBudgetRepository implements IBudgetRepository {
     budgets.add(new SBudget("Budget two", 300, today.getDate()));
     return budgets;
   }
+
+  public SBudget createBudget(SBudget budget) {
+    budget.setId(1);
+    return budget;
+  }
 }

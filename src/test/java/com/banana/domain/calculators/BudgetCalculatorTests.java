@@ -3,6 +3,7 @@ package com.banana.domain.calculators;
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.exceptions.CreationException;
+import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.User;
@@ -39,6 +40,7 @@ public class BudgetCalculatorTests {
     this.budgetFetcher = new FakeBudgetFetcher();
     this.budgetFetcher = Mockito.spy(this.budgetFetcher);
     this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher);
+    Mockito.doReturn(this.account).when(this.accountFetcher).getAccountByUserAndId(any(User.class), any(long.class));
   }
 
   @Test
@@ -46,7 +48,7 @@ public class BudgetCalculatorTests {
     Moment today = new Moment();
     Budget newBudget = new Budget("My budget", 200, today.getFirstDateOfMonth().getDate());
 
-    Budget createdBudget = this.budgetPort.createBudget(this.account, newBudget);
+    Budget createdBudget = this.budgetPort.createBudget(this.user, 1, newBudget);
 
     assertThat(createdBudget.getId()).isGreaterThan(0);
   }
@@ -60,7 +62,7 @@ public class BudgetCalculatorTests {
     Mockito.doReturn(budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
 
     try {
-      Budget createdBudget = this.budgetPort.createBudget(this.account, newBudget);
+      Budget createdBudget = this.budgetPort.createBudget(this.user, 1, newBudget);
       fail("Should throw creation exception with negative amoun");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("Cannot create multiple budgets with the same name");
@@ -74,10 +76,23 @@ public class BudgetCalculatorTests {
     Budget newBudget = new Budget("My budget", -200, today.getFirstDateOfMonth().getDate());
 
     try {
-      Budget createdBudget = this.budgetPort.createBudget(this.account, newBudget);
+      Budget createdBudget = this.budgetPort.createBudget(this.user, 1, newBudget);
       fail("Should throw creation exception with negative amoun");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("Budget initial amount cannot be negative");
+    }
+  }
+
+  @Test
+  public void should_throw_expcetion_if_there_is_budget_with_this_id_for_user() {
+    Budget budgetToUpdate = new Budget("My budget", -200, (new Moment()).getFirstDateOfMonth().getDate());
+    budgetToUpdate.setId(1);
+
+    try {
+      Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
+      fail("Should throw no element found exception if there is no budget with this id for the given account and user");
+    } catch (NoElementFoundException e) {
+      assertThat(e.getMessage()).contains("No budget with this id");
     }
   }
 }

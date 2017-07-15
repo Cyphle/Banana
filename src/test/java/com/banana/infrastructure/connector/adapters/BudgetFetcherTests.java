@@ -10,6 +10,7 @@ import com.banana.infrastructure.connector.repositories.IUserRepository;
 import com.banana.utilities.FakeAccountRepository;
 import com.banana.utilities.FakeBudgetRepository;
 import com.banana.utilities.FakeUserRepository;
+import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,5 +47,13 @@ public class BudgetFetcherTests {
     assertThat(budgets.get(0).getInitialAmount()).isEqualTo(200);
     assertThat(budgets.get(1).getName()).isEqualTo("Budget two");
     assertThat(budgets.get(1).getInitialAmount()).isEqualTo(300);
+  }
+
+  @Test
+  public void should_get_create_budget() {
+    Budget newBudget = new Budget("My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
+    Budget createdBudget = this.budgetFetcher.createBudget(this.account, newBudget);
+
+    assertThat(createdBudget).isNotNull();
   }
 }

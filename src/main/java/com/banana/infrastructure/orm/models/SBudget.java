@@ -3,6 +3,8 @@ package com.banana.infrastructure.orm.models;
 import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "budgets")
 public class SBudget {
   private static final long serialVersionUID = 1L;
 
@@ -31,6 +33,7 @@ public class SBudget {
     this.name = name;
     this.initialAmount = initialAmount;
     this.startDate = startDate;
+    this.isDeleted = false;
   }
 
   public long getId() { return this.id; }
@@ -46,4 +49,18 @@ public class SBudget {
   public double getInitialAmount() { return this.initialAmount; }
 
   public Date getStartDate() { return this.startDate; }
+
+  public void setStartDate(Date startDate) { this.startDate = startDate; }
+
+  public Date getEndDate() { return this.endDate; }
+
+  public void setEndDate(Date endDate) { this.endDate = endDate; }
+
+  public Date getCreationDate() { return this.creationDate; }
+
+  public void setCreationDate(Date creationDate) { this.creationDate = creationDate; }
+
+  public Date getUpdateDate() { return this.updateDate; }
+
+  public void setUpdateDate(Date updateDate) { this.updateDate = updateDate; }
 }
