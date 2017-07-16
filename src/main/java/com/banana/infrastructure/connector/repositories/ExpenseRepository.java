@@ -1,13 +1,20 @@
 package com.banana.infrastructure.connector.repositories;
 
 import com.banana.infrastructure.orm.models.SExpense;
-import com.banana.infrastructure.orm.models.SUser;
+import com.banana.infrastructure.orm.repositories.SExpenseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class ExpenseRepository implements IExpenseRepository {
+  private SExpenseRepository expenseRepository;
 
-  public List<SExpense> getExpensesOfUserAccountAndBudgetById(SUser user, long accountId, long budgetId) {
-    return null;
+  @Autowired
+  public ExpenseRepository(SExpenseRepository expenseRepository) {
+    this.expenseRepository = expenseRepository;
+  }
+
+  public List<SExpense> getExpensesByBudgetid(long budgetId) {
+    return this.expenseRepository.findByBudgetId(budgetId);
   }
 }

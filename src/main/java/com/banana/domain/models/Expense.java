@@ -22,9 +22,15 @@ public class Expense {
 
   public long getId() { return this.id; }
 
+  public void setId(long id) { this.id = id; }
+
   public String getDescription() { return this.description; }
 
   public double getAmount() { return this.amount; }
 
   public Date getExpenseDate() { return this.expenseDate; }
+
+  public Date getDebitDate() { return this.debitDate; }
+
+  public void setDebitDate(Date debitDate) { this.debitDate = debitDate; }
 }

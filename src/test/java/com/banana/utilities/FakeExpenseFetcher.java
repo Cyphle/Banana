@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FakeExpenseFetcher implements IExpenseFetcher {
-  public List<Expense> getExpensesOfUserAccountAndBudgetById(User user, long accountId, long budgetId) {
+  public List<Expense> getExpensesByBudgetid(long budgetId) {
     return new ArrayList<Expense>();
   }
 }

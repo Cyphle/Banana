@@ -2,8 +2,9 @@ package com.banana.infrastructure.connector.adapters;
 
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.models.Expense;
-import com.banana.domain.models.User;
+import com.banana.infrastructure.connector.pivots.ExpensePivot;
 import com.banana.infrastructure.connector.repositories.IExpenseRepository;
+import com.banana.infrastructure.orm.models.SExpense;
 
 import java.util.List;
 
@@ -14,7 +15,8 @@ public class ExpenseFetcher implements IExpenseFetcher {
     this.expenseRepository = expenseRepository;
   }
 
-  public List<Expense> getExpensesOfUserAccountAndBudgetById(User user, long accountId, long budgetId) {
-    return null;
+  public List<Expense> getExpensesByBudgetid(long budgetId) {
+    List<SExpense> sExpenses = this.expenseRepository.getExpensesByBudgetid(budgetId);
+    return ExpensePivot.fromInfrastructureToDomain(sExpenses);
   }
 }

@@ -21,12 +21,12 @@ public class SAccount implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_id")
   private SUser user;
   @Column(name = "name")
   private String name;
-  @Column(name = "slug", unique=true)
+  @Column(name = "slug", unique = true)
   private String slug;
   @Column(name = "initial_amount")
   private double initialAmount;

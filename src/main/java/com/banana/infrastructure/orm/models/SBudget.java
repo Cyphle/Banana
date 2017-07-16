@@ -11,7 +11,7 @@ public class SBudget {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "account_id")
   private SAccount account;
   @Column(name = "name")

@@ -70,7 +70,7 @@ public class BudgetCalculator implements BudgetPort {
     if (myBudget == null)
       throw new NoElementFoundException("No budget found with id " + budgetId);
     else {
-      List<Expense> expenses = this.expenseFetcher.getExpensesOfUserAccountAndBudgetById(user, accountId, budgetId);
+      List<Expense> expenses = this.expenseFetcher.getExpensesByBudgetid(budgetId);
     }
     /*
       -> get budget to check if exists

@@ -1,0 +1,72 @@
+package com.banana.infrastructure.orm.repositories;
+
+import com.banana.infrastructure.orm.models.SAccount;
+import com.banana.infrastructure.orm.models.SBudget;
+import com.banana.infrastructure.orm.models.SExpense;
+import com.banana.infrastructure.orm.models.SUser;
+import com.banana.utils.Moment;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.lang.reflect.Array;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class SExpenseRepositoryTests {
+  @Autowired
+  private TestEntityManager entityManager;
+
+  @Autowired
+  private SExpenseRepository expenseRepository;
+
+  @Autowired
+  private SBudgetRepository budgetRepository;
+
+  @Autowired
+  private SAccountRepository accountRepository;
+
+  private SUser user;
+  private SAccount account;
+  private SExpense expenseOne;
+  private SExpense expenseTwo;
+  private SBudget budget;
+
+  @Before
+  public void setup() {
+    this.user = new SUser("Doe", "John", "john@doe.fr");
+    this.entityManager.persist(this.user);
+    this.account = new SAccount(this.user, "My Account", "my-account", 2000);
+    this.entityManager.persist(this.account);
+    this.budget = new SBudget("My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
+    this.budget.setAccount(this.account);
+    this.entityManager.persist(this.budget);
+    this.expenseOne = new SExpense("Courses", 24, (new Moment("2017-07-12")).getDate());
+    this.expenseOne.setBudget(this.budget);
+    this.entityManager.persist(this.expenseOne);
+    this.expenseTwo = new SExpense("Bar", 40, (new Moment("2017-07-13")).getDate());
+    this.expenseTwo.setBudget(this.budget);
+    this.entityManager.persist(this.expenseTwo);
+  }
+
+  @Test
+  public void should_get_expenses_by_budget_id() {
+    SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "my-account");
+    List<SBudget> sBudget = this.budgetRepository.findByUserUsernameAndAccountId(this.user.getUsername(), sAccount.getId());
+
+    List<SExpense> sExpenses = this.expenseRepository.findByBudgetId(sBudget.get(0).getId());
+
+    assertThat(sExpenses.size()).isEqualTo(2);
+    assertThat(sExpenses.get(0).getDescription()).isEqualTo("Courses");
+    assertThat(sExpenses.get(0).getAmount()).isEqualTo(24);
+    assertThat(sExpenses.get(1).getDescription()).isEqualTo("Bar");
+    assertThat(sExpenses.get(1).getAmount()).isEqualTo(40);
+  }
+}
