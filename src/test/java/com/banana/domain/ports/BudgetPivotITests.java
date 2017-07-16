@@ -79,7 +79,7 @@ public class BudgetPivotITests {
 
     this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
     this.budgetFetcher = new BudgetFetcher(this.userRepository, this.accountRepository, this.budgetRepository);
-    this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher);
+    this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher, null);
   }
 
   @Test

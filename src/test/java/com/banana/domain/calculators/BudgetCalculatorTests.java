@@ -2,14 +2,17 @@ package com.banana.domain.calculators;
 
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
+import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
+import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.BudgetPort;
 import com.banana.utilities.FakeAccountFetcher;
 import com.banana.utilities.FakeBudgetFetcher;
+import com.banana.utilities.FakeExpenseFetcher;
 import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +31,7 @@ public class BudgetCalculatorTests {
 
   private IAccountFetcher accountFetcher;
   private IBudgetFetcher budgetFetcher;
+  private IExpenseFetcher expenseFetcher;
   private BudgetPort budgetPort;
   private List<Budget> budgets;
   private Budget budgetOne;
@@ -48,7 +52,9 @@ public class BudgetCalculatorTests {
     this.accountFetcher = Mockito.spy(this.accountFetcher);
     this.budgetFetcher = new FakeBudgetFetcher();
     this.budgetFetcher = Mockito.spy(this.budgetFetcher);
-    this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher);
+    this.expenseFetcher = new FakeExpenseFetcher();
+    this.expenseFetcher = Mockito.spy(this.expenseFetcher);
+    this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher, this.expenseFetcher);
     Mockito.doReturn(this.account).when(this.accountFetcher).getAccountByUserAndId(any(User.class), any(long.class));
   }
 
@@ -139,6 +145,32 @@ public class BudgetCalculatorTests {
     assertThat(endDate.getDayOfMonth()).isEqualTo(31);
     assertThat(endDate.getMonthNumber()).isEqualTo(12);
     assertThat(endDate.getYear()).isEqualTo(2017);
+  }
+
+  @Test
+  public void should_throw_error_if_budget_for_expense_does_not_exists() {
+    Expense newExpense = new Expense("My expense", 20, (new Moment()).getDate());
+    Mockito.doReturn(null).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
+
+    try {
+      Expense createdExpense = this.budgetPort.addExpense(this.user, 1, 1, newExpense);
+      fail("Should throw error when budget does not exists");
+    } catch (NoElementFoundException e) {
+      assertThat(e.getMessage()).contains("No budget found with id");
+    }
+  }
+
+  @Test
+  public void should_throw_error_if_adding_expense_overflow_budget_amount() {
+    Expense newExpense = new Expense("My expense", 300, (new Moment()).getDate());
+    Mockito.doReturn(this.budgetOne).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
+
+    try {
+      Expense createdExpense = this.budgetPort.addExpense(this.user, 1, 1, newExpense);
+      fail("Should throw error if total expenses are higher than budget amount");
+    } catch (CreationException e) {
+      assertThat(e.getMessage()).contains("Budget amount has been exceeded");
+    }
   }
 
   /*

@@ -2,6 +2,7 @@ package com.banana.domain.calculators;
 
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
+import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.exceptions.UpdateException;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 public class BudgetCalculator implements BudgetPort {
   private IAccountFetcher accountFetcher;
   private IBudgetFetcher budgetFetcher;
+  private IExpenseFetcher expenseFetcher;
 
-  public BudgetCalculator(IAccountFetcher accountFetcher, IBudgetFetcher budgetFetcher) {
+  public BudgetCalculator(IAccountFetcher accountFetcher, IBudgetFetcher budgetFetcher, IExpenseFetcher expenseFetcher) {
     this.accountFetcher = accountFetcher;
     this.budgetFetcher = budgetFetcher;
+    this.expenseFetcher = expenseFetcher;
   }
 
   public Budget createBudget(User user, long accountId, Budget budget) throws CreationException {
@@ -63,6 +66,12 @@ public class BudgetCalculator implements BudgetPort {
   }
 
   public Expense addExpense(User user, long accountId, long budgetId, Expense expense) {
+    Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
+    if (myBudget == null)
+      throw new NoElementFoundException("No budget found with id " + budgetId);
+    else {
+      List<Expense> expenses = this.expenseFetcher.getExpensesOfUserAccountAndBudgetById(user, accountId, budgetId);
+    }
     /*
       -> get budget to check if exists
       -> set amount to absolute
