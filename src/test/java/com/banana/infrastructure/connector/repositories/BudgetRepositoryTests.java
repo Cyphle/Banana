@@ -89,4 +89,21 @@ public class BudgetRepositoryTests {
     assertThat(updateDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
     assertThat(updateDate.getYear()).isEqualTo(today.getYear());
   }
+
+  @Test
+  public void should_update_budget() {
+    SBudget budgetToUpdate = new SBudget("Budget to update", 300, (new Moment("2017-01-01")).getDate());
+    budgetToUpdate.setAccount(this.sAccount);
+    Moment today = new Moment();
+    given(this.sBudgetRepository.save(any(SBudget.class))).willReturn(budgetToUpdate);
+
+    SBudget updatedBudget = this.budgetRepository.updateBudget(budgetToUpdate);
+    Moment updateDate = new Moment(updatedBudget.getUpdateDate());
+
+    assertThat(updatedBudget.getName()).isEqualTo("Budget to update");
+    assertThat(updatedBudget.getInitialAmount()).isEqualTo(300);
+    assertThat(updateDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(updateDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(updateDate.getYear()).isEqualTo(today.getYear());
+  }
 }

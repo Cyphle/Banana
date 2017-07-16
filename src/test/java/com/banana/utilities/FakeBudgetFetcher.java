@@ -17,4 +17,8 @@ public class FakeBudgetFetcher implements IBudgetFetcher {
     budget.setId(1);
     return budget;
   }
+
+  public Budget updateBudget(Account account, Budget budget) {
+    return budget;
+  }
 }

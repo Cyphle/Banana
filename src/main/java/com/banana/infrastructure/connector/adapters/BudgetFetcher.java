@@ -33,12 +33,23 @@ public class BudgetFetcher implements IBudgetFetcher {
   }
 
   public Budget createBudget(Account account, Budget budget) {
+    SBudget sBudget = this.fromDomainToInfrastructure(account, budget);
+    SBudget createdBudget = this.budgetRepository.createBudget(sBudget);
+    return BudgetPivot.fromInfrastructureToDomain(createdBudget);
+  }
+
+  public Budget updateBudget(Account account, Budget budget) {
+    SBudget budgetToUpdate = this.fromDomainToInfrastructure(account, budget);
+    SBudget updatedBudget = this.budgetRepository.updateBudget(budgetToUpdate);
+    return BudgetPivot.fromInfrastructureToDomain(updatedBudget);
+  }
+
+  private SBudget fromDomainToInfrastructure(Account account, Budget budget) {
     SUser user = this.userRepository.getUserByUsername(account.getUser().getUsername());
     SAccount sAccount = this.accountRepository.getAccountByUserAndId(user, account.getId());
     sAccount.setUser(user);
     SBudget sBudget = BudgetPivot.fromDomainToInfrastructure(budget);
     sBudget.setAccount(sAccount);
-    SBudget createdBudget = this.budgetRepository.createBudget(sBudget);
-    return BudgetPivot.fromInfrastructureToDomain(createdBudget);
+    return sBudget;
   }
 }

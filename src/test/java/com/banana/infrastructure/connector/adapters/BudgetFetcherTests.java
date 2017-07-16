@@ -30,6 +30,7 @@ public class BudgetFetcherTests {
   public void setup() {
     this.user = new User(1, "Doe", "John", "john@doe.fr");
     this.account = new Account(this.user, "My account", 1000);
+    this.account.setId(1);
 
     this.accountRepository = new FakeAccountRepository();
     this.userRepository = new FakeUserRepository();
@@ -55,5 +56,16 @@ public class BudgetFetcherTests {
     Budget createdBudget = this.budgetFetcher.createBudget(this.account, newBudget);
 
     assertThat(createdBudget).isNotNull();
+  }
+
+  @Test
+  public void should_return_budget_after_its_update() {
+    Budget budgetToUpdate = new Budget(1, "Budget to update", 300, (new Moment()).getFirstDateOfMonth().getDate());
+
+    Budget updatedBudget = this.budgetFetcher.updateBudget(this.account, budgetToUpdate);
+
+    assertThat(updatedBudget.getId()).isEqualTo(1);
+    assertThat(updatedBudget.getName()).isEqualTo("Budget to update");
+    assertThat(updatedBudget.getInitialAmount()).isEqualTo(300);
   }
 }

@@ -3,12 +3,15 @@ package com.banana.domain.calculators;
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.exceptions.CreationException;
+import com.banana.domain.exceptions.NoElementFoundException;
+import com.banana.domain.exceptions.UpdateException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.BudgetPort;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BudgetCalculator implements BudgetPort {
   private IAccountFetcher accountFetcher;
@@ -37,17 +40,30 @@ public class BudgetCalculator implements BudgetPort {
     }
   }
 
-  public Budget updateBudget(User user, long accountId, Budget budget) throws CreationException {
+  public Budget updateBudget(User user, long accountId, Budget budget) throws NoElementFoundException, UpdateException {
     List<Budget> budgets = this.budgetFetcher.getBudgetsOfUserAndAccount(user, accountId);
+    if (budgets.size() == 0)
+      throw new NoElementFoundException("No budget found for account " + accountId);
+    else {
+      List<Budget> doesExist = budgets.stream().filter(fetchedBudget -> fetchedBudget.getId() == budget.getId()).collect(Collectors.toList());
+      if (doesExist.size() == 0)
+        throw new NoElementFoundException("No budget found with id " + budget.getId());
+      else {
+        if (doesExist.get(0).getName() == budget.getName())
+          throw new UpdateException("A budget with this name already exists");
+        else if (budget.getInitialAmount() < 0)
+          throw new UpdateException("Budget initial amount cannot be negative");
+        else {
+          Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
+          return this.budgetFetcher.updateBudget(account, budget);
+        }
+      }
+    }
+  }
 
   /*
-    First check that there is an existing budget for user and account id with this id
-    Should update budget
-    -> check that budget initial amount is not negative
-    -> check that budget id belongs to account id and user user
-    -> check that budget name does not already exists
-    -> update
+    FOR UPDATE
+      Il faudra prendre en compte de supprimer les dépenses dans les cas de modification de start date et end date
+
    */
-    return null;
-  }
 }

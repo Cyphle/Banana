@@ -8,4 +8,5 @@ import java.util.List;
 public interface IBudgetRepository {
   List<SBudget> getBudgetsOfUserAndAccount(SUser user, long accountId);
   SBudget createBudget(SBudget budget);
+  SBudget updateBudget(SBudget budget);
 }

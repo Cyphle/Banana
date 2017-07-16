@@ -29,11 +29,20 @@ public class BudgetCalculatorTests {
   private IAccountFetcher accountFetcher;
   private IBudgetFetcher budgetFetcher;
   private BudgetPort budgetPort;
+  private List<Budget> budgets;
+  private Budget budgetOne;
+  private Budget budgetTwo;
 
   @Before
   public void setup() {
     this.user = new User("Doe", "John", "john@doe.fr");
     this.account = new Account(user, "Account", 1000);
+
+    this.budgetOne = new Budget(2, "Budget one", 200, (new Moment()).getFirstDateOfMonth().getDate());
+    this.budgetTwo = new Budget(3, "Budget two", 300, (new Moment()).getFirstDateOfMonth().getDate());
+    this.budgets = new ArrayList<>();
+    this.budgets.add(this.budgetOne);
+    this.budgets.add(this.budgetTwo);
 
     this.accountFetcher = new FakeAccountFetcher();
     this.accountFetcher = Mockito.spy(this.accountFetcher);
@@ -84,15 +93,51 @@ public class BudgetCalculatorTests {
   }
 
   @Test
-  public void should_throw_expcetion_if_there_is_budget_with_this_id_for_user() {
-    Budget budgetToUpdate = new Budget("My budget", -200, (new Moment()).getFirstDateOfMonth().getDate());
+  public void should_throw_expcetion_if_there_is_no_budget_for_the_account() {
+    Mockito.doReturn(new ArrayList<Budget>()).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
+    Budget budgetToUpdate = new Budget("My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
     budgetToUpdate.setId(1);
 
     try {
       Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
       fail("Should throw no element found exception if there is no budget with this id for the given account and user");
     } catch (NoElementFoundException e) {
-      assertThat(e.getMessage()).contains("No budget with this id");
+      assertThat(e.getMessage()).contains("No budget found for account");
     }
+  }
+
+  @Test
+  public void should_throw_expcetion_if_there_is_no_budget_with_this_id_for_user() {
+    Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
+    Budget budgetToUpdate = new Budget(1,"My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
+
+    try {
+      Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
+      fail("Should throw no element found exception if there is no budget with this id for the given account and user");
+    } catch (NoElementFoundException e) {
+      assertThat(e.getMessage()).contains("No budget found with id");
+    }
+  }
+
+  @Test
+  public void should_update_budget() {
+    Budget budgetToUpdate = new Budget(2,"Budget updated", 100, (new Moment("2017-10-01")).getDate());
+    budgetToUpdate.setEndDate((new Moment("2017-12-31")).getDate());
+    Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
+
+    Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
+
+    Moment startDate = new Moment(updatedBudget.getStartDate());
+    Moment endDate = new Moment(updatedBudget.getEndDate());
+
+    assertThat(updatedBudget.getId()).isEqualTo(budgetToUpdate.getId());
+    assertThat(updatedBudget.getName()).isEqualTo("Budget updated");
+    assertThat(updatedBudget.getInitialAmount()).isEqualTo(100);
+    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getMonthNumber()).isEqualTo(10);
+    assertThat(startDate.getYear()).isEqualTo(2017);
+    assertThat(endDate.getDayOfMonth()).isEqualTo(31);
+    assertThat(endDate.getMonthNumber()).isEqualTo(12);
+    assertThat(endDate.getYear()).isEqualTo(2017);
   }
 }

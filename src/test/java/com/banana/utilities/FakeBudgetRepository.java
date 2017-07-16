@@ -21,4 +21,8 @@ public class FakeBudgetRepository implements IBudgetRepository {
     budget.setId(1);
     return budget;
   }
+
+  public SBudget updateBudget(SBudget budget) {
+    return budget;
+  }
 }

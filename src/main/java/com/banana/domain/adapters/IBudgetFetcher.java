@@ -9,4 +9,5 @@ import java.util.List;
 public interface IBudgetFetcher {
   List<Budget> getBudgetsOfUserAndAccount(User user, long accountId);
   Budget createBudget(Account account, Budget budget);
+  Budget updateBudget(Account account, Budget budget);
 }

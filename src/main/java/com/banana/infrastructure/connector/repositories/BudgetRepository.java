@@ -26,4 +26,9 @@ public class BudgetRepository implements IBudgetRepository {
     budget.setUpdateDate(today.getDate());
     return this.budgetRepository.save(budget);
   }
+
+  public SBudget updateBudget(SBudget budget) {
+    budget.setUpdateDate((new Moment()).getDate());
+    return this.budgetRepository.save(budget);
+  }
 }

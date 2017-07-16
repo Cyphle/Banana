@@ -130,14 +130,6 @@ public class BudgetPivotITests {
     }
   }
   /*
-    Should update budget
-    -> check that budget initial amount is not negative
-    -> check that budget id belongs to account id and user user
-    -> check that budget name does not already exists
-    -> update
-   */
-
-  /*
     Should add expense
     -> check that total budget expenses + expense is not higher that budget initial amount (for the month)
     -> add expense
