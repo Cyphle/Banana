@@ -29,7 +29,18 @@ public class BudgetFetcher implements IBudgetFetcher {
   public List<Budget> getBudgetsOfUserAndAccount(User user, long accountId) {
     SUser sUser = UserPivot.fromDomainToInfrastructure(user);
     List<SBudget> sBudgets = this.budgetRepository.getBudgetsOfUserAndAccount(sUser, accountId);
+
+    /*
+        SHOULD GET EXPENSES
+     */
+
     return BudgetPivot.fromInfrastructureToDomain(sBudgets);
+  }
+
+  public Budget getBudgetOfUserAndAccountById(User user, long accountId, long budgetId) {
+    SUser sUser = UserPivot.fromDomainToInfrastructure(user);
+    SBudget sBudget = this.budgetRepository.getBudgetOfUserAndAccountById(sUser, accountId, budgetId);
+    return BudgetPivot.fromInfrastructureToDomain(sBudget);
   }
 
   public Budget createBudget(Account account, Budget budget) {

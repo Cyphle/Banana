@@ -9,4 +9,6 @@ import java.util.List;
 public interface SBudgetRepository extends CrudRepository<SBudget, Long> {
   @Query("Select b from SBudget b where b.account.user.username = ?1 and b.account.id = ?2")
   List<SBudget> findByUserUsernameAndAccountId(String username, long accountId);
+  @Query("Select b from SBudget  b where b.account.user.username = ?1 and b.account.id = ?2 and b.id = ?3")
+  SBudget findByUserUsernameAndAccountIdAndBudgetId(String username, long accountId, long budgetId);
 }

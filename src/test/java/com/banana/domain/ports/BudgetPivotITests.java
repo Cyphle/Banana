@@ -6,6 +6,7 @@ import com.banana.domain.calculators.AccountCalculator;
 import com.banana.domain.calculators.BudgetCalculator;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
+import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.infrastructure.connector.adapters.BudgetFetcher;
@@ -128,6 +129,32 @@ public class BudgetPivotITests {
     } else {
       fail("No budget has been found in this test");
     }
+  }
+
+  @Test
+  public void should_add_expense_to_budget() {
+    Moment today = new Moment();
+    Expense newExpense = new Expense("Courses", 20, today.getDate());
+
+    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    List<Budget> existingBudgets = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId());
+    Budget budget = null;
+    for (Budget tempBudget : existingBudgets) {
+      if (tempBudget.getName() == "Budget one")
+        budget = tempBudget;
+    }
+
+    Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(this.user, myAccount.getId(), budget.getId());
+
+    Expense createdExpense = this.budgetPort.addExpense(this.user, myAccount.getId(), myBudget.getId(), newExpense);
+    Moment expenseDate = new Moment(createdExpense.getExpenseDate());
+
+    assertThat(createdExpense.getId()).isGreaterThan(0);
+    assertThat(createdExpense.getDescription()).isEqualTo(newExpense.getDescription());
+    assertThat(createdExpense.getAmount()).isEqualTo(newExpense.getAmount());
+    assertThat(expenseDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(expenseDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(expenseDate.getYear()).isEqualTo(today.getYear());
   }
   /*
     Should add expense

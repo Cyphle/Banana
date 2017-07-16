@@ -1,0 +1,30 @@
+package com.banana.domain.models;
+
+import java.util.Date;
+
+public class Expense {
+  private long id;
+  private String description;
+  private double amount;
+  private Date expenseDate;
+  private Date debitDate;
+
+  public Expense(String description, double amount, Date expenseDate) {
+    this.description = description;
+    this.amount = amount;
+    this.expenseDate = expenseDate;
+  }
+
+  public Expense(long id, String description, double amount, Date expenseDate) {
+    this(description, amount, expenseDate);
+    this.id = id;
+  }
+
+  public long getId() { return this.id; }
+
+  public String getDescription() { return this.description; }
+
+  public double getAmount() { return this.amount; }
+
+  public Date getExpenseDate() { return this.expenseDate; }
+}

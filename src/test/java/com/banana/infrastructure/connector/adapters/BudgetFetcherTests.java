@@ -25,12 +25,15 @@ public class BudgetFetcherTests {
   private IUserRepository userRepository;
   private User user;
   private Account account;
+  private Budget budget;
 
   @Before
   public void setup() {
     this.user = new User(1, "Doe", "John", "john@doe.fr");
     this.account = new Account(this.user, "My account", 1000);
     this.account.setId(1);
+
+    this.budget = new Budget(1, "My budget", 300, (new Moment()).getFirstDateOfMonth().getDate());
 
     this.accountRepository = new FakeAccountRepository();
     this.userRepository = new FakeUserRepository();
@@ -48,6 +51,15 @@ public class BudgetFetcherTests {
     assertThat(budgets.get(0).getInitialAmount()).isEqualTo(200);
     assertThat(budgets.get(1).getName()).isEqualTo("Budget two");
     assertThat(budgets.get(1).getInitialAmount()).isEqualTo(300);
+  }
+
+  @Test
+  public void should_get_budget_of_user_and_account_id_by_id() {
+    Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(this.user, this.account.getId(), 1);
+
+    assertThat(myBudget.getId()).isEqualTo(1);
+    assertThat(myBudget.getName()).isEqualTo("My budget");
+    assertThat(myBudget.getInitialAmount()).isEqualTo(300);
   }
 
   @Test

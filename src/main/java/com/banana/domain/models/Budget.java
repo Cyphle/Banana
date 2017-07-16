@@ -1,6 +1,7 @@
 package com.banana.domain.models;
 
 import java.util.Date;
+import java.util.List;
 
 public class Budget {
   private long id;
@@ -8,6 +9,7 @@ public class Budget {
   private double initialAmount;
   private Date startDate;
   private Date endDate;
+  private List<Expense> expenses;
 
   public Budget(String name, double initialAmount, Date startDate) {
     this.name = name;

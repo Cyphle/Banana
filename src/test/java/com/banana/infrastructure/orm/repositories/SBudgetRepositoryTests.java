@@ -63,6 +63,16 @@ public class SBudgetRepositoryTests {
   }
 
   @Test
+  public void should_find_budgets_by_username_account_id_and_budget_id() {
+    SAccount myAccount = this.accountRepository.findByUserUsernameAndSlug(this.user.getUsername(), this.account.getSlug());
+    List<SBudget> budgets = this.budgetRepository.findByUserUsernameAndAccountId(this.user.getUsername(), myAccount.getId());
+
+    SBudget fetchedBudget = this.budgetRepository.findByUserUsernameAndAccountIdAndBudgetId(this.user.getUsername(), myAccount.getId(), budgets.get(0).getId());
+
+    assertThat(fetchedBudget).isNotNull();
+  }
+
+  @Test
   public void should_save_new_budget() {
     SBudget newBudget = new SBudget("New budget", 400, (new Moment()).getFirstDateOfMonth().getDate());
     newBudget.setAccount(this.account);

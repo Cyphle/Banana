@@ -140,4 +140,8 @@ public class BudgetCalculatorTests {
     assertThat(endDate.getMonthNumber()).isEqualTo(12);
     assertThat(endDate.getYear()).isEqualTo(2017);
   }
+
+  /*
+  ADD EXpense should throw error if adding expense is over budget amount
+   */
 }

@@ -13,6 +13,10 @@ public class FakeBudgetFetcher implements IBudgetFetcher {
     return new ArrayList<>();
   }
 
+  public Budget getBudgetOfUserAndAccountById(User user, long accountId, long budgetId) {
+    return null;
+  }
+
   public Budget createBudget(Account account, Budget budget) {
     budget.setId(1);
     return budget;

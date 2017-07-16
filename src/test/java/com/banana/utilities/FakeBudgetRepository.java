@@ -17,6 +17,12 @@ public class FakeBudgetRepository implements IBudgetRepository {
     return budgets;
   }
 
+  public SBudget getBudgetOfUserAndAccountById(SUser user, long accountId, long budgetId) {
+    SBudget budget = new SBudget("My budget", 300, (new Moment()).getFirstDateOfMonth().getDate());
+    budget.setId(1);
+    return budget;
+  }
+
   public SBudget createBudget(SBudget budget) {
     budget.setId(1);
     return budget;

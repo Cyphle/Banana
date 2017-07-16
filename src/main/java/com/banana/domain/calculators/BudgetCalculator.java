@@ -7,6 +7,7 @@ import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.exceptions.UpdateException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
+import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.BudgetPort;
 
@@ -59,6 +60,15 @@ public class BudgetCalculator implements BudgetPort {
         }
       }
     }
+  }
+
+  public Expense addExpense(User user, long accountId, long budgetId, Expense expense) {
+    /*
+      -> get budget to check if exists
+      -> set amount to absolute
+      -> save
+     */
+    return null;
   }
 
   /*

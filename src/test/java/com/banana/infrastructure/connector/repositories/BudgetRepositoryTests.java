@@ -70,6 +70,17 @@ public class BudgetRepositoryTests {
   }
 
   @Test
+  public void should_get_budget_of_user_by_account_id_and_budget_id() {
+    given(this.sBudgetRepository.findByUserUsernameAndAccountIdAndBudgetId(any(String.class), any(long.class), any(long.class))).willReturn(this.sBudgetOne);
+
+    SBudget fetchedBudget = this.budgetRepository.getBudgetOfUserAndAccountById(this.sUser, 1, 1);
+
+    assertThat(fetchedBudget.getId()).isEqualTo(1);
+    assertThat(fetchedBudget.getName()).isEqualTo("Budget one");
+    assertThat(fetchedBudget.getInitialAmount()).isEqualTo(200);
+  }
+
+  @Test
   public void should_create_new_budget() {
     SBudget newBudget = new SBudget("New budget", 400, (new Moment()).getFirstDateOfMonth().getDate());
     newBudget.setAccount(this.sAccount);
