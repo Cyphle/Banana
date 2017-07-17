@@ -65,4 +65,18 @@ public class Moment implements IMoment {
     String monthNumber = this.getMonthNumber() < 10 ? ("0" + this.getMonthNumber()) : "" + this.getMonthNumber();
     return new Moment(this.getYear() + "-" + monthNumber + "-01");
   }
+
+  public int getLastDayOfMonth() {
+    LocalDate initial = this.zonedTime.toLocalDate();
+    LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
+    return end.getDayOfMonth();
+  }
+
+  public boolean isInMonthOfYear(int month, int year) {
+    if (this.getYear() != year)
+      return false;
+    else if (this.getMonthNumber() != month)
+      return false;
+    return true;
+  }
 }

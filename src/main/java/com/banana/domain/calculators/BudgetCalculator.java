@@ -11,6 +11,7 @@ import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.BudgetPort;
+import com.banana.utils.Moment;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,32 +46,49 @@ public class BudgetCalculator implements BudgetPort {
   }
 
   public Budget updateBudget(User user, long accountId, Budget budget) throws NoElementFoundException, UpdateException {
-    List<Budget> budgets = this.budgetFetcher.getBudgetsOfUserAndAccount(user, accountId);
+    List<Budget> budgets = this.budgetFetcher
+                              .getBudgetsOfUserAndAccount(user, accountId)
+                              .stream()
+                              .filter(fetchedBudget -> fetchedBudget.getId() == budget.getId())
+                              .collect(Collectors.toList());
     if (budgets.size() == 0)
-      throw new NoElementFoundException("No budget found for account " + accountId);
+      throw new NoElementFoundException("No budget found with id " + budget.getId());
     else {
-      List<Budget> doesExist = budgets.stream().filter(fetchedBudget -> fetchedBudget.getId() == budget.getId()).collect(Collectors.toList());
-      if (doesExist.size() == 0)
-        throw new NoElementFoundException("No budget found with id " + budget.getId());
+      if (budgets.get(0).getName() == budget.getName())
+        throw new UpdateException("A budget with this name already exists");
+      else if (budget.getInitialAmount() < 0)
+        throw new UpdateException("Budget initial amount cannot be negative");
       else {
-        if (doesExist.get(0).getName() == budget.getName())
-          throw new UpdateException("A budget with this name already exists");
-        else if (budget.getInitialAmount() < 0)
-          throw new UpdateException("Budget initial amount cannot be negative");
-        else {
-          Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
-          return this.budgetFetcher.updateBudget(account, budget);
-        }
+        Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
+        return this.budgetFetcher.updateBudget(account, budget);
       }
     }
   }
 
-  public Expense addExpense(User user, long accountId, long budgetId, Expense expense) {
+  public Expense addExpense(User user, long accountId, long budgetId, Expense expense) throws CreationException {
     Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
     if (myBudget == null)
       throw new NoElementFoundException("No budget found with id " + budgetId);
     else {
-      List<Expense> expenses = this.expenseFetcher.getExpensesByBudgetid(budgetId);
+      Moment expenseDate = new Moment(expense.getExpenseDate());
+      double totalExpense = this.expenseFetcher
+                                    .getExpensesByBudgetid(budgetId)
+                                    .stream()
+                                    .filter(fetchExpense -> (new Moment(fetchExpense.getExpenseDate())).isInMonthOfYear(expenseDate.getMonthNumber(), expenseDate.getYear()))
+                                    .map(Expense::getAmount)
+                                    .reduce(0.0, (a, b) -> a + b);
+      if (totalExpense + expense.getAmount() > myBudget.getInitialAmount())
+        throw new CreationException("Budget amount has been exceeded. Total amount would be : " + (totalExpense + expense.getAmount()));
+
+
+      /*
+          SUM ONLY IF EXPENSE IS IN THE GIVEN MONTH OF EXPENSE (EXPENSE DATE)
+          - get month and year of expense date of expense to add
+          - filter expenses to beginning of month and end of month included
+          - sum expenses
+
+          --> !!! IMPORTANT !!! Need moment.isDateInMonthOfYear(Date date, int month, int year);
+       */
     }
     /*
       -> get budget to check if exists

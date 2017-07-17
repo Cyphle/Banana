@@ -2,6 +2,7 @@ package com.banana.domain.ports;
 
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
+import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.calculators.AccountCalculator;
 import com.banana.domain.calculators.BudgetCalculator;
 import com.banana.domain.models.Account;
@@ -10,12 +11,14 @@ import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.infrastructure.connector.adapters.BudgetFetcher;
+import com.banana.infrastructure.connector.adapters.ExpenseFetcher;
 import com.banana.infrastructure.connector.repositories.*;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SBudget;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
 import com.banana.infrastructure.orm.repositories.SBudgetRepository;
+import com.banana.infrastructure.orm.repositories.SExpenseRepository;
 import com.banana.infrastructure.orm.repositories.SUserRepository;
 import com.banana.utils.Moment;
 import org.junit.Before;
@@ -42,12 +45,16 @@ public class BudgetPivotITests {
   private SUserRepository sUserRepository;
   @Autowired
   private SBudgetRepository sBudgetRepository;
+  @Autowired
+  private SExpenseRepository sExpenseRepository;
 
   private IAccountRepository accountRepository;
   private IUserRepository userRepository;
   private IAccountFetcher accountFetcher;
   private IBudgetRepository budgetRepository;
   private IBudgetFetcher budgetFetcher;
+  private IExpenseRepository expenseRepository;
+  private IExpenseFetcher expenseFetcher;
   private AccountPort accountPort;
   private BudgetPort budgetPort;
 
@@ -77,9 +84,12 @@ public class BudgetPivotITests {
     this.accountFetcher = new AccountFetcher(this.userRepository, this.accountRepository);
     this.accountPort = new AccountCalculator(this.accountFetcher);
 
+    this.expenseRepository = new ExpenseRepository(this.sExpenseRepository);
+    this.expenseFetcher = new ExpenseFetcher(this.expenseRepository);
+
     this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
     this.budgetFetcher = new BudgetFetcher(this.userRepository, this.accountRepository, this.budgetRepository);
-    this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher, null);
+    this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher, this.expenseFetcher);
   }
 
   @Test

@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -112,5 +113,44 @@ public class MomentTests {
     assertThat(firstDayOfMonth.getDayOfMonth()).isEqualTo(1);
     assertThat(firstDayOfMonth.getMonthNumber()).isEqualTo(myMoment.getMonthNumber());
     assertThat(firstDayOfMonth.getYear()).isEqualTo(myMoment.getYear());
+  }
+
+  @Test
+  public void should_get_last_day_of_month() {
+    Moment june = new Moment("2017-06-08");
+    Moment july = new Moment("2017-07-10");
+    Moment january = new Moment("2017-01-03");
+    Moment december = new Moment("2017-12-07");
+    Moment february = new Moment("2017-02-04");
+    Moment februaryBissextil = new Moment("2016-02-05");
+
+    assertThat(june.getLastDayOfMonth()).isEqualTo(30);
+    assertThat(july.getLastDayOfMonth()).isEqualTo(31);
+    assertThat(january.getLastDayOfMonth()).isEqualTo(31);
+    assertThat(december.getLastDayOfMonth()).isEqualTo(31);
+    assertThat(february.getLastDayOfMonth()).isEqualTo(28);
+    assertThat(februaryBissextil.getLastDayOfMonth()).isEqualTo(29);
+  }
+
+  @Test
+  public void should_return_true_if_date_is_in_month() {
+    Moment date = new Moment("2017-07-16");
+    Moment dateTwo = new Moment("2017-07-01");
+    Moment dateThree = new Moment("2017-07-31");
+
+    assertThat(date.isInMonthOfYear(Month.JULY.getValue(), 2017)).isTrue();
+    assertThat(dateTwo.isInMonthOfYear(Month.JULY.getValue(), 2017)).isTrue();
+    assertThat(dateThree.isInMonthOfYear(Month.JULY.getValue(), 2017)).isTrue();
+  }
+
+  @Test
+  public void should_return_false_if_date_is_not_in_month() {
+    Moment date = new Moment("2017-07-16");
+    Moment dateTwo = new Moment("2017-07-01");
+    Moment dateThree = new Moment("2017-07-31");
+
+    assertThat(date.isInMonthOfYear(Month.AUGUST.getValue(), 2017)).isFalse();
+    assertThat(dateTwo.isInMonthOfYear(Month.JUNE.getValue(), 2017)).isFalse();
+    assertThat(dateThree.isInMonthOfYear(Month.AUGUST.getValue(), 2017)).isFalse();
   }
 }

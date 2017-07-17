@@ -10,4 +10,6 @@ public interface IMoment {
   int getYear();
   int getHour();
   Moment getFirstDateOfMonth();
+  int getLastDayOfMonth();
+  boolean isInMonthOfYear(int month, int year);
 }
