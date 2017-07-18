@@ -75,7 +75,7 @@ public class BudgetCalculator implements BudgetPort {
     else {
       Moment expenseDate = new Moment(expense.getExpenseDate());
       double totalExpense = this.expenseFetcher
-                                    .getExpensesByBudgetid(budgetId)
+                                    .getExpensesByBudgetId(budgetId)
                                     .stream()
                                     .filter(fetchExpense -> (new Moment(fetchExpense.getExpenseDate())).isInMonthOfYear(expenseDate.getMonthNumber(), expenseDate.getYear()))
                                     .map(Expense::getAmount)

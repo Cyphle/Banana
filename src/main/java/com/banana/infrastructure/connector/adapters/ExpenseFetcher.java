@@ -14,12 +14,12 @@ public class ExpenseFetcher implements IExpenseFetcher {
   private IExpenseRepository expenseRepository;
   private IBudgetRepository budgetRepository;
 
-  public ExpenseFetcher(IExpenseRepository expenseRepository, IBudgetRepository budgetRepository) {
+  public ExpenseFetcher(IBudgetRepository budgetRepository, IExpenseRepository expenseRepository) {
     this.expenseRepository = expenseRepository;
     this.budgetRepository = budgetRepository;
   }
 
-  public List<Expense> getExpensesByBudgetid(long budgetId) {
+  public List<Expense> getExpensesByBudgetId(long budgetId) {
     List<SExpense> sExpenses = this.expenseRepository.getExpensesByBudgetid(budgetId);
     return ExpensePivot.fromInfrastructureToDomain(sExpenses);
   }

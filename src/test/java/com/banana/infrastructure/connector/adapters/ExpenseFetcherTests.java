@@ -29,12 +29,12 @@ public class ExpenseFetcherTests {
     this.expenseRepository = new FakeExpenseRepository();
     this.budgetRepository = new FakeBudgetRepository();
 
-    this.expenseFetcher = new ExpenseFetcher(this.expenseRepository, this.budgetRepository);
+    this.expenseFetcher = new ExpenseFetcher(this.budgetRepository, this.expenseRepository);
   }
 
   @Test
   public void should_get_expenses_for_budget_of_user_and_account() {
-    List<Expense> expenses = this.expenseFetcher.getExpensesByBudgetid(1);
+    List<Expense> expenses = this.expenseFetcher.getExpensesByBudgetId(1);
 
     assertThat(expenses.size()).isEqualTo(2);
     assertThat(expenses.get(0).getDescription()).isEqualTo("Courses");
