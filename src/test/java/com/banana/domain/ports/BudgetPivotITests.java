@@ -85,9 +85,8 @@ public class BudgetPivotITests {
     this.accountPort = new AccountCalculator(this.accountFetcher);
 
     this.expenseRepository = new ExpenseRepository(this.sExpenseRepository);
-    this.expenseFetcher = new ExpenseFetcher(this.expenseRepository);
-
     this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
+    this.expenseFetcher = new ExpenseFetcher(this.expenseRepository, this.budgetRepository);
     this.budgetFetcher = new BudgetFetcher(this.userRepository, this.accountRepository, this.budgetRepository);
     this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher, this.expenseFetcher);
   }
@@ -166,11 +165,6 @@ public class BudgetPivotITests {
     assertThat(expenseDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
     assertThat(expenseDate.getYear()).isEqualTo(today.getYear());
   }
-  /*
-    Should add expense
-    -> check that total budget expenses + expense is not higher that budget initial amount (for the month)
-    -> add expense
-   */
 
   /*
     Should delete budget

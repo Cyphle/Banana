@@ -54,4 +54,24 @@ public class ExpensePivotTests {
     assertThat(expenses.get(1).getDescription()).isEqualTo(sExpenseTwo.getDescription());
     assertThat(expenses.get(1).getAmount()).isEqualTo(sExpenseTwo.getAmount());
   }
+
+  @Test
+  public void should_pivot_infrastructure_expense_from_domain() {
+    Expense expense = new Expense(1, "Courses", 24, (new Moment("2017-07-18")).getDate());
+    expense.setDebitDate((new Moment("2017-07-20")).getDate());
+
+    SExpense sExpense = ExpensePivot.fromDomainToInfrastructure(expense);
+    Moment expenseDate = new Moment(sExpense.getExpenseDate());
+    Moment debitDate = new Moment(sExpense.getDebitDate());
+
+    assertThat(sExpense.getId()).isEqualTo(1);
+    assertThat(sExpense.getDescription()).isEqualTo("Courses");
+    assertThat(sExpense.getAmount()).isEqualTo(24);
+    assertThat(expenseDate.getDayOfMonth()).isEqualTo(18);
+    assertThat(expenseDate.getMonthNumber()).isEqualTo(7);
+    assertThat(expenseDate.getYear()).isEqualTo(2017);
+    assertThat(debitDate.getDayOfMonth()).isEqualTo(20);
+    assertThat(debitDate.getMonthNumber()).isEqualTo(7);
+    assertThat(debitDate.getYear()).isEqualTo(2017);
+  }
 }

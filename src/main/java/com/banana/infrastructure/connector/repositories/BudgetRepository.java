@@ -24,6 +24,10 @@ public class BudgetRepository implements IBudgetRepository {
     return this.budgetRepository.findByUserUsernameAndAccountIdAndBudgetId(user.getUsername(), accountId, budgetId);
   }
 
+  public SBudget getBudgetById(long budgetId) {
+    return this.budgetRepository.findOne(budgetId);
+  }
+
   public SBudget createBudget(SBudget budget) {
     Moment today = new Moment();
     budget.setCreationDate(today.getDate());

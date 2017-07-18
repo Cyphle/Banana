@@ -26,4 +26,13 @@ public class ExpensePivot {
     }
     return expenses;
   }
+
+  public static SExpense fromDomainToInfrastructure(Expense expense) {
+    SExpense sExpense = new SExpense(expense.getDescription(), expense.getAmount(), expense.getExpenseDate());
+    if (expense.getId() > 0)
+      sExpense.setId(expense.getId());
+    if (expense.getDebitDate() != null)
+      sExpense.setDebitDate(expense.getDebitDate());
+    return sExpense;
+  }
 }

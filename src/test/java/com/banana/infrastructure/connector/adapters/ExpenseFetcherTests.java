@@ -3,8 +3,11 @@ package com.banana.infrastructure.connector.adapters;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
+import com.banana.infrastructure.connector.repositories.IBudgetRepository;
 import com.banana.infrastructure.connector.repositories.IExpenseRepository;
+import com.banana.utilities.FakeBudgetRepository;
 import com.banana.utilities.FakeExpenseRepository;
+import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExpenseFetcherTests {
   private IExpenseRepository expenseRepository;
+  private IBudgetRepository budgetRepository;
   private IExpenseFetcher expenseFetcher;
 
   private User user;
@@ -23,8 +27,9 @@ public class ExpenseFetcherTests {
     this.user = new User(1, "Doe", "John", "john@doe.fr");
 
     this.expenseRepository = new FakeExpenseRepository();
+    this.budgetRepository = new FakeBudgetRepository();
 
-    this.expenseFetcher = new ExpenseFetcher(this.expenseRepository);
+    this.expenseFetcher = new ExpenseFetcher(this.expenseRepository, this.budgetRepository);
   }
 
   @Test
@@ -36,5 +41,15 @@ public class ExpenseFetcherTests {
     assertThat(expenses.get(0).getAmount()).isEqualTo(24);
     assertThat(expenses.get(1).getDescription()).isEqualTo("Bar");
     assertThat(expenses.get(1).getAmount()).isEqualTo(40);
+  }
+
+  @Test
+  public void should_create_expense() {
+    Expense newExpense = new Expense("Courses", 24, (new Moment("2017-07-18")).getDate());
+
+    Expense createdExpense = this.expenseFetcher.createExpense(1, newExpense);
+
+    assertThat(createdExpense).isNotNull();
+    assertThat(createdExpense.getId()).isGreaterThan(0);
   }
 }

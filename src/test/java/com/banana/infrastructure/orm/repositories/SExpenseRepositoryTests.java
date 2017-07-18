@@ -69,4 +69,18 @@ public class SExpenseRepositoryTests {
     assertThat(sExpenses.get(1).getDescription()).isEqualTo("Bar");
     assertThat(sExpenses.get(1).getAmount()).isEqualTo(40);
   }
+
+  @Test
+  public void should_save_new_expense() {
+    SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "my-account");
+    List<SBudget> sBudgets = this.budgetRepository.findByUserUsernameAndAccountId(this.user.getUsername(), sAccount.getId());
+    SExpense sExpense = new SExpense("Courses", 24, (new Moment("2017-07-18")).getDate());
+    sExpense.setBudget(sBudgets.get(0));
+
+    SExpense savedExpense = this.expenseRepository.save(sExpense);
+
+    assertThat(savedExpense.getId()).isGreaterThan(0);
+    assertThat(savedExpense.getDescription()).isEqualTo("Courses");
+    assertThat(savedExpense.getAmount()).isEqualTo(24);
+  }
 }

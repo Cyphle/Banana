@@ -32,7 +32,7 @@ public class BudgetCalculator implements BudgetPort {
     if (account == null)
       throw new CreationException("No account for user and id : " + accountId);
     else {
-      if (budget.getInitialAmount() < 0)
+      if (this.isInitialAmountNegative(budget))
         throw new CreationException("Budget initial amount cannot be negative");
       else {
         List<Budget> budgets = this.budgetFetcher.getBudgetsOfUserAndAccount(account.getUser(), account.getId());
@@ -56,7 +56,7 @@ public class BudgetCalculator implements BudgetPort {
     else {
       if (budgets.get(0).getName() == budget.getName())
         throw new UpdateException("A budget with this name already exists");
-      else if (budget.getInitialAmount() < 0)
+      else if (this.isInitialAmountNegative(budget))
         throw new UpdateException("Budget initial amount cannot be negative");
       else {
         Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
@@ -65,6 +65,9 @@ public class BudgetCalculator implements BudgetPort {
     }
   }
 
+  /*
+      TO BE MOVED IN EXPENSEPORT ????
+   */
   public Expense addExpense(User user, long accountId, long budgetId, Expense expense) throws CreationException {
     Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
     if (myBudget == null)
@@ -79,23 +82,9 @@ public class BudgetCalculator implements BudgetPort {
                                     .reduce(0.0, (a, b) -> a + b);
       if (totalExpense + expense.getAmount() > myBudget.getInitialAmount())
         throw new CreationException("Budget amount has been exceeded. Total amount would be : " + (totalExpense + expense.getAmount()));
-
-
-      /*
-          SUM ONLY IF EXPENSE IS IN THE GIVEN MONTH OF EXPENSE (EXPENSE DATE)
-          - get month and year of expense date of expense to add
-          - filter expenses to beginning of month and end of month included
-          - sum expenses
-
-          --> !!! IMPORTANT !!! Need moment.isDateInMonthOfYear(Date date, int month, int year);
-       */
+      expense.setAmount(Math.abs(expense.getAmount()));
+      return this.expenseFetcher.createExpense(budgetId, expense);
     }
-    /*
-      -> get budget to check if exists
-      -> set amount to absolute
-      -> save
-     */
-    return null;
   }
 
   /*
@@ -103,4 +92,8 @@ public class BudgetCalculator implements BudgetPort {
       Il faudra prendre en compte de supprimer les dépenses dans les cas de modification de start date et end date
 
    */
+
+  private boolean isInitialAmountNegative(Budget budget) {
+    return budget.getInitialAmount() < 0;
+  }
 }

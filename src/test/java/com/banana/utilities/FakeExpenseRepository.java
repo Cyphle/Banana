@@ -20,4 +20,10 @@ public class FakeExpenseRepository implements IExpenseRepository {
     sExpenses.add(sExpenseTwo);
     return sExpenses;
   }
+
+  public SExpense createExpense(SExpense expense) {
+    SExpense sExpenseOne = new SExpense("Courses", 24, (new Moment("2017-07-14")).getDate());
+    sExpenseOne.setId(1);
+    return sExpenseOne;
+  }
 }

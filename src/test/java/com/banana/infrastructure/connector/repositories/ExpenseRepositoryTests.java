@@ -59,4 +59,25 @@ public class ExpenseRepositoryTests {
     assertThat(sExpenses.get(1).getDescription()).isEqualTo("Bar");
     assertThat(sExpenses.get(1).getAmount()).isEqualTo(40);
   }
+
+  @Test
+  public void should_create_new_expense() {
+    SExpense newExpense = new SExpense("Courses", 24, (new Moment("2017-07-18")).getDate());
+    newExpense.setBudget(this.budget);
+    Moment today = new Moment();
+    given(this.sExpenseRepository.save(any(SExpense.class))).willReturn(newExpense);
+
+    SExpense createdExpense = this.expenseRepository.createExpense(newExpense);
+    Moment creationDate = new Moment(createdExpense.getCreationDate());
+    Moment updateDate = new Moment(createdExpense.getUpdateDate());
+
+    assertThat(createdExpense.getDescription()).isEqualTo("Courses");
+    assertThat(createdExpense.getAmount()).isEqualTo(24);
+    assertThat(creationDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(creationDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(creationDate.getYear()).isEqualTo(today.getYear());
+    assertThat(updateDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(updateDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(updateDate.getYear()).isEqualTo(today.getYear());
+  }
 }

@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface IExpenseFetcher {
   List<Expense> getExpensesByBudgetid(long budgetId);
+  Expense createExpense(long budgetId, Expense expense);
 }

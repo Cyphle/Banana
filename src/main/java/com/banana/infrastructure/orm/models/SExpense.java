@@ -56,4 +56,12 @@ public class SExpense {
   public Date getDebitDate() { return this.debitDate; }
 
   public void setDebitDate(Date debitDate) { this.debitDate = debitDate; }
+
+  public Date getCreationDate() { return this.creationDate; }
+
+  public void setCreationDate(Date creationDate) { this.creationDate = creationDate; }
+
+  public Date getUpdateDate() { return this.updateDate; }
+
+  public void setUpdateDate(Date updateDate) { this.updateDate = updateDate; }
 }
