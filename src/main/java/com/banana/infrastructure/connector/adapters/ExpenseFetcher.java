@@ -31,4 +31,12 @@ public class ExpenseFetcher implements IExpenseFetcher {
     SExpense createdExpense = this.expenseRepository.createExpense(sExpense);
     return ExpensePivot.fromInfrastructureToDomain(createdExpense);
   }
+
+  public Expense updateBudgetExpense(long budgetId, Expense expense) {
+    return null;
+  }
+
+  public Expense updateAccountExpense(long accountId, Expense expense) {
+    return null;
+  }
 }

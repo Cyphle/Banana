@@ -20,4 +20,12 @@ public class FakeExpenseFetcher implements IExpenseFetcher {
   public Expense createExpense(long budgetId, Expense expense) {
     return new Expense(1, "Courses", 24, (new Moment("2017-07-18")).getDate());
   }
+
+  public Expense updateBudgetExpense(long budgetId, Expense expense) {
+    return expense;
+  }
+
+  public Expense updateAccountExpense(long accountId, Expense expense) {
+    return expense;
+  }
 }

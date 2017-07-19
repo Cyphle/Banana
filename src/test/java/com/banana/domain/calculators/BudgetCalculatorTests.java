@@ -99,7 +99,7 @@ public class BudgetCalculatorTests {
   }
 
   @Test
-  public void should_throw_expcetion_if_there_is_no_budget_with_this_id_for_user() {
+  public void should_throw_exception_if_there_is_no_budget_with_this_id_for_user() {
     Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
     Budget budgetToUpdate = new Budget(1,"My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
 
