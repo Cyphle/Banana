@@ -20,6 +20,10 @@ public class AccountRepository implements IAccountRepository {
     return this.accountRepository.findByUserUsername(user.getUsername());
   }
 
+  public SAccount getAccountById(long accountId) {
+    return this.accountRepository.findOne(accountId);
+  }
+
   public SAccount getAccountByUserAndId(SUser user, long accountId) {
     return this.accountRepository.findByUserUsernameAndId(user.getUsername(), accountId);
   }

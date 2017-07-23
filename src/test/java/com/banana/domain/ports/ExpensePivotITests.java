@@ -3,6 +3,7 @@ package com.banana.domain.ports;
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.adapters.IExpenseFetcher;
+import com.banana.domain.calculators.ExpenseCalculator;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
@@ -87,21 +88,22 @@ public class ExpensePivotITests {
     this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
     this.budgetFetcher = new BudgetFetcher(this.userRepository, this.accountRepository, this.budgetRepository);
     this.expenseRepository = new ExpenseRepository(this.sExpenseRepository);
-    this.expenseFetcher = new ExpenseFetcher(this.budgetRepository, this.expenseRepository);
+    this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
 
+    this.expensePort = new ExpenseCalculator(this.accountFetcher, this.budgetFetcher, this.expenseFetcher);
   }
 
   @Test
   public void should_update_a_budget_expense() {
     Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
     Budget myBudget = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
-    Expense myExpense = this.expenseFetcher.getExpensesByBudgetId(myBudget.getId()).get(0);
+    Expense myExpense = this.expenseFetcher.getExpensesOfBudget(myBudget.getId()).get(0);
 
     myExpense.setDescription(myExpense.getDescription() + " updated");
     myExpense.setAmount(50);
     myExpense.setDebitDate(new Moment("2017-08-02").getDate());
 
-    Expense updatedExpense = this.expensePort.updateExpense(this.user, -1, myBudget.getId(), myExpense);
+    Expense updatedExpense = this.expensePort.updateExpense(this.user, myAccount.getId(), myBudget.getId(), myExpense);
     Moment debitDate = new Moment(updatedExpense.getDebitDate());
 
     assertThat(updatedExpense.getId()).isEqualTo(myExpense.getId());
@@ -110,5 +112,10 @@ public class ExpensePivotITests {
     assertThat(debitDate.getDayOfMonth()).isEqualTo(2);
     assertThat(debitDate.getMonthNumber()).isEqualTo(8);
     assertThat(debitDate.getYear()).isEqualTo(2017);
+  }
+
+  @Test
+  public void should_update_an_account_expense() {
+    // TODO test to implement
   }
 }

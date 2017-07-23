@@ -43,13 +43,23 @@ public class SExpense {
 
   public void setId(long id) { this.id = id; }
 
+  public SAccount getAccount() {
+    return this.account;
+  }
+
   public void setAccount(SAccount account) { this.account = account; }
+
+  public SBudget getBudget() { return this.budget; }
 
   public void setBudget(SBudget budget) { this.budget = budget; }
 
   public String getDescription() { return this.description; }
 
   public double getAmount() { return this.amount; }
+
+  public void setAmount(double amount) {
+    this.amount = amount;
+  }
 
   public Date getExpenseDate() { return this.expenseDate; }
 

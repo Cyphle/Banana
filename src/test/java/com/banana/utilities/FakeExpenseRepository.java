@@ -26,4 +26,8 @@ public class FakeExpenseRepository implements IExpenseRepository {
     sExpenseOne.setId(1);
     return sExpenseOne;
   }
+
+  public SExpense updateExpense(SExpense expense) {
+    return expense;
+  }
 }

@@ -69,13 +69,14 @@ public class BudgetCalculator implements BudgetPort {
       TO BE MOVED IN EXPENSEPORT ????
    */
   public Expense addExpense(User user, long accountId, long budgetId, Expense expense) throws CreationException {
+    // TODO To be moved in expense port
     Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
     if (myBudget == null)
       throw new NoElementFoundException("No budget found with id " + budgetId);
     else {
       Moment expenseDate = new Moment(expense.getExpenseDate());
       double totalExpense = this.expenseFetcher
-                                    .getExpensesByBudgetId(budgetId)
+                                    .getExpensesOfBudget(budgetId)
                                     .stream()
                                     .filter(fetchExpense -> (new Moment(fetchExpense.getExpenseDate())).isInMonthOfYear(expenseDate.getMonthNumber(), expenseDate.getYear()))
                                     .map(Expense::getAmount)
@@ -86,6 +87,8 @@ public class BudgetCalculator implements BudgetPort {
       return this.expenseFetcher.createExpense(budgetId, expense);
     }
   }
+
+  // TODO For update have to update expenses depending on start date, end date, and initial amount (forbid to modify amount if expenses exceed)
 
   /*
     FOR UPDATE

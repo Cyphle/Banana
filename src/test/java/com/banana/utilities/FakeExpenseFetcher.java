@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FakeExpenseFetcher implements IExpenseFetcher {
-  public List<Expense> getExpensesByBudgetId(long budgetId) {
-    Expense expenseOne = new Expense("Courses", 24, (new Moment("2017-07-10")).getDate());
-    Expense expenseTwo = new Expense("Bar", 40, (new Moment("2017-08-01")).getDate());
-    List<Expense> expenses = new ArrayList<>();
-    expenses.add(expenseOne);
-    expenses.add(expenseTwo);
-    return expenses;
+  public List<Expense> getExpensesOfAccount(long accountId) {
+    return this.getExpenses();
+  }
+
+  public List<Expense> getExpensesOfBudget(long budgetId) {
+    return this.getExpenses();
   }
 
   public Expense createExpense(long budgetId, Expense expense) {
@@ -27,5 +26,14 @@ public class FakeExpenseFetcher implements IExpenseFetcher {
 
   public Expense updateAccountExpense(long accountId, Expense expense) {
     return expense;
+  }
+
+  private List<Expense> getExpenses() {
+    Expense expenseOne = new Expense("Courses", 24, (new Moment("2017-07-10")).getDate());
+    Expense expenseTwo = new Expense("Bar", 40, (new Moment("2017-08-01")).getDate());
+    List<Expense> expenses = new ArrayList<>();
+    expenses.add(expenseOne);
+    expenses.add(expenseTwo);
+    return expenses;
   }
 }

@@ -25,4 +25,10 @@ public class ExpenseRepository implements IExpenseRepository {
     expense.setUpdateDate(today.getDate());
     return this.expenseRepository.save(expense);
   }
+
+  public SExpense updateExpense(SExpense expense) {
+    Moment today = new Moment();
+    expense.setUpdateDate(today.getDate());
+    return this.expenseRepository.save(expense);
+  }
 }

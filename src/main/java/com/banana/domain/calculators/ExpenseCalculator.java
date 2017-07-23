@@ -23,13 +23,20 @@ public class ExpenseCalculator implements ExpensePort {
     this.expenseFetcher = expenseFetcher;
   }
 
+  // TODO Missing method to create an account expense
+
+  /*
+      CREATE ACCOUNT EXPENSE MISSING
+   */
+
+
   public Expense updateExpense(User user, long accountId, long budgetId, Expense expense) {
     if (this.isBudgetExpense(budgetId)) {
       Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
       if (this.doesBudgetExists(myBudget)) {
         Moment expenseDate = new Moment(expense.getExpenseDate());
         double totalExpense = this.expenseFetcher
-                                  .getExpensesByBudgetId(budgetId)
+                                  .getExpensesOfBudget(budgetId)
                                   .stream()
                                   .filter(fetchExpense -> (new Moment(fetchExpense.getExpenseDate())).isInMonthOfYear(expenseDate.getMonthNumber(), expenseDate.getYear()))
                                   .map(Expense::getAmount)
@@ -47,11 +54,6 @@ public class ExpenseCalculator implements ExpensePort {
       } else
         throw new NoElementFoundException("No account found with id : " + accountId);
     }
-    /*
-      - if budgetId <= 0 ==> it is an account expense
-      - else ==> it is a budget expense
-          -> if budget, check that it does not exceed budget
-     */
   }
 
   private boolean doesAccountExists(Account myAccount) {

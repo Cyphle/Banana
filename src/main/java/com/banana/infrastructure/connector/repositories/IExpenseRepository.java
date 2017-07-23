@@ -7,4 +7,5 @@ import java.util.List;
 public interface IExpenseRepository {
   List<SExpense> getExpensesByBudgetid(long budgetId);
   SExpense createExpense(SExpense expense);
+  SExpense updateExpense(SExpense expense);
 }

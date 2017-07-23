@@ -86,7 +86,7 @@ public class BudgetPivotITests {
 
     this.expenseRepository = new ExpenseRepository(this.sExpenseRepository);
     this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
-    this.expenseFetcher = new ExpenseFetcher(this.budgetRepository, this.expenseRepository);
+    this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
     this.budgetFetcher = new BudgetFetcher(this.userRepository, this.accountRepository, this.budgetRepository);
     this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher, this.expenseFetcher);
   }

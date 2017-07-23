@@ -5,6 +5,7 @@ import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.exceptions.NoElementFoundException;
+import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
@@ -27,11 +28,13 @@ public class ExpenseCalculatorTests {
   private IExpenseFetcher expenseFetcher;
   private ExpensePort expensePort;
   private User user;
+  private Account account;
   private Budget budgetOne;
 
   @Before
   public void setup() {
     this.user = new User("Doe", "John", "john@doe.fr");
+    this.account = new Account(1, this.user, "My account", "my-account", 2000);
     this.budgetOne = new Budget(2, "Budget one", 200, (new Moment()).getFirstDateOfMonth().getDate());
 
     this.accountFetcher = new FakeAccountFetcher();
@@ -97,6 +100,8 @@ public class ExpenseCalculatorTests {
 
   @Test
   public void should_update_an_account_expense() {
+    Mockito.doReturn(this.account).when(this.accountFetcher).getAccountByUserAndId(any(User.class), any(long.class));
+
     Expense newExpense = new Expense(1, "My expense", 66, (new Moment("2017-07-17")).getDate());
 
     Expense createdExpense = this.expensePort.updateExpense(this.user, 1, -1, newExpense);

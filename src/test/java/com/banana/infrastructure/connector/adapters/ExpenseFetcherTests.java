@@ -3,8 +3,10 @@ package com.banana.infrastructure.connector.adapters;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
+import com.banana.infrastructure.connector.repositories.IAccountRepository;
 import com.banana.infrastructure.connector.repositories.IBudgetRepository;
 import com.banana.infrastructure.connector.repositories.IExpenseRepository;
+import com.banana.utilities.FakeAccountRepository;
 import com.banana.utilities.FakeBudgetRepository;
 import com.banana.utilities.FakeExpenseRepository;
 import com.banana.utils.Moment;
@@ -16,6 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExpenseFetcherTests {
+  private IAccountRepository accountRepository;
   private IExpenseRepository expenseRepository;
   private IBudgetRepository budgetRepository;
   private IExpenseFetcher expenseFetcher;
@@ -28,8 +31,9 @@ public class ExpenseFetcherTests {
 
     this.expenseRepository = new FakeExpenseRepository();
     this.budgetRepository = new FakeBudgetRepository();
+    this.accountRepository = new FakeAccountRepository();
 
-    this.expenseFetcher = new ExpenseFetcher(this.budgetRepository, this.expenseRepository);
+    this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
   }
 
   @Test
@@ -51,5 +55,25 @@ public class ExpenseFetcherTests {
 
     assertThat(createdExpense).isNotNull();
     assertThat(createdExpense.getId()).isGreaterThan(0);
+  }
+
+  @Test
+  public void should_update_budget_expense() {
+    Expense expenseToUpdate = new Expense(1, "Courses", 24, (new Moment("2017-07-23")).getDate());
+
+    Expense updatedExpense = this.expenseFetcher.updateBudgetExpense(1, expenseToUpdate);
+
+    assertThat(updatedExpense).isNotNull();
+    assertThat(updatedExpense.getId()).isEqualTo(expenseToUpdate.getId());
+  }
+
+  @Test
+  public void should_update_account_expense() {
+    Expense expenseToUpdate = new Expense(1, "Courses", 24, (new Moment("2017-07-23")).getDate());
+
+    Expense updatedExpense = this.expenseFetcher.updateAccountExpense(1, expenseToUpdate);
+
+    assertThat(updatedExpense).isNotNull();
+    assertThat(updatedExpense.getId()).isEqualTo(expenseToUpdate.getId());
   }
 }

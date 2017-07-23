@@ -1,6 +1,7 @@
 package com.banana.infrastructure.connector.repositories;
 
 import com.banana.BananaApplication;
+import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SBudget;
 import com.banana.infrastructure.orm.models.SExpense;
 import com.banana.infrastructure.orm.repositories.SExpenseRepository;
@@ -34,9 +35,11 @@ public class ExpenseRepositoryTests {
   private SExpense expenseOne;
   private SExpense expenseTwo;
   private SBudget budget;
+  private SAccount account;
 
   @Before
   public void setup() {
+    this.account = new SAccount("My account", 2000);
     this.budget = new SBudget("My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
     this.expenseOne = new SExpense("Courses", 24, (new Moment("2017-07-12")).getDate());
     this.expenseTwo = new SExpense("Bar", 40, (new Moment("2017-07-13")).getDate());
@@ -76,6 +79,44 @@ public class ExpenseRepositoryTests {
     assertThat(creationDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
     assertThat(creationDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
     assertThat(creationDate.getYear()).isEqualTo(today.getYear());
+    assertThat(updateDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(updateDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(updateDate.getYear()).isEqualTo(today.getYear());
+  }
+
+  @Test
+  public void should_update_budget_expense() {
+    SExpense expenseToUpdate = new SExpense("Courses", 24, (new Moment("2017-07-18")).getDate());
+    expenseToUpdate.setId(1);
+    expenseToUpdate.setBudget(this.budget);
+    Moment today = new Moment();
+    given(this.sExpenseRepository.save(any(SExpense.class))).willReturn(expenseToUpdate);
+
+    SExpense updatedExpense = this.expenseRepository.updateExpense(expenseToUpdate);
+    Moment updateDate = new Moment(updatedExpense.getUpdateDate());
+
+    assertThat(updatedExpense.getId()).isEqualTo(expenseToUpdate.getId());
+    assertThat(updatedExpense.getBudget()).isNotNull();
+    assertThat(updatedExpense.getAccount()).isNull();
+    assertThat(updateDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(updateDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(updateDate.getYear()).isEqualTo(today.getYear());
+  }
+
+  @Test
+  public void should_update_account_expense() {
+    SExpense expenseToUpdate = new SExpense("Courses", 24, (new Moment("2017-07-18")).getDate());
+    expenseToUpdate.setId(1);
+    expenseToUpdate.setAccount(this.account);
+    Moment today = new Moment();
+    given(this.sExpenseRepository.save(any(SExpense.class))).willReturn(expenseToUpdate);
+
+    SExpense updatedExpense = this.expenseRepository.updateExpense(expenseToUpdate);
+    Moment updateDate = new Moment(updatedExpense.getUpdateDate());
+
+    assertThat(updatedExpense.getId()).isEqualTo(expenseToUpdate.getId());
+    assertThat(updatedExpense.getBudget()).isNull();
+    assertThat(updatedExpense.getAccount()).isNotNull();
     assertThat(updateDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
     assertThat(updateDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
     assertThat(updateDate.getYear()).isEqualTo(today.getYear());

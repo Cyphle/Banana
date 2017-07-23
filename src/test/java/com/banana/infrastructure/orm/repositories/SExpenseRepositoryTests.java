@@ -83,4 +83,47 @@ public class SExpenseRepositoryTests {
     assertThat(savedExpense.getDescription()).isEqualTo("Courses");
     assertThat(savedExpense.getAmount()).isEqualTo(24);
   }
+
+  @Test
+  public void should_update_budget_expense() {
+    SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "my-account");
+    List<SBudget> sBudgets = this.budgetRepository.findByUserUsernameAndAccountId(this.user.getUsername(), sAccount.getId());
+    SExpense sExpense = new SExpense("Bar", 40, (new Moment("2017-07-18")).getDate());
+    sExpense.setBudget(sBudgets.get(0));
+    SExpense expenseToUpdate = this.expenseRepository.save(sExpense);
+    expenseToUpdate.setAmount(100);
+    expenseToUpdate.setDebitDate((new Moment("2017-07-20")).getDate());
+
+    SExpense updatedExpense = this.expenseRepository.save(expenseToUpdate);
+    Moment debitDate = new Moment(updatedExpense.getDebitDate());
+
+    assertThat(updatedExpense.getId()).isEqualTo(expenseToUpdate.getId());
+    assertThat(updatedExpense.getAmount()).isEqualTo(100);
+    assertThat(updatedExpense.getBudget().getName()).isEqualTo("My budget");
+    assertThat(updatedExpense.getAccount()).isNull();
+    assertThat(debitDate.getDayOfMonth()).isEqualTo(20);
+    assertThat(debitDate.getMonthNumber()).isEqualTo(7);
+    assertThat(debitDate.getYear()).isEqualTo(2017);
+  }
+
+  @Test
+  public void should_update_account_expense() {
+    SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "my-account");
+    SExpense sExpense = new SExpense("Retrait", 50, (new Moment("2017-07-18")).getDate());
+    sExpense.setAccount(sAccount);
+    SExpense expenseToUpdate = this.expenseRepository.save(sExpense);
+    expenseToUpdate.setAmount(200);
+    expenseToUpdate.setDebitDate((new Moment("2017-07-22")).getDate());
+
+    SExpense updatedExpense = this.expenseRepository.save(expenseToUpdate);
+    Moment debitDate = new Moment(updatedExpense.getDebitDate());
+
+    assertThat(updatedExpense.getId()).isEqualTo(expenseToUpdate.getId());
+    assertThat(updatedExpense.getAmount()).isEqualTo(200);
+    assertThat(updatedExpense.getBudget()).isNull();
+    assertThat(updatedExpense.getAccount().getName()).isEqualTo("My Account");
+    assertThat(debitDate.getDayOfMonth()).isEqualTo(22);
+    assertThat(debitDate.getMonthNumber()).isEqualTo(7);
+    assertThat(debitDate.getYear()).isEqualTo(2017);
+  }
 }
