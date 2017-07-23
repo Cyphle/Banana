@@ -1,6 +1,8 @@
 package com.banana.infrastructure.connector.adapters;
 
 import com.banana.domain.adapters.IExpenseFetcher;
+import com.banana.domain.models.Account;
+import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
@@ -37,8 +39,9 @@ public class ExpenseFetcherTests {
   }
 
   @Test
-  public void should_get_expenses_for_budget_of_user_and_account() {
-    List<Expense> expenses = this.expenseFetcher.getExpensesByBudgetId(1);
+  public void should_get_expenses_for_account() {
+    Account account = new Account(1, this.user, "Test", "test", 2000.0);
+    List<Expense> expenses = this.expenseFetcher.getExpensesOfAccount(account);
 
     assertThat(expenses.size()).isEqualTo(2);
     assertThat(expenses.get(0).getDescription()).isEqualTo("Courses");
@@ -48,10 +51,32 @@ public class ExpenseFetcherTests {
   }
 
   @Test
-  public void should_create_expense() {
+  public void should_get_expenses_for_budget_of_user_and_account() {
+    Budget budget = new Budget(1, "Budget" , 200, new Moment().getDate());
+    List<Expense> expenses = this.expenseFetcher.getExpensesOfBudget(budget);
+
+    assertThat(expenses.size()).isEqualTo(2);
+    assertThat(expenses.get(0).getDescription()).isEqualTo("Courses");
+    assertThat(expenses.get(0).getAmount()).isEqualTo(24);
+    assertThat(expenses.get(1).getDescription()).isEqualTo("Bar");
+    assertThat(expenses.get(1).getAmount()).isEqualTo(40);
+  }
+
+  @Test
+  public void should_create_account_expense() {
     Expense newExpense = new Expense("Courses", 24, (new Moment("2017-07-18")).getDate());
 
-    Expense createdExpense = this.expenseFetcher.createExpense(1, newExpense);
+    Expense createdExpense = this.expenseFetcher.createAccountExpense(1, newExpense);
+
+    assertThat(createdExpense).isNotNull();
+    assertThat(createdExpense.getId()).isGreaterThan(0);
+  }
+
+  @Test
+  public void should_create_budget_expense() {
+    Expense newExpense = new Expense("Courses", 24, (new Moment("2017-07-18")).getDate());
+
+    Expense createdExpense = this.expenseFetcher.createBudgetExpense(1, newExpense);
 
     assertThat(createdExpense).isNotNull();
     assertThat(createdExpense.getId()).isGreaterThan(0);

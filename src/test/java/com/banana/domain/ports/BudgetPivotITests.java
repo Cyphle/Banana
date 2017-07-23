@@ -140,32 +140,6 @@ public class BudgetPivotITests {
     }
   }
 
-  @Test
-  public void should_add_expense_to_budget() {
-    Moment today = new Moment();
-    Expense newExpense = new Expense("Courses", 20, today.getDate());
-
-    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
-    List<Budget> existingBudgets = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId());
-    Budget budget = null;
-    for (Budget tempBudget : existingBudgets) {
-      if (tempBudget.getName() == "Budget one")
-        budget = tempBudget;
-    }
-
-    Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(this.user, myAccount.getId(), budget.getId());
-
-    Expense createdExpense = this.budgetPort.addExpense(this.user, myAccount.getId(), myBudget.getId(), newExpense);
-    Moment expenseDate = new Moment(createdExpense.getExpenseDate());
-
-    assertThat(createdExpense.getId()).isGreaterThan(0);
-    assertThat(createdExpense.getDescription()).isEqualTo(newExpense.getDescription());
-    assertThat(createdExpense.getAmount()).isEqualTo(newExpense.getAmount());
-    assertThat(expenseDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
-    assertThat(expenseDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
-    assertThat(expenseDate.getYear()).isEqualTo(today.getYear());
-  }
-
   /*
     Should delete budget
     -> modify endDate to end at given date

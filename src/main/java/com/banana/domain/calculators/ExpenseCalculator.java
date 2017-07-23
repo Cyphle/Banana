@@ -23,37 +23,39 @@ public class ExpenseCalculator implements ExpensePort {
     this.expenseFetcher = expenseFetcher;
   }
 
-  // TODO Missing method to create an account expense
-
-  /*
-      CREATE ACCOUNT EXPENSE MISSING
-   */
-
-
-  public Expense updateExpense(User user, long accountId, long budgetId, Expense expense) {
+  public Expense createExpense(User user, long accountId, long budgetId, Expense expense) throws CreationException, NoElementFoundException {
     if (this.isBudgetExpense(budgetId)) {
-      Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
-      if (this.doesBudgetExists(myBudget)) {
-        Moment expenseDate = new Moment(expense.getExpenseDate());
-        double totalExpense = this.expenseFetcher
-                                  .getExpensesOfBudget(budgetId)
-                                  .stream()
-                                  .filter(fetchExpense -> (new Moment(fetchExpense.getExpenseDate())).isInMonthOfYear(expenseDate.getMonthNumber(), expenseDate.getYear()))
-                                  .map(Expense::getAmount)
-                                  .reduce(0.0, (a, b) -> a + b);
-        if (totalExpense + expense.getAmount() > myBudget.getInitialAmount())
-          throw new CreationException("Budget amount has been exceeded. Total amount would be : " + (totalExpense + expense.getAmount()));
+      if (this.verifyExpense(user, accountId, budgetId, expense)) {
         expense.setAmount(Math.abs(expense.getAmount()));
-        return this.expenseFetcher.updateBudgetExpense(budgetId, expense);
+        return this.expenseFetcher.createBudgetExpense(budgetId, expense);
       } else
-        throw new NoElementFoundException("No budget found with id : " + budgetId);
+        return null;
     } else {
       Account myAccount = this.accountFetcher.getAccountByUserAndId(user, accountId);
       if (this.doesAccountExists(myAccount)) {
-        return this.expenseFetcher.updateAccountExpense(accountId, expense);
+        return this.expenseFetcher.createAccountExpense(accountId, expense);
       } else
         throw new NoElementFoundException("No account found with id : " + accountId);
     }
+  }
+
+  public Expense updateExpense(User user, long accountId, long budgetId, Expense expense) throws CreationException, NoElementFoundException  {
+    if (expense.getId() > 0) {
+      if (this.isBudgetExpense(budgetId)) {
+        if (this.verifyExpense(user, accountId, budgetId, expense)) {
+          expense.setAmount(Math.abs(expense.getAmount()));
+          return this.expenseFetcher.updateBudgetExpense(budgetId, expense);
+        } else
+          return null;
+      } else {
+        Account myAccount = this.accountFetcher.getAccountByUserAndId(user, accountId);
+        if (this.doesAccountExists(myAccount)) {
+          return this.expenseFetcher.updateAccountExpense(accountId, expense);
+        } else
+          throw new NoElementFoundException("No account found with id : " + accountId);
+      }
+    } else
+      return null;
   }
 
   private boolean doesAccountExists(Account myAccount) {
@@ -66,5 +68,26 @@ public class ExpenseCalculator implements ExpensePort {
 
   private boolean isBudgetExpense(long budgetId) {
     return budgetId > 0;
+  }
+
+  private boolean verifyExpense(User user, long accountId, long budgetId, Expense expense) throws CreationException, NoElementFoundException {
+    Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
+    if (this.doesBudgetExists(myBudget)) {
+      double totalExpense = this.getTotalExpense(expense, myBudget);
+      if (totalExpense + expense.getAmount() > myBudget.getInitialAmount())
+        throw new CreationException("Budget amount has been exceeded. Total amount would be : " + (totalExpense + expense.getAmount()));
+    } else
+      throw new NoElementFoundException("No budget found with id " + budgetId);
+    return true;
+  }
+
+  private double getTotalExpense(Expense expense, Budget myBudget) {
+    Moment expenseDate = new Moment(expense.getExpenseDate());
+    return this.expenseFetcher
+            .getExpensesOfBudget(myBudget)
+            .stream()
+            .filter(fetchExpense -> (new Moment(fetchExpense.getExpenseDate())).isInMonthOfYear(expenseDate.getMonthNumber(), expenseDate.getYear()))
+            .map(Expense::getAmount)
+            .reduce(0.0, (a, b) -> a + b);
   }
 }

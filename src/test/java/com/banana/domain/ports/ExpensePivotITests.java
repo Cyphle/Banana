@@ -29,6 +29,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -80,7 +82,7 @@ public class ExpensePivotITests {
 
     this.sExpenseTwo = new SExpense("Bar", 30, (new Moment("2017-07-06")).getDate());
     this.sExpenseTwo.setAccount(this.sAccount);
-    this.entityManager.persist(this.sExpenseOne);
+    this.entityManager.persist(this.sExpenseTwo);
 
     this.userRepository = new UserRepository(this.sUserRepository);
     this.accountRepository = new AccountRepository(this.sAccountRepository);
@@ -94,10 +96,47 @@ public class ExpensePivotITests {
   }
 
   @Test
+  public void should_add_expense_to_budget() {
+    Moment today = new Moment();
+    Expense newExpense = new Expense("Courses", 20, today.getDate());
+
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Budget myBudget = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
+
+    Expense createdExpense = this.expensePort.createExpense(this.user, myAccount.getId(), myBudget.getId(), newExpense);
+    Moment expenseDate = new Moment(createdExpense.getExpenseDate());
+
+    assertThat(createdExpense.getId()).isGreaterThan(0);
+    assertThat(createdExpense.getDescription()).isEqualTo(newExpense.getDescription());
+    assertThat(createdExpense.getAmount()).isEqualTo(newExpense.getAmount());
+    assertThat(expenseDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(expenseDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(expenseDate.getYear()).isEqualTo(today.getYear());
+  }
+
+  @Test
+  public void should_add_expense_to_account() {
+    Moment today = new Moment();
+    Expense newExpense = new Expense("Courses", 20, today.getDate());
+
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+
+    Expense createdExpense = this.expensePort.createExpense(this.user, myAccount.getId(), -1, newExpense);
+    Moment expenseDate = new Moment(createdExpense.getExpenseDate());
+
+    assertThat(createdExpense.getId()).isGreaterThan(0);
+    assertThat(createdExpense.getDescription()).isEqualTo(newExpense.getDescription());
+    assertThat(createdExpense.getAmount()).isEqualTo(newExpense.getAmount());
+    assertThat(expenseDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(expenseDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(expenseDate.getYear()).isEqualTo(today.getYear());
+  }
+
+  @Test
   public void should_update_a_budget_expense() {
     Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
     Budget myBudget = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
-    Expense myExpense = this.expenseFetcher.getExpensesOfBudget(myBudget.getId()).get(0);
+    Expense myExpense = this.expenseFetcher.getExpensesOfBudget(myBudget).get(0);
 
     myExpense.setDescription(myExpense.getDescription() + " updated");
     myExpense.setAmount(50);
@@ -116,6 +155,21 @@ public class ExpensePivotITests {
 
   @Test
   public void should_update_an_account_expense() {
-    // TODO test to implement
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Expense expenseToUpdate = this.expenseFetcher.getExpensesOfAccount(myAccount).get(0);
+
+    expenseToUpdate.setDescription(expenseToUpdate.getDescription() + " updated");
+    expenseToUpdate.setAmount(100);
+    expenseToUpdate.setDebitDate((new Moment("2017-08-10")).getDate());
+
+    Expense updatedExpense = this.expensePort.updateExpense(this.user, myAccount.getId(), -1, expenseToUpdate);
+    Moment debitDate = new Moment(updatedExpense.getDebitDate());
+
+    assertThat(updatedExpense.getId()).isEqualTo(expenseToUpdate.getId());
+    assertThat(updatedExpense.getDescription()).isEqualTo("Bar updated");
+    assertThat(updatedExpense.getAmount()).isEqualTo(100);
+    assertThat(debitDate.getDayOfMonth()).isEqualTo(10);
+    assertThat(debitDate.getMonthNumber()).isEqualTo(8);
+    assertThat(debitDate.getYear()).isEqualTo(2017);
   }
 }

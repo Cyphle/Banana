@@ -1,6 +1,8 @@
 package com.banana.infrastructure.connector.adapters;
 
 import com.banana.domain.adapters.IExpenseFetcher;
+import com.banana.domain.models.Account;
+import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
 import com.banana.infrastructure.connector.pivots.ExpensePivot;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
@@ -23,16 +25,25 @@ public class ExpenseFetcher implements IExpenseFetcher {
     this.budgetRepository = budgetRepository;
   }
 
-  public List<Expense> getExpensesOfAccount(long accountId) {
-    return null;
-  }
-
-  public List<Expense> getExpensesOfBudget(long budgetId) {
-    List<SExpense> sExpenses = this.expenseRepository.getExpensesByBudgetid(budgetId);
+  public List<Expense> getExpensesOfAccount(Account account) {
+    List<SExpense> sExpenses = this.expenseRepository.getExpenseByAccountId(account.getId());
     return ExpensePivot.fromInfrastructureToDomain(sExpenses);
   }
 
-  public Expense createExpense(long budgetId, Expense expense) {
+  public List<Expense> getExpensesOfBudget(Budget budget) {
+    List<SExpense> sExpenses = this.expenseRepository.getExpensesByBudgetid(budget.getId());
+    return ExpensePivot.fromInfrastructureToDomain(sExpenses);
+  }
+
+  public Expense createAccountExpense(long accountId, Expense expense) {
+    SAccount account = this.accountRepository.getAccountById(accountId);
+    SExpense sExpense = ExpensePivot.fromDomainToInfrastructure(expense);
+    sExpense.setAccount(account);
+    SExpense createdExpense = this.expenseRepository.createExpense(sExpense);
+    return ExpensePivot.fromInfrastructureToDomain(createdExpense);
+  }
+
+  public Expense createBudgetExpense(long budgetId, Expense expense) {
     SBudget budget = this.budgetRepository.getBudgetById(budgetId);
     SExpense sExpense = ExpensePivot.fromDomainToInfrastructure(expense);
     sExpense.setBudget(budget);

@@ -51,8 +51,21 @@ public class ExpenseRepositoryTests {
   }
 
   @Test
+  public void should_get_expense_by_account_id() {
+    given(this.sExpenseRepository.findByAccountId(any(long.class))).willReturn(this.expenses);
+
+    List<SExpense> sExpenses = this.expenseRepository.getExpenseByAccountId(1);
+
+    assertThat(sExpenses.size()).isEqualTo(2);
+    assertThat(sExpenses.get(0).getDescription()).isEqualTo("Courses");
+    assertThat(sExpenses.get(0).getAmount()).isEqualTo(24);
+    assertThat(sExpenses.get(1).getDescription()).isEqualTo("Bar");
+    assertThat(sExpenses.get(1).getAmount()).isEqualTo(40);
+  }
+
+  @Test
   public void should_get_expenses_by_budget_id() {
-    given(this.expenseRepository.getExpensesByBudgetid(any(long.class))).willReturn(this.expenses);
+    given(this.sExpenseRepository.findByBudgetId(any(long.class))).willReturn(this.expenses);
 
     List<SExpense> sExpenses = this.expenseRepository.getExpensesByBudgetid(1);
 

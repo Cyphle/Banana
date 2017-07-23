@@ -15,6 +15,10 @@ public class ExpenseRepository implements IExpenseRepository {
     this.expenseRepository = expenseRepository;
   }
 
+  public List<SExpense> getExpenseByAccountId(long accountId) {
+    return this.expenseRepository.findByAccountId(accountId);
+  }
+
   public List<SExpense> getExpensesByBudgetid(long budgetId) {
     return this.expenseRepository.findByBudgetId(budgetId);
   }

@@ -37,23 +37,50 @@ public class SExpenseRepositoryTests {
   private SAccount account;
   private SExpense expenseOne;
   private SExpense expenseTwo;
+  private SExpense expenseThree;
+  private SExpense expenseFour;
   private SBudget budget;
 
   @Before
   public void setup() {
     this.user = new SUser("Doe", "John", "john@doe.fr");
     this.entityManager.persist(this.user);
+
     this.account = new SAccount(this.user, "My Account", "my-account", 2000);
     this.entityManager.persist(this.account);
+
     this.budget = new SBudget("My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
     this.budget.setAccount(this.account);
     this.entityManager.persist(this.budget);
+
     this.expenseOne = new SExpense("Courses", 24, (new Moment("2017-07-12")).getDate());
     this.expenseOne.setBudget(this.budget);
     this.entityManager.persist(this.expenseOne);
+
     this.expenseTwo = new SExpense("Bar", 40, (new Moment("2017-07-13")).getDate());
     this.expenseTwo.setBudget(this.budget);
     this.entityManager.persist(this.expenseTwo);
+
+    this.expenseThree = new SExpense("Retrait", 50, (new Moment("2017-07-14")).getDate());
+    this.expenseThree.setAccount(this.account);
+    this.entityManager.persist(this.expenseThree);
+
+    this.expenseFour = new SExpense("Sortie", 100, (new Moment("2017-08-15")).getDate());
+    this.expenseFour.setAccount(this.account);
+    this.entityManager.persist(this.expenseFour);
+  }
+
+  @Test
+  public void should_get_expenses_by_account_id_but_not_budget_expenses() {
+    SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "my-account");
+
+    List<SExpense> sExpenses = this.expenseRepository.findByAccountId(sAccount.getId());
+
+    assertThat(sExpenses.size()).isEqualTo(2);
+    assertThat(sExpenses.get(0).getDescription()).isEqualTo("Retrait");
+    assertThat(sExpenses.get(0).getAmount()).isEqualTo(50);
+    assertThat(sExpenses.get(1).getDescription()).isEqualTo("Sortie");
+    assertThat(sExpenses.get(1).getAmount()).isEqualTo(100);
   }
 
   @Test

@@ -133,42 +133,6 @@ public class BudgetCalculatorTests {
     assertThat(endDate.getYear()).isEqualTo(2017);
   }
 
-  @Test
-  public void should_throw_error_if_budget_for_expense_does_not_exists() {
-    Expense newExpense = new Expense("My expense", 20, (new Moment()).getDate());
-    Mockito.doReturn(null).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
-
-    try {
-      Expense createdExpense = this.budgetPort.addExpense(this.user, 1, 1, newExpense);
-      fail("Should throw error when budget does not exists");
-    } catch (NoElementFoundException e) {
-      assertThat(e.getMessage()).contains("No budget found with id");
-    }
-  }
-
-  @Test
-  public void should_throw_error_if_adding_expense_overflow_budget_amount() {
-    Expense newExpense = new Expense("My expense", 300, (new Moment("2017-07-17")).getDate());
-    Mockito.doReturn(this.budgetOne).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
-
-    try {
-      Expense createdExpense = this.budgetPort.addExpense(this.user, 1, 1, newExpense);
-      fail("Should throw error if total expenses are higher than budget amount");
-    } catch (CreationException e) {
-      assertThat(e.getMessage()).contains("Budget amount has been exceeded. Total amount would be : 324");
-    }
-  }
-
-  @Test
-  public void should_create_a_new_expense() {
-    Expense newExpense = new Expense("My expense", 66, (new Moment("2017-07-17")).getDate());
-    Mockito.doReturn(this.budgetOne).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
-
-    Expense createdExpense = this.budgetPort.addExpense(this.user, 1, 1, newExpense);
-
-    assertThat(createdExpense.getId()).isGreaterThan(0);
-  }
-
   /*
   ADD EXpense should throw error if adding expense is over budget amount
    */
