@@ -66,6 +66,12 @@ public class Moment implements IMoment {
     return new Moment(this.getYear() + "-" + monthNumber + "-01");
   }
 
+  public Moment getLastDateOfMonth() {
+    LocalDate initial = this.zonedTime.toLocalDate();
+    LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
+    return new Moment(end.toString());
+  }
+
   public int getLastDayOfMonth() {
     LocalDate initial = this.zonedTime.toLocalDate();
     LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
@@ -78,5 +84,44 @@ public class Moment implements IMoment {
     else if (this.getMonthNumber() != month)
       return false;
     return true;
+  }
+
+  public Moment getLastDayOfPrecedingMonth() {
+    int year = this.getYear();
+    int month = this.getMonthNumber();
+    if (this.getMonthNumber() == 1) {
+      month = 12;
+      --year;
+    } else
+      --month;
+    LocalDate initial = LocalDate.of(year, month, this.getDayOfMonth());
+    LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
+    return new Moment(Date.from(end.atStartOfDay(this.zone).toInstant()));
+  }
+
+  /**
+   *
+   * @param momentCompare
+   * @return -1 is this is before momentCompare, 0 if equal, 1 if this is after momentCompare
+   */
+  public int compareTo(Moment momentCompare) {
+    if (this.getYear() < momentCompare.getYear())
+      return -1;
+    else if (this.getYear() > momentCompare.getYear())
+      return 1;
+    else {
+      if (this.getMonthNumber() < momentCompare.getMonthNumber())
+        return -1;
+      else if (this.getMonthNumber() > momentCompare.getMonthNumber())
+        return 1;
+      else {
+        if (this.getDayOfMonth() < momentCompare.getDayOfMonth())
+          return -1;
+        else if (this.getDayOfMonth() > momentCompare.getDayOfMonth())
+          return 1;
+        else
+          return 0;
+      }
+    }
   }
 }

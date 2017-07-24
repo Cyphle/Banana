@@ -106,13 +106,32 @@ public class MomentTests {
   }
 
   @Test
-  public void should_get_first_day_of_month() {
+  public void should_get_first_date_of_month() {
     Moment myMoment = new Moment("2017-07-14");
     Moment firstDayOfMonth = myMoment.getFirstDateOfMonth();
 
     assertThat(firstDayOfMonth.getDayOfMonth()).isEqualTo(1);
     assertThat(firstDayOfMonth.getMonthNumber()).isEqualTo(myMoment.getMonthNumber());
     assertThat(firstDayOfMonth.getYear()).isEqualTo(myMoment.getYear());
+  }
+
+  @Test
+  public void should_get_last_date_of_month() {
+    Moment myMoment = new Moment("2017-07-14");
+    Moment lastDateOfMonth = myMoment.getLastDateOfMonth();
+    Moment mySecondMoment = new Moment("2016-02-10");
+    Moment secondLastDateOfMonth = mySecondMoment.getLastDateOfMonth();
+    Moment thirdMoment = new Moment("2017-12-20").getLastDateOfMonth();
+
+    assertThat(lastDateOfMonth.getDayOfMonth()).isEqualTo(31);
+    assertThat(lastDateOfMonth.getMonthNumber()).isEqualTo(myMoment.getMonthNumber());
+    assertThat(lastDateOfMonth.getYear()).isEqualTo(myMoment.getYear());
+    assertThat(secondLastDateOfMonth.getDayOfMonth()).isEqualTo(29);
+    assertThat(secondLastDateOfMonth.getMonthNumber()).isEqualTo(mySecondMoment.getMonthNumber());
+    assertThat(secondLastDateOfMonth.getYear()).isEqualTo(mySecondMoment.getYear());
+    assertThat(thirdMoment.getDayOfMonth()).isEqualTo(31);
+    assertThat(thirdMoment.getMonthNumber()).isEqualTo(thirdMoment.getMonthNumber());
+    assertThat(thirdMoment.getYear()).isEqualTo(thirdMoment.getYear());
   }
 
   @Test
@@ -152,5 +171,46 @@ public class MomentTests {
     assertThat(date.isInMonthOfYear(Month.AUGUST.getValue(), 2017)).isFalse();
     assertThat(dateTwo.isInMonthOfYear(Month.JUNE.getValue(), 2017)).isFalse();
     assertThat(dateThree.isInMonthOfYear(Month.AUGUST.getValue(), 2017)).isFalse();
+  }
+
+  @Test
+  public void should_get_end_of_preceding_month() {
+    Moment dateOne = new Moment("2017-08-10").getLastDayOfPrecedingMonth();
+    Moment dateTwo = new Moment("2017-01-12").getLastDayOfPrecedingMonth();
+    Moment dateThree = new Moment("2016-03-12").getLastDayOfPrecedingMonth();
+
+    assertThat(dateOne.getDayOfMonth()).isEqualTo(31);
+    assertThat(dateOne.getMonthNumber()).isEqualTo(7);
+    assertThat(dateOne.getYear()).isEqualTo(2017);
+    assertThat(dateTwo.getDayOfMonth()).isEqualTo(31);
+    assertThat(dateTwo.getMonthNumber()).isEqualTo(12);
+    assertThat(dateTwo.getYear()).isEqualTo(2016);
+    assertThat(dateThree.getDayOfMonth()).isEqualTo(29);
+    assertThat(dateThree.getMonthNumber()).isEqualTo(2);
+    assertThat(dateThree.getYear()).isEqualTo(2016);
+  }
+
+  @Test
+  public void should_return_minus_one_if_date_is_before_compare() {
+    Moment date = new Moment("2017-01-01");
+    Moment compareTo = new Moment("2017-02-12");
+
+    assertThat(date.compareTo(compareTo)).isEqualTo(-1);
+  }
+
+  @Test
+  public void should_return_zero_if_date_are_equal() {
+    Moment date = new Moment("2017-01-01");
+    Moment compareTo = new Moment("2017-01-01");
+
+    assertThat(date.compareTo(compareTo)).isEqualTo(0);
+  }
+
+  @Test
+  public void should_return_one_if_date_is_after_compare() {
+    Moment date = new Moment("2017-03-01");
+    Moment compareTo = new Moment("2017-02-12");
+
+    assertThat(date.compareTo(compareTo)).isEqualTo(1);
   }
 }

@@ -13,4 +13,5 @@ public interface IExpenseFetcher {
   Expense createAccountExpense(long accountId, Expense expense);
   Expense updateBudgetExpense(long budgetId, Expense expense);
   Expense updateAccountExpense(long accountId, Expense expense);
+  boolean deleteBudgetExpense(long budgetId, Expense expense);
 }

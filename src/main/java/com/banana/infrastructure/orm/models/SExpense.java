@@ -74,4 +74,8 @@ public class SExpense {
   public Date getUpdateDate() { return this.updateDate; }
 
   public void setUpdateDate(Date updateDate) { this.updateDate = updateDate; }
+
+  public void setIsDeleted(boolean deleted) {
+    this.isDeleted = deleted;
+  }
 }

@@ -42,8 +42,8 @@ public class BudgetCalculatorTests {
     this.user = new User("Doe", "John", "john@doe.fr");
     this.account = new Account(user, "Account", 1000);
 
-    this.budgetOne = new Budget(2, "Budget one", 200, (new Moment()).getFirstDateOfMonth().getDate());
-    this.budgetTwo = new Budget(3, "Budget two", 300, (new Moment()).getFirstDateOfMonth().getDate());
+    this.budgetOne = new Budget(2, "Budget one", 200, (new Moment("2017-01-01")).getFirstDateOfMonth().getDate());
+    this.budgetTwo = new Budget(3, "Budget two", 300, (new Moment("2017-02-01")).getFirstDateOfMonth().getDate());
     this.budgets = new ArrayList<>();
     this.budgets.add(this.budgetOne);
     this.budgets.add(this.budgetTwo);
@@ -66,22 +66,6 @@ public class BudgetCalculatorTests {
     Budget createdBudget = this.budgetPort.createBudget(this.user, 1, newBudget);
 
     assertThat(createdBudget.getId()).isGreaterThan(0);
-  }
-
-  @Test
-  public void should_throw_exception_if_budget_name_already_exists() {
-    Moment today = new Moment();
-    Budget newBudget = new Budget("My budget", 200, today.getFirstDateOfMonth().getDate());
-    List<Budget> budgets = new ArrayList<>();
-    budgets.add(new Budget("My budget", 300, today.getFirstDateOfMonth().getDate()));
-    Mockito.doReturn(budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
-
-    try {
-      Budget createdBudget = this.budgetPort.createBudget(this.user, 1, newBudget);
-      fail("Should throw creation exception with negative amoun");
-    } catch (CreationException e) {
-      assertThat(e.getMessage()).contains("Cannot create multiple budgets with the same name");
-    }
   }
 
   @Test
@@ -112,9 +96,28 @@ public class BudgetCalculatorTests {
   }
 
   @Test
-  public void should_update_budget() {
+  public void should_update_budget_name() {
+    Budget budgetToUpdate = new Budget(2,"Budget updated", 200, (new Moment("2017-01-01")).getDate());
+
+    Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
+
+    Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
+
+    Moment startDate = new Moment(updatedBudget.getStartDate());
+
+    assertThat(updatedBudget.getId()).isEqualTo(budgetToUpdate.getId());
+    assertThat(updatedBudget.getName()).isEqualTo("Budget updated");
+    assertThat(updatedBudget.getInitialAmount()).isEqualTo(200);
+    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getMonthNumber()).isEqualTo(1);
+    assertThat(startDate.getYear()).isEqualTo(2017);
+  }
+
+  @Test
+  public void should_update_budget_amount() {
     Budget budgetToUpdate = new Budget(2,"Budget updated", 100, (new Moment("2017-10-01")).getDate());
     budgetToUpdate.setEndDate((new Moment("2017-12-31")).getDate());
+
     Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
 
     Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
@@ -122,12 +125,48 @@ public class BudgetCalculatorTests {
     Moment startDate = new Moment(updatedBudget.getStartDate());
     Moment endDate = new Moment(updatedBudget.getEndDate());
 
-    assertThat(updatedBudget.getId()).isEqualTo(budgetToUpdate.getId());
+    assertThat(updatedBudget.getId()).isNotEqualTo(budgetToUpdate.getId());
     assertThat(updatedBudget.getName()).isEqualTo("Budget updated");
     assertThat(updatedBudget.getInitialAmount()).isEqualTo(100);
     assertThat(startDate.getDayOfMonth()).isEqualTo(1);
     assertThat(startDate.getMonthNumber()).isEqualTo(10);
     assertThat(startDate.getYear()).isEqualTo(2017);
+    assertThat(endDate.getDayOfMonth()).isEqualTo(31);
+    assertThat(endDate.getMonthNumber()).isEqualTo(12);
+    assertThat(endDate.getYear()).isEqualTo(2017);
+  }
+
+  @Test
+  public void should_update_budget_start_date() {
+    Budget budgetToUpdate = new Budget(2,"Budget one", 200, (new Moment("2017-10-01")).getDate());
+    budgetToUpdate.setStartDate((new Moment("2017-12-31")).getDate());
+
+    Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
+
+    Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
+    Moment startDate = new Moment(updatedBudget.getStartDate());
+
+    assertThat(updatedBudget.getId()).isEqualTo(budgetToUpdate.getId());
+    assertThat(updatedBudget.getName()).isEqualTo("Budget one");
+    assertThat(updatedBudget.getInitialAmount()).isEqualTo(200);
+    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getMonthNumber()).isEqualTo(12);
+    assertThat(startDate.getYear()).isEqualTo(2017);
+  }
+
+  @Test
+  public void should_update_budget_end_date() {
+    Budget budgetToUpdate = new Budget(2,"Budget one", 200, (new Moment("2017-01-01")).getDate());
+    budgetToUpdate.setEndDate((new Moment("2017-12-20")).getDate());
+
+    Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
+
+    Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
+    Moment endDate = new Moment(updatedBudget.getEndDate());
+
+    assertThat(updatedBudget.getId()).isEqualTo(budgetToUpdate.getId());
+    assertThat(updatedBudget.getName()).isEqualTo("Budget one");
+    assertThat(updatedBudget.getInitialAmount()).isEqualTo(200);
     assertThat(endDate.getDayOfMonth()).isEqualTo(31);
     assertThat(endDate.getMonthNumber()).isEqualTo(12);
     assertThat(endDate.getYear()).isEqualTo(2017);

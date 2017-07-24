@@ -153,4 +153,9 @@ public class SExpenseRepositoryTests {
     assertThat(debitDate.getMonthNumber()).isEqualTo(7);
     assertThat(debitDate.getYear()).isEqualTo(2017);
   }
+
+  @Test
+  public void should_delete_expense() {
+
+  }
 }

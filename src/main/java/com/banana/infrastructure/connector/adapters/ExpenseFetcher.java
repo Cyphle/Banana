@@ -66,4 +66,15 @@ public class ExpenseFetcher implements IExpenseFetcher {
     SExpense updatedExpense = this.expenseRepository.updateExpense(sExpense);
     return ExpensePivot.fromInfrastructureToDomain(updatedExpense);
   }
+
+  public boolean deleteBudgetExpense(long budgetId, Expense expense) {
+    SBudget budget = this.budgetRepository.getBudgetById(budgetId);
+    SExpense sExpense = ExpensePivot.fromDomainToInfrastructure(expense);
+    sExpense.setBudget(budget);
+    sExpense.setIsDeleted(true);
+    SExpense deletedExpense = this.expenseRepository.updateExpense(sExpense);
+    if (deletedExpense != null)
+      return true;
+    return false;
+  }
 }

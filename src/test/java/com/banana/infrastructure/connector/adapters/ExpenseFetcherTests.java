@@ -101,4 +101,13 @@ public class ExpenseFetcherTests {
     assertThat(updatedExpense).isNotNull();
     assertThat(updatedExpense.getId()).isEqualTo(expenseToUpdate.getId());
   }
+
+  @Test
+  public void should_delete_expense() {
+    Expense expenseToUpdate = new Expense(1, "Courses", 24, (new Moment("2017-07-23")).getDate());
+
+    boolean isDeleted = this.expenseFetcher.deleteBudgetExpense(1, expenseToUpdate);
+
+    assertThat(isDeleted).isTrue();
+  }
 }

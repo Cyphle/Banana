@@ -42,4 +42,8 @@ public class FakeExpenseFetcher implements IExpenseFetcher {
     expenses.add(expenseTwo);
     return expenses;
   }
+
+  public boolean deleteBudgetExpense(long budgetId, Expense expense) {
+    return true;
+  }
 }

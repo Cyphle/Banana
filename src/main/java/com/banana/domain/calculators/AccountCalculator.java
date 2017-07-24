@@ -27,7 +27,7 @@ public class AccountCalculator implements AccountPort {
   }
 
   public Account getAccountByUserAndAccountSlug(User user, String accountSlug) {
-    // TODO add budgets, expenses, and all
+    // TODO add budgets, expenses, and all (NOT TO PUT IN FETCHER BUT HERE)
     return this.accountFetcher.getAccountByUserAndAccountSlug(user, accountSlug);
   }
 

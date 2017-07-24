@@ -10,6 +10,9 @@ public interface IMoment {
   int getYear();
   int getHour();
   Moment getFirstDateOfMonth();
+  Moment getLastDateOfMonth();
   int getLastDayOfMonth();
   boolean isInMonthOfYear(int month, int year);
+  Moment getLastDayOfPrecedingMonth();
+  int compareTo(Moment momentCompare);
 }
