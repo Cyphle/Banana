@@ -116,14 +116,12 @@ public class BudgetCalculatorTests {
   @Test
   public void should_update_budget_amount() {
     Budget budgetToUpdate = new Budget(2,"Budget updated", 100, (new Moment("2017-10-01")).getDate());
-    budgetToUpdate.setEndDate((new Moment("2017-12-31")).getDate());
 
     Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
 
     Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
 
     Moment startDate = new Moment(updatedBudget.getStartDate());
-    Moment endDate = new Moment(updatedBudget.getEndDate());
 
     assertThat(updatedBudget.getId()).isNotEqualTo(budgetToUpdate.getId());
     assertThat(updatedBudget.getName()).isEqualTo("Budget updated");
@@ -131,9 +129,6 @@ public class BudgetCalculatorTests {
     assertThat(startDate.getDayOfMonth()).isEqualTo(1);
     assertThat(startDate.getMonthNumber()).isEqualTo(10);
     assertThat(startDate.getYear()).isEqualTo(2017);
-    assertThat(endDate.getDayOfMonth()).isEqualTo(31);
-    assertThat(endDate.getMonthNumber()).isEqualTo(12);
-    assertThat(endDate.getYear()).isEqualTo(2017);
   }
 
   @Test

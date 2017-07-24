@@ -168,6 +168,7 @@ public class BudgetPivotITests {
 
     // Check that a new budget has been created
     assertThat(existingBudgets.size()).isEqualTo(2);
+    assertThat(updatedBudget.getId()).isNotEqualTo(oldBudget.getId());
     // Check that old budget did not change except for end date
     assertThat(oldStartDate.getDayOfMonth()).isEqualTo(initialStartDate.getDayOfMonth());
     assertThat(oldStartDate.getMonthNumber()).isEqualTo(initialStartDate.getMonthNumber());

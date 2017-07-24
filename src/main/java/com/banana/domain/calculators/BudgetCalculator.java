@@ -54,67 +54,72 @@ public class BudgetCalculator implements BudgetPort {
       else {
         Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
         Budget oldBudget = budgets.get(0);
-
-        Moment oldStartDate = new Moment(oldBudget.getStartDate());
-        Moment oldEndDate = null;
-        if (oldBudget.getEndDate() != null) oldEndDate = new Moment(oldBudget.getEndDate());
-        Moment newStartDate = new Moment(budget.getStartDate()).getFirstDateOfMonth().getFirstDateOfMonth();
-        Moment newEndDate = null;
-        if (budget.getEndDate() != null) newEndDate = new Moment(budget.getEndDate()).getLastDateOfMonth();
-
-        if (oldBudget.getInitialAmount() != budget.getInitialAmount()) {
-          return this.updateBudgetAmount(budget, account, oldBudget);
-        } else if (oldStartDate.compareTo(newStartDate) != 0) {
-          return this.updateBudgetStartDate(budget, account, newStartDate);
-        } if ((oldEndDate == null && newEndDate != null) || (oldEndDate != null && newEndDate == null) || (oldEndDate != null && newEndDate != null && oldEndDate.compareTo(newEndDate) != 0)) {
-          return this.updateBudgetEndDate(budget, account, newEndDate);
-        } else {
-          return this.budgetFetcher.updateBudget(account, budget);
-        }
+        Budget budgetToUpdate = budget;
+        budgetToUpdate = this.updateBudgetProperties(budget, account, oldBudget, budgetToUpdate);
+        return this.budgetFetcher.updateBudget(account, budgetToUpdate);
       }
     }
   }
 
-  private Budget updateBudgetEndDate(Budget budget, Account account, Moment newEndDate) {
+  private Budget updateBudgetProperties(Budget budget, Account account, Budget oldBudget, Budget budgetToUpdate) {
+    Moment oldStartDate = new Moment(oldBudget.getStartDate());
+    Moment oldEndDate = null;
+    if (oldBudget.getEndDate() != null) oldEndDate = new Moment(oldBudget.getEndDate());
+    Moment newStartDate = new Moment(budget.getStartDate()).getFirstDateOfMonth().getFirstDateOfMonth();
+    Moment newEndDate = null;
+    if (budget.getEndDate() != null) newEndDate = new Moment(budget.getEndDate()).getLastDateOfMonth();
+
+    if (oldStartDate.compareTo(newStartDate) != 0)
+      budgetToUpdate = this.updateBudgetStartDate(budget, newStartDate);
+    if ((oldEndDate == null && newEndDate != null) || (oldEndDate != null && newEndDate == null) || (oldEndDate != null && newEndDate != null && oldEndDate.compareTo(newEndDate) != 0))
+      budgetToUpdate = this.updateBudgetEndDate(budget, newEndDate);
+    if (oldBudget.getInitialAmount() != budget.getInitialAmount())
+      budgetToUpdate = this.updateBudgetAmount(budget, account, oldBudget);
+    return budgetToUpdate;
+  }
+
+  private Budget updateBudgetAmount(Budget budget, Account account, Budget oldBudget) {
+    Budget budgetToUpdate;Moment oldBudgetEndDate = (new Moment(budget.getStartDate())).getLastDayOfPrecedingMonth();
+    oldBudget.setEndDate(oldBudgetEndDate.getDate());
+    this.budgetFetcher.updateBudget(account, oldBudget);
+    Budget newBudget = new Budget(budget.getName(), budget.getInitialAmount(), new Moment(budget.getStartDate()).getFirstDateOfMonth().getDate());
+    if (budget.getEndDate() != null) newBudget.setEndDate(budget.getEndDate());
+
+    budgetToUpdate = newBudget;
+    return budgetToUpdate;
+  }
+
+  private Budget updateBudgetEndDate(Budget budget, Moment newEndDate) {
     if (newEndDate != null) {
       final Moment endDateCompare = new Moment(budget.getEndDate()).getLastDateOfMonth();
       List<Expense> expenses = this.expenseFetcher.getExpensesOfBudget(budget)
-            .stream()
-            .filter(expense -> {
-              Moment expenseDate = new Moment(expense.getExpenseDate());
-              return expenseDate.compareTo(endDateCompare) > 0;
-            })
-            .collect(Collectors.toList());
+              .stream()
+              .filter(expense -> {
+                Moment expenseDate = new Moment(expense.getExpenseDate());
+                return expenseDate.compareTo(endDateCompare) > 0;
+              })
+              .collect(Collectors.toList());
       for (Expense expense : expenses) {
         this.expenseFetcher.deleteBudgetExpense(budget.getId(), expense);
       }
     }
     budget.setEndDate(newEndDate.getDate());
-    return this.budgetFetcher.updateBudget(account, budget);
+    return budget;
   }
 
-  private Budget updateBudgetStartDate(Budget budget, Account account, Moment newStartDate) {
+  private Budget updateBudgetStartDate(Budget budget, Moment newStartDate) {
     List<Expense> expenses = this.expenseFetcher.getExpensesOfBudget(budget)
-                                                .stream()
-                                                .filter(expense -> {
-                                                  Moment expenseDate = new Moment(expense.getExpenseDate());
-                                                  return expenseDate.compareTo(newStartDate) < 0;
-                                                })
-                                                .collect(Collectors.toList());
+            .stream()
+            .filter(expense -> {
+              Moment expenseDate = new Moment(expense.getExpenseDate());
+              return expenseDate.compareTo(newStartDate) < 0;
+            })
+            .collect(Collectors.toList());
     for (Expense expense : expenses) {
       this.expenseFetcher.deleteBudgetExpense(budget.getId(), expense);
     }
     budget.setStartDate(newStartDate.getDate());
-    return this.budgetFetcher.updateBudget(account, budget);
-  }
-
-  private Budget updateBudgetAmount(Budget budget, Account account, Budget oldBudget) {
-    Moment oldBudgetEndDate = (new Moment(budget.getStartDate())).getLastDayOfPrecedingMonth();
-    oldBudget.setEndDate(oldBudgetEndDate.getDate());
-    this.budgetFetcher.updateBudget(account, oldBudget);
-    Budget newBudget = new Budget(budget.getName(), budget.getInitialAmount(), new Moment(budget.getStartDate()).getFirstDateOfMonth().getDate());
-    if (budget.getEndDate() != null) newBudget.setEndDate(budget.getEndDate());
-    return this.budgetFetcher.updateBudget(account, newBudget);
+    return budget;
   }
 
   private boolean isInitialAmountNegative(Budget budget) {
