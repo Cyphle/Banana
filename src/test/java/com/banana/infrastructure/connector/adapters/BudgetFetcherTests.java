@@ -65,7 +65,7 @@ public class BudgetFetcherTests {
   @Test
   public void should_get_create_budget() {
     Budget newBudget = new Budget("My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
-    Budget createdBudget = this.budgetFetcher.createBudget(this.account, newBudget);
+    Budget createdBudget = this.budgetFetcher.createBudget(this.account.getId(), newBudget);
 
     assertThat(createdBudget).isNotNull();
   }
@@ -74,7 +74,7 @@ public class BudgetFetcherTests {
   public void should_return_budget_after_its_update() {
     Budget budgetToUpdate = new Budget(1, "Budget to update", 300, (new Moment()).getFirstDateOfMonth().getDate());
 
-    Budget updatedBudget = this.budgetFetcher.updateBudget(this.account, budgetToUpdate);
+    Budget updatedBudget = this.budgetFetcher.updateBudget(this.account.getId(), budgetToUpdate);
 
     assertThat(updatedBudget.getId()).isEqualTo(1);
     assertThat(updatedBudget.getName()).isEqualTo("Budget to update");

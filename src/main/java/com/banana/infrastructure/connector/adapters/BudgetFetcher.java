@@ -30,6 +30,7 @@ public class BudgetFetcher implements IBudgetFetcher {
     SUser sUser = UserPivot.fromDomainToInfrastructure(user);
     List<SBudget> sBudgets = this.budgetRepository.getBudgetsOfUserAndAccount(sUser, accountId);
 
+    // TODO should get budget expenses
     /*
         SHOULD GET EXPENSES
      */
@@ -43,22 +44,20 @@ public class BudgetFetcher implements IBudgetFetcher {
     return BudgetPivot.fromInfrastructureToDomain(sBudget);
   }
 
-  public Budget createBudget(Account account, Budget budget) {
-    SBudget sBudget = this.fromDomainToInfrastructure(account, budget);
+  public Budget createBudget(long accountId, Budget budget) {
+    SBudget sBudget = this.fromDomainToInfrastructure(accountId, budget);
     SBudget createdBudget = this.budgetRepository.createBudget(sBudget);
     return BudgetPivot.fromInfrastructureToDomain(createdBudget);
   }
 
-  public Budget updateBudget(Account account, Budget budget) {
-    SBudget budgetToUpdate = this.fromDomainToInfrastructure(account, budget);
+  public Budget updateBudget(long accountId, Budget budget) {
+    SBudget budgetToUpdate = this.fromDomainToInfrastructure(accountId, budget);
     SBudget updatedBudget = this.budgetRepository.updateBudget(budgetToUpdate);
     return BudgetPivot.fromInfrastructureToDomain(updatedBudget);
   }
 
-  private SBudget fromDomainToInfrastructure(Account account, Budget budget) {
-    SUser user = this.userRepository.getUserByUsername(account.getUser().getUsername());
-    SAccount sAccount = this.accountRepository.getAccountByUserAndId(user, account.getId());
-    sAccount.setUser(user);
+  private SBudget fromDomainToInfrastructure(long accountId, Budget budget) {
+    SAccount sAccount = this.accountRepository.getAccountById(accountId);
     SBudget sBudget = BudgetPivot.fromDomainToInfrastructure(budget);
     sBudget.setAccount(sAccount);
     return sBudget;

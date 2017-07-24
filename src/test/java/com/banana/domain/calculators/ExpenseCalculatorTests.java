@@ -54,7 +54,7 @@ public class ExpenseCalculatorTests {
     try {
       Expense createdExpense = this.expensePort.createExpense(this.user, 1, 1, newExpense);
       fail("Should throw error when budget does not exists");
-    } catch (NoElementFoundException e) {
+    } catch (CreationException e) {
       assertThat(e.getMessage()).contains("No budget found with id");
     }
   }
@@ -73,7 +73,7 @@ public class ExpenseCalculatorTests {
   }
 
   @Test
-  public void should_create_a_new_expense() {
+  public void should_create_a_new_budget_expense() {
     Expense newExpense = new Expense("My expense", 66, (new Moment("2017-07-17")).getDate());
     Mockito.doReturn(this.budgetOne).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
 
@@ -91,7 +91,7 @@ public class ExpenseCalculatorTests {
     try {
       Expense updatedExpense = this.expensePort.updateExpense(this.user, 1, 1, expenseToUpdate);
       fail("Should throw an error if there is no budget for the expense update");
-    } catch (NoElementFoundException e) {
+    } catch (CreationException e) {
       assertThat(e.getMessage()).contains("No budget found");
     }
   }
@@ -129,8 +129,8 @@ public class ExpenseCalculatorTests {
     try {
       Expense updatedExpense = this.expensePort.updateExpense(this.user, 1, -1, expenseToUpdate);
       fail("Should throw an error if there is no account for the expense update");
-    } catch (NoElementFoundException e) {
-      assertThat(e.getMessage()).contains("No account found");
+    } catch (CreationException e) {
+      assertThat(e.getMessage()).contains("No account for user and id");
     }
   }
 

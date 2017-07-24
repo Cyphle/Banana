@@ -17,12 +17,12 @@ public class FakeBudgetFetcher implements IBudgetFetcher {
     return null;
   }
 
-  public Budget createBudget(Account account, Budget budget) {
+  public Budget createBudget(long accountId, Budget budget) {
     budget.setId(1);
     return budget;
   }
 
-  public Budget updateBudget(Account account, Budget budget) {
+  public Budget updateBudget(long accountId, Budget budget) {
     return budget;
   }
 }

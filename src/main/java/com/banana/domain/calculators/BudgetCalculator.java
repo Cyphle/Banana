@@ -11,6 +11,7 @@ import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.BudgetPort;
+import com.banana.domain.validators.AccountVerifier;
 import com.banana.utils.Moment;
 
 import java.util.List;
@@ -20,23 +21,22 @@ public class BudgetCalculator implements BudgetPort {
   private IAccountFetcher accountFetcher;
   private IBudgetFetcher budgetFetcher;
   private IExpenseFetcher expenseFetcher;
+  private AccountVerifier accountVerifier;
 
   public BudgetCalculator(IAccountFetcher accountFetcher, IBudgetFetcher budgetFetcher, IExpenseFetcher expenseFetcher) {
     this.accountFetcher = accountFetcher;
     this.budgetFetcher = budgetFetcher;
     this.expenseFetcher = expenseFetcher;
+
+    this.accountVerifier = new AccountVerifier(this.accountFetcher);
   }
 
   public Budget createBudget(User user, long accountId, Budget budget) throws CreationException {
-    Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
-    if (account == null)
-      throw new CreationException("No account for user and id : " + accountId);
+    this.accountVerifier.verifyAccount(user, accountId);
+    if (this.isInitialAmountNegative(budget))
+      throw new CreationException("Budget initial amount cannot be negative");
     else {
-      if (this.isInitialAmountNegative(budget))
-        throw new CreationException("Budget initial amount cannot be negative");
-      else {
-        return this.budgetFetcher.createBudget(account, budget);
-      }
+      return this.budgetFetcher.createBudget(accountId, budget);
     }
   }
 
@@ -56,7 +56,7 @@ public class BudgetCalculator implements BudgetPort {
         Budget oldBudget = budgets.get(0);
         Budget budgetToUpdate = budget;
         budgetToUpdate = this.updateBudgetProperties(budget, account, oldBudget, budgetToUpdate);
-        return this.budgetFetcher.updateBudget(account, budgetToUpdate);
+        return this.budgetFetcher.updateBudget(accountId, budgetToUpdate);
       }
     }
   }
@@ -79,9 +79,10 @@ public class BudgetCalculator implements BudgetPort {
   }
 
   private Budget updateBudgetAmount(Budget budget, Account account, Budget oldBudget) {
-    Budget budgetToUpdate;Moment oldBudgetEndDate = (new Moment(budget.getStartDate())).getLastDayOfPrecedingMonth();
+    Budget budgetToUpdate;
+    Moment oldBudgetEndDate = (new Moment(budget.getStartDate())).getLastDayOfPrecedingMonth();
     oldBudget.setEndDate(oldBudgetEndDate.getDate());
-    this.budgetFetcher.updateBudget(account, oldBudget);
+    this.budgetFetcher.updateBudget(account.getId(), oldBudget);
     Budget newBudget = new Budget(budget.getName(), budget.getInitialAmount(), new Moment(budget.getStartDate()).getFirstDateOfMonth().getDate());
     if (budget.getEndDate() != null) newBudget.setEndDate(budget.getEndDate());
 
