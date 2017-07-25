@@ -110,4 +110,26 @@ public class ChargeCalculatorTests {
     assertThat(startDate.getMonthNumber()).isEqualTo(8);
     assertThat(startDate.getYear()).isEqualTo(2017);
   }
+
+  @Test
+  public void should_update_charge_other_properties_than_amount() {
+    Charge chargeToUpdate = new Charge(1, "Loyer update", 1200, (new Moment("2017-08-01")).getDate());
+    chargeToUpdate.setEndDate(new Moment("2018-03-20").getDate());
+    Mockito.doReturn(this.account).when(this.accountFetcher).getAccountByUserAndId(any(User.class), any(long.class));
+    Mockito.doReturn(this.charges).when(this.chargeFetcher).getChargesOfUserAndAccount(any(User.class), any(long.class));
+
+    Charge updatedCharge = this.chargePort.updateCharge(this.user, 1, chargeToUpdate);
+    Moment startDate = new Moment(updatedCharge.getStartDate());
+    Moment endDate = new Moment(updatedCharge.getEndDate());
+
+    assertThat(updatedCharge.getId()).isEqualTo(chargeToUpdate.getId());
+    assertThat(updatedCharge.getDescription()).isEqualTo("Loyer update");
+    assertThat(updatedCharge.getAmount()).isEqualTo(1200);
+    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getMonthNumber()).isEqualTo(8);
+    assertThat(startDate.getYear()).isEqualTo(2017);
+    assertThat(endDate.getDayOfMonth()).isEqualTo(31);
+    assertThat(endDate.getMonthNumber()).isEqualTo(3);
+    assertThat(endDate.getYear()).isEqualTo(2018);
+  }
 }

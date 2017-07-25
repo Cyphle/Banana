@@ -124,15 +124,41 @@ public class ChargePortITests {
     assertThat(newStartDate.getDayOfMonth()).isEqualTo(1);
     assertThat(newStartDate.getMonthNumber()).isEqualTo(8);
     assertThat(newStartDate.getYear()).isEqualTo(2017);
+    assertThat(updatedCharge.getEndDate()).isNull();
   }
 
   @Test
-  public void should_update_start_date_or_end_date_or_descriptionof_charge() {
-    // TODO nothing special to do for this update
+  public void should_update_start_date_or_end_date_or_description_of_charge() {
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Charge chargeToUpdate = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId()).get(0);
+
+    chargeToUpdate.setStartDate(new Moment("2017-03-03").getDate());
+    chargeToUpdate.setEndDate(new Moment("2018-04-20").getDate());
+    Charge updatedCharge = this.chargePort.updateCharge(this.user, myAccount.getId(), chargeToUpdate);
+    Moment startDate = new Moment(updatedCharge.getStartDate());
+    Moment endDate = new Moment(updatedCharge.getEndDate());
+    List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId());
+
+    assertThat(charges.size()).isEqualTo(1);
+    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getMonthNumber()).isEqualTo(3);
+    assertThat(startDate.getYear()).isEqualTo(2017);
+    assertThat(endDate.getDayOfMonth()).isEqualTo(30);
+    assertThat(endDate.getMonthNumber()).isEqualTo(4);
+    assertThat(endDate.getYear()).isEqualTo(2018);
   }
 
   @Test
   public void should_update_charge_description() {
-    // TODO test change charge description
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Charge chargeToUpdate = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId()).get(0);
+
+    chargeToUpdate.setDescription("Bouygues");
+    Charge updatedCharge = this.chargePort.updateCharge(this.user, myAccount.getId(), chargeToUpdate);
+    List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId());
+
+    assertThat(charges.size()).isEqualTo(1);
+    assertThat(updatedCharge.getDescription()).isEqualTo("Bouygues");
+    assertThat(updatedCharge.getAmount()).isEqualTo(40);
   }
 }
