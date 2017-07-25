@@ -161,4 +161,16 @@ public class ChargePortITests {
     assertThat(updatedCharge.getDescription()).isEqualTo("Bouygues");
     assertThat(updatedCharge.getAmount()).isEqualTo(40);
   }
+
+  @Test
+  public void should_delete_charge() {
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Charge chargeToUpdate = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId()).get(0);
+
+    boolean isDeleted = this.chargePort.deleteCharge(this.user, myAccount.getId(), chargeToUpdate);
+    List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId());
+
+    assertThat(isDeleted).isTrue();
+    assertThat(charges.size()).isEqualTo(0);
+  }
 }

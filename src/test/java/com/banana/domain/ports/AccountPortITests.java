@@ -116,6 +116,7 @@ public class AccountPortITests {
     assertThat(updatedAccount.getInitialAmount()).isEqualTo(2000.0);
   }
 
+  // TODO delete account
   /*
     - delete account
       -> set is_deleted to true for account and its budgets, its expenses, ...

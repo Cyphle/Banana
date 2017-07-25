@@ -66,4 +66,13 @@ public class ChargeFetcherTests {
     assertThat(updatedCharge.getDescription()).isEqualTo("Loyer to update");
     assertThat(updatedCharge.getAmount()).isEqualTo(1400);
   }
+
+  @Test
+  public void should_delete_charge() {
+    Charge chargeToDelete = new Charge(1, "Loyer to update", 1400, (new Moment()).getFirstDateOfMonth().getDate());
+
+    boolean isDeleted = this.chargeFetcher.deleteCharge(chargeToDelete);
+
+    assertThat(isDeleted).isTrue();
+  }
 }

@@ -106,7 +106,7 @@ public class ExpenseFetcherTests {
   public void should_delete_expense() {
     Expense expenseToUpdate = new Expense(1, "Courses", 24, (new Moment("2017-07-23")).getDate());
 
-    boolean isDeleted = this.expenseFetcher.deleteBudgetExpense(1, expenseToUpdate);
+    boolean isDeleted = this.expenseFetcher.deleteExpense(expenseToUpdate);
 
     assertThat(isDeleted).isTrue();
   }

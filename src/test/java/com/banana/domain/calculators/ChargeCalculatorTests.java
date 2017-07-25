@@ -5,7 +5,6 @@ import com.banana.domain.adapters.IChargeFetcher;
 import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.exceptions.UpdateException;
 import com.banana.domain.models.Account;
-import com.banana.domain.models.Budget;
 import com.banana.domain.models.Charge;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.ChargePort;
@@ -131,5 +130,16 @@ public class ChargeCalculatorTests {
     assertThat(endDate.getDayOfMonth()).isEqualTo(31);
     assertThat(endDate.getMonthNumber()).isEqualTo(3);
     assertThat(endDate.getYear()).isEqualTo(2018);
+  }
+
+  @Test
+  public void should_delete_charge() {
+    Charge chargeToUpdate = new Charge(1, "Loyer update", 1200, (new Moment("2017-08-01")).getDate());
+    Mockito.doReturn(this.account).when(this.accountFetcher).getAccountByUserAndId(any(User.class), any(long.class));
+    Mockito.doReturn(this.charges).when(this.chargeFetcher).getChargesOfUserAndAccount(any(User.class), any(long.class));
+
+    boolean isDeleted = this.chargePort.deleteCharge(this.user, 1, chargeToUpdate);
+
+    assertThat(isDeleted).isTrue();
   }
 }

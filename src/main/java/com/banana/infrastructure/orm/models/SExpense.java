@@ -75,7 +75,9 @@ public class SExpense {
 
   public void setUpdateDate(Date updateDate) { this.updateDate = updateDate; }
 
-  public void setIsDeleted(boolean deleted) {
+  public boolean isDeleted() { return this.isDeleted; }
+
+  public void setDeleted(boolean deleted) {
     this.isDeleted = deleted;
   }
 }

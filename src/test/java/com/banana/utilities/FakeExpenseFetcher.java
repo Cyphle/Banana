@@ -43,7 +43,7 @@ public class FakeExpenseFetcher implements IExpenseFetcher {
     return expenses;
   }
 
-  public boolean deleteBudgetExpense(long budgetId, Expense expense) {
+  public boolean deleteExpense(Expense expense) {
     return true;
   }
 }

@@ -4,6 +4,7 @@ import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
+import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.ExpensePort;
@@ -48,7 +49,19 @@ public class ExpenseCalculator implements ExpensePort {
         return this.expenseFetcher.updateAccountExpense(accountId, expense);
       }
     } else
-      throw new CreationException("Unknown expense");
+      throw new NoElementFoundException("Unknown expense");
+  }
+
+  public boolean deleteExpense(User user, long accountId, long budgetId, Expense expense) {
+    if (expense.getId() > 0) {
+      if (this.isBudgetExpense(budgetId)) {
+        this.expenseVerifier.verifyBudget(user, accountId, budgetId, expense);
+      } else {
+        this.accountVerifier.verifyAccount(user, accountId);
+      }
+      return this.expenseFetcher.deleteExpense(expense);
+    } else
+      throw new NoElementFoundException("Unknown expense");
   }
 
   private boolean isBudgetExpense(long budgetId) {

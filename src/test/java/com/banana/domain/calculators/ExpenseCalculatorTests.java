@@ -143,4 +143,26 @@ public class ExpenseCalculatorTests {
 
     assertThat(createdExpense.getId()).isGreaterThan(0);
   }
+
+  @Test
+  public void should_delete_an_account_expense() {
+    Mockito.doReturn(this.account).when(this.accountFetcher).getAccountByUserAndId(any(User.class), any(long.class));
+
+    Expense newExpense = new Expense(1, "My expense", 66, (new Moment("2017-07-17")).getDate());
+
+    boolean isDeleted = this.expensePort.deleteExpense(this.user, 1, -1, newExpense);
+
+    assertThat(isDeleted).isTrue();
+  }
+
+  @Test
+  public void should_delete_an_budget_expense() {
+    Mockito.doReturn(this.budgetOne).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
+
+    Expense newExpense = new Expense(1, "My expense", 66, (new Moment("2017-07-17")).getDate());
+
+    boolean isDeleted = this.expensePort.deleteExpense(this.user, 1, 1, newExpense);
+
+    assertThat(isDeleted).isTrue();
+  }
 }

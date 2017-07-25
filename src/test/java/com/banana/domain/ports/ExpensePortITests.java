@@ -172,4 +172,22 @@ public class ExpensePortITests {
     assertThat(debitDate.getMonthNumber()).isEqualTo(8);
     assertThat(debitDate.getYear()).isEqualTo(2017);
   }
+
+  @Test
+  public void should_delete_an_expense() {
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Expense accountExpenseToDelete = this.expenseFetcher.getExpensesOfAccount(myAccount).get(0);
+    Budget myBudget = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
+    Expense budgetExpenseToDelete = this.expenseFetcher.getExpensesOfBudget(myBudget).get(0);
+
+    boolean isAccountExpenseDeleted = this.expensePort.deleteExpense(this.user, myAccount.getId(), -1, accountExpenseToDelete);
+    List<Expense> accountExpenses = this.expenseFetcher.getExpensesOfAccount(myAccount);
+    boolean isBudgetExpenseDeleted = this.expensePort.deleteExpense(this.user, myAccount.getId(), myBudget.getId(), budgetExpenseToDelete);
+    List<Expense> budgetExpenses = this.expenseFetcher.getExpensesOfBudget(myBudget);
+
+    assertThat(isAccountExpenseDeleted).isTrue();
+    assertThat(accountExpenses.size()).isEqualTo(0);
+    assertThat(isBudgetExpenseDeleted).isTrue();
+    assertThat(budgetExpenses.size()).isEqualTo(0);
+  }
 }

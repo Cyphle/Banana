@@ -1,14 +1,12 @@
 package com.banana.infrastructure.connector.adapters;
 
 import com.banana.domain.adapters.IBudgetFetcher;
-import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.pivots.BudgetPivot;
 import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
 import com.banana.infrastructure.connector.repositories.IBudgetRepository;
-import com.banana.infrastructure.connector.repositories.IUserRepository;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SBudget;
 import com.banana.infrastructure.orm.models.SUser;
@@ -27,12 +25,6 @@ public class BudgetFetcher implements IBudgetFetcher {
   public List<Budget> getBudgetsOfUserAndAccount(User user, long accountId) {
     SUser sUser = UserPivot.fromDomainToInfrastructure(user);
     List<SBudget> sBudgets = this.budgetRepository.getBudgetsOfUserAndAccount(sUser, accountId);
-
-    // TODO should get budget expenses
-    /*
-        SHOULD GET EXPENSES
-     */
-
     return BudgetPivot.fromInfrastructureToDomain(sBudgets);
   }
 

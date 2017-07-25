@@ -4,7 +4,6 @@ import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
-import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.exceptions.UpdateException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
@@ -38,12 +37,6 @@ public class BudgetCalculator implements BudgetPort {
     else {
       return this.budgetFetcher.createBudget(accountId, budget);
     }
-  }
-
-  private void verifyAccount(User user, long accountId) {
-    Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
-    if (account == null)
-      throw new CreationException("No account for user and id : " + accountId);
   }
 
   public Budget updateBudget(User user, long accountId, Budget budget) throws UpdateException {
@@ -108,7 +101,7 @@ public class BudgetCalculator implements BudgetPort {
               })
               .collect(Collectors.toList());
       for (Expense expense : expenses) {
-        this.expenseFetcher.deleteBudgetExpense(budget.getId(), expense);
+        this.expenseFetcher.deleteExpense(expense);
       }
     }
     budget.setEndDate(newEndDate.getDate());
@@ -124,7 +117,7 @@ public class BudgetCalculator implements BudgetPort {
             })
             .collect(Collectors.toList());
     for (Expense expense : expenses) {
-      this.expenseFetcher.deleteBudgetExpense(budget.getId(), expense);
+      this.expenseFetcher.deleteExpense(expense);
     }
     budget.setStartDate(newStartDate.getDate());
     return budget;

@@ -19,4 +19,8 @@ public class FakeChargeFetcher implements IChargeFetcher {
   public Charge updateCharge(long accountId, Charge charge) {
     return charge;
   }
+
+  public boolean deleteCharge(Charge charge) {
+    return true;
+  }
 }

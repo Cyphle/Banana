@@ -46,4 +46,13 @@ public class ChargeFetcher implements IChargeFetcher {
     sCharge.setAccount(sAccount);
     return sCharge;
   }
+
+  public boolean deleteCharge(Charge charge) {
+    SCharge sCharge = ChargePivot.fromDomainToInfrastructure(charge);
+    sCharge.setDeleted(true);
+    SCharge deletedCharge = this.chargeRepository.updateCharge(sCharge);
+    if (deletedCharge != null && deletedCharge.isDeleted())
+      return true;
+    return false;
+  }
 }

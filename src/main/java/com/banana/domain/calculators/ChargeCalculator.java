@@ -2,6 +2,7 @@ package com.banana.domain.calculators;
 
 import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IChargeFetcher;
+import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.exceptions.UpdateException;
 import com.banana.domain.models.Charge;
 import com.banana.domain.models.User;
@@ -44,18 +45,33 @@ public class ChargeCalculator implements ChargePort {
       throw new UpdateException("No charge found with id " + charge.getId());
     else {
       Charge oldCharge = charges.get(0);
-      if (oldCharge.getAmount() != charge.getAmount()) {
-        Moment oldChargeEndDate = new Moment(charge.getStartDate()).getLastDayOfPrecedingMonth();
-        oldCharge.setEndDate(oldChargeEndDate.getDate());
-        this.chargeFetcher.updateCharge(accountId, oldCharge);
-        Charge newCharge = new Charge(charge.getDescription(), charge.getAmount(), new Moment(charge.getStartDate()).getFirstDateOfMonth().getDate());
-        if (charge.getEndDate() != null) newCharge.setEndDate(charge.getEndDate());
-        return this.chargeFetcher.createCharge(accountId, newCharge);
-      } else {
-        charge.setStartDate(new Moment(charge.getStartDate()).getFirstDateOfMonth().getDate());
-        if (charge.getEndDate() != null) charge.setEndDate(new Moment(charge.getEndDate()).getLastDateOfMonth().getDate());
-        return this.chargeFetcher.updateCharge(accountId, charge);
-      }
+      if (oldCharge.getAmount() != charge.getAmount())
+        return this.updateChargeAmount(accountId, charge, oldCharge);
+      else
+        return this.updateChargeProperties(accountId, charge);
     }
+  }
+
+  public boolean deleteCharge(User user, long accountId, Charge charge) throws NoElementFoundException {
+    if (charge.getId() > 0) {
+      this.accountVerifier.verifyAccount(user, accountId);
+      return this.chargeFetcher.deleteCharge(charge);
+    } else
+      throw new NoElementFoundException("No such charge");
+  }
+
+  private Charge updateChargeAmount(long accountId, Charge charge, Charge oldCharge) {
+    Moment oldChargeEndDate = new Moment(charge.getStartDate()).getLastDayOfPrecedingMonth();
+    oldCharge.setEndDate(oldChargeEndDate.getDate());
+    this.chargeFetcher.updateCharge(accountId, oldCharge);
+    Charge newCharge = new Charge(charge.getDescription(), charge.getAmount(), new Moment(charge.getStartDate()).getFirstDateOfMonth().getDate());
+    if (charge.getEndDate() != null) newCharge.setEndDate(charge.getEndDate());
+    return this.chargeFetcher.createCharge(accountId, newCharge);
+  }
+
+  private Charge updateChargeProperties(long accountId, Charge charge) {
+    charge.setStartDate(new Moment(charge.getStartDate()).getFirstDateOfMonth().getDate());
+    if (charge.getEndDate() != null) charge.setEndDate(new Moment(charge.getEndDate()).getLastDateOfMonth().getDate());
+    return this.chargeFetcher.updateCharge(accountId, charge);
   }
 }
