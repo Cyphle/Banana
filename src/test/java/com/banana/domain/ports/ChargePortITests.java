@@ -24,6 +24,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -84,7 +86,9 @@ public class ChargePortITests {
 
     Charge createdCharge = this.chargePort.createCharge(this.user, myAccount.getId(), newCharge);
     Moment startDate = new Moment(createdCharge.getStartDate());
+    List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId());
 
+    assertThat(charges.size()).isEqualTo(2);
     assertThat(createdCharge.getId()).isGreaterThan(0);
     assertThat(createdCharge.getDescription()).isEqualTo("Loyer");
     assertThat(createdCharge.getAmount()).isEqualTo(1200);
@@ -95,11 +99,40 @@ public class ChargePortITests {
 
   @Test
   public void should_duplicate_charge_if_amount_is_modified() {
-    // TODO stop the charge previous month, duplicate it, start it from current month
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Charge chargeToUpdate = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId()).get(0);
+
+    chargeToUpdate.setAmount(50);
+    chargeToUpdate.setStartDate(new Moment("2017-08-10").getDate());
+    Charge updatedCharge = this.chargePort.updateCharge(this.user, myAccount.getId(), chargeToUpdate);
+    List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId());
+    Moment oldStartDate = new Moment(charges.get(0).getStartDate());
+    Moment oldEndDate = new Moment(charges.get(0).getEndDate());
+    Moment newStartDate = new Moment(updatedCharge.getStartDate());
+
+    assertThat(charges.size()).isEqualTo(2);
+    assertThat(charges.get(0).getDescription()).isEqualTo("Internet");
+    assertThat(charges.get(0).getAmount()).isEqualTo(40);
+    assertThat(oldStartDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(oldStartDate.getMonthNumber()).isEqualTo(1);
+    assertThat(oldStartDate.getYear()).isEqualTo(2017);
+    assertThat(oldEndDate.getDayOfMonth()).isEqualTo(31);
+    assertThat(oldEndDate.getMonthNumber()).isEqualTo(7);
+    assertThat(oldEndDate.getYear()).isEqualTo(2017);
+    assertThat(updatedCharge.getDescription()).isEqualTo("Internet");
+    assertThat(updatedCharge.getAmount()).isEqualTo(50);
+    assertThat(newStartDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(newStartDate.getMonthNumber()).isEqualTo(8);
+    assertThat(newStartDate.getYear()).isEqualTo(2017);
   }
 
   @Test
   public void should_update_start_date_or_end_date_or_descriptionof_charge() {
     // TODO nothing special to do for this update
+  }
+
+  @Test
+  public void should_update_charge_description() {
+    // TODO test change charge description
   }
 }

@@ -2,6 +2,7 @@ package com.banana.infrastructure.connector.adapters;
 
 import com.banana.domain.adapters.IChargeFetcher;
 import com.banana.domain.models.Account;
+import com.banana.domain.models.Budget;
 import com.banana.domain.models.Charge;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
@@ -53,5 +54,16 @@ public class ChargeFetcherTests {
     Charge createdCharge = this.chargeFetcher.createCharge(1, newCharge);
 
     assertThat(createdCharge).isNotNull();
+  }
+
+  @Test
+  public void should_return_charge_after_its_update() {
+    Charge chargeToUpdate = new Charge(1, "Loyer to update", 1400, (new Moment()).getFirstDateOfMonth().getDate());
+
+    Charge updatedCharge = this.chargeFetcher.updateCharge(this.account.getId(), chargeToUpdate);
+
+    assertThat(updatedCharge.getId()).isEqualTo(1);
+    assertThat(updatedCharge.getDescription()).isEqualTo("Loyer to update");
+    assertThat(updatedCharge.getAmount()).isEqualTo(1400);
   }
 }

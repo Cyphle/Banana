@@ -165,6 +165,7 @@ public class BudgetPortITests {
     Budget oldBudget = existingBudgets.get(0);
     Moment oldStartDate = new Moment(oldBudget.getStartDate());
     Moment oldEndDate = new Moment(oldBudget.getEndDate());
+    List<Expense> expenses = this.expenseFetcher.getExpensesOfBudget(budgetToUpdate);
 
     // Check that a new budget has been created
     assertThat(existingBudgets.size()).isEqualTo(2);
@@ -183,6 +184,7 @@ public class BudgetPortITests {
     assertThat(newStartDate.getDayOfMonth()).isEqualTo(1);
     assertThat(newStartDate.getMonthNumber()).isEqualTo(8);
     assertThat(newStartDate.getYear()).isEqualTo(2017);
+    assertThat(expenses.size()).isEqualTo(3);
   }
 
   @Test

@@ -8,4 +8,5 @@ import java.util.List;
 public interface IChargeRepository {
   List<SCharge> getChargesOfUserAndAccount(SUser user, long accountId);
   SCharge createCharge(SCharge charge);
+  SCharge updateCharge(SCharge charge);
 }

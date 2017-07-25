@@ -40,23 +40,34 @@ public class BudgetCalculator implements BudgetPort {
     }
   }
 
-  public Budget updateBudget(User user, long accountId, Budget budget) throws NoElementFoundException, UpdateException {
+  private void verifyAccount(User user, long accountId) {
+    Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
+    if (account == null)
+      throw new CreationException("No account for user and id : " + accountId);
+  }
+
+  public Budget updateBudget(User user, long accountId, Budget budget) throws UpdateException {
     List<Budget> budgets = this.budgetFetcher
             .getBudgetsOfUserAndAccount(user, accountId)
             .stream()
             .filter(fetchedBudget -> fetchedBudget.getId() == budget.getId())
             .collect(Collectors.toList());
     if (budgets.size() == 0)
-      throw new NoElementFoundException("No budget found with id " + budget.getId());
+      throw new UpdateException("No budget found with id " + budget.getId());
     else {
       if (this.isInitialAmountNegative(budget))
         throw new UpdateException("Budget initial amount cannot be negative");
       else {
         Account account = this.accountFetcher.getAccountByUserAndId(user, accountId);
         Budget oldBudget = budgets.get(0);
-        Budget budgetToUpdate = budget;
-        budgetToUpdate = this.updateBudgetProperties(budget, account, oldBudget, budgetToUpdate);
-        return this.budgetFetcher.updateBudget(accountId, budgetToUpdate);
+
+        if (oldBudget.getInitialAmount() != budget.getInitialAmount()) {
+          Budget newBudget = this.updateBudgetAmount(budget, account, oldBudget);
+          return this.budgetFetcher.createBudget(accountId, newBudget);
+        } else {
+          Budget budgetToUpdate = this.updateBudgetProperties(budget, account, oldBudget, budget);
+          return this.budgetFetcher.updateBudget(accountId, budgetToUpdate);
+        }
       }
     }
   }
@@ -73,21 +84,17 @@ public class BudgetCalculator implements BudgetPort {
       budgetToUpdate = this.updateBudgetStartDate(budget, newStartDate);
     if ((oldEndDate == null && newEndDate != null) || (oldEndDate != null && newEndDate == null) || (oldEndDate != null && newEndDate != null && oldEndDate.compareTo(newEndDate) != 0))
       budgetToUpdate = this.updateBudgetEndDate(budget, newEndDate);
-    if (oldBudget.getInitialAmount() != budget.getInitialAmount())
-      budgetToUpdate = this.updateBudgetAmount(budget, account, oldBudget);
+
     return budgetToUpdate;
   }
 
   private Budget updateBudgetAmount(Budget budget, Account account, Budget oldBudget) {
-    Budget budgetToUpdate;
     Moment oldBudgetEndDate = (new Moment(budget.getStartDate())).getLastDayOfPrecedingMonth();
     oldBudget.setEndDate(oldBudgetEndDate.getDate());
     this.budgetFetcher.updateBudget(account.getId(), oldBudget);
     Budget newBudget = new Budget(budget.getName(), budget.getInitialAmount(), new Moment(budget.getStartDate()).getFirstDateOfMonth().getDate());
     if (budget.getEndDate() != null) newBudget.setEndDate(budget.getEndDate());
-
-    budgetToUpdate = newBudget;
-    return budgetToUpdate;
+    return newBudget;
   }
 
   private Budget updateBudgetEndDate(Budget budget, Moment newEndDate) {

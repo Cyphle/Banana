@@ -12,7 +12,11 @@ public class FakeChargeFetcher implements IChargeFetcher {
   }
 
   public Charge createCharge(long accountId, Charge charge) {
-    charge.setId(1);
+    charge.setId(10);
+    return charge;
+  }
+
+  public Charge updateCharge(long accountId, Charge charge) {
     return charge;
   }
 }

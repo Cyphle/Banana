@@ -26,4 +26,9 @@ public class ChargeRepository implements IChargeRepository {
     charge.setUpdateDate(today.getDate());
     return this.chargeRepository.save(charge);
   }
+
+  public SCharge updateCharge(SCharge charge) {
+    charge.setUpdateDate((new Moment()).getDate());
+    return this.chargeRepository.save(charge);
+  }
 }

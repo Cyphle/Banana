@@ -19,4 +19,8 @@ public class FakeChargeRepository implements IChargeRepository {
   public SCharge createCharge(SCharge charge) {
     return charge;
   }
+
+  public SCharge updateCharge(SCharge charge) {
+    return charge;
+  }
 }

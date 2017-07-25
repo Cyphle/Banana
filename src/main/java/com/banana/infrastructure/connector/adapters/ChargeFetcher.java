@@ -29,10 +29,21 @@ public class ChargeFetcher implements IChargeFetcher {
   }
 
   public Charge createCharge(long accountId, Charge charge) {
+    SCharge sCharge = this.fromDomainToInfrastructure(accountId, charge);
+    SCharge createdCharge = this.chargeRepository.createCharge(sCharge);
+    return ChargePivot.fromInfrastructureToDomain(createdCharge);
+  }
+
+  public Charge updateCharge(long accountId, Charge charge) {
+    SCharge sCharge = this.fromDomainToInfrastructure(accountId, charge);
+    SCharge updatedCharge = this.chargeRepository.updateCharge(sCharge);
+    return ChargePivot.fromInfrastructureToDomain(updatedCharge);
+  }
+
+  private SCharge fromDomainToInfrastructure(long accountId, Charge charge) {
     SAccount sAccount = this.accountRepository.getAccountById(accountId);
     SCharge sCharge = ChargePivot.fromDomainToInfrastructure(charge);
     sCharge.setAccount(sAccount);
-    SCharge createdCharge = this.chargeRepository.createCharge(sCharge);
-    return ChargePivot.fromInfrastructureToDomain(createdCharge);
+    return sCharge;
   }
 }

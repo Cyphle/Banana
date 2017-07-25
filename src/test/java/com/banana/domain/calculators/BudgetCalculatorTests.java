@@ -5,6 +5,7 @@ import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.exceptions.NoElementFoundException;
+import com.banana.domain.exceptions.UpdateException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
@@ -90,7 +91,7 @@ public class BudgetCalculatorTests {
     try {
       Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
       fail("Should throw no element found exception if there is no budget with this id for the given account and user");
-    } catch (NoElementFoundException e) {
+    } catch (UpdateException e) {
       assertThat(e.getMessage()).contains("No budget found with id");
     }
   }

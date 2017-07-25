@@ -85,4 +85,21 @@ public class ChargeRepositoryTests {
     assertThat(updateDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
     assertThat(updateDate.getYear()).isEqualTo(today.getYear());
   }
+
+  @Test
+  public void should_update_charge() {
+    SCharge chargeToUpdate = new SCharge("Loyer updated", 1200, (new Moment("2013-01-01")).getDate());
+    chargeToUpdate.setAccount(this.sAccount);
+    Moment today = new Moment();
+    given(this.sChargeRepository.save(any(SCharge.class))).willReturn(chargeToUpdate);
+
+    SCharge updatedCharge = this.chargeRepository.updateCharge(chargeToUpdate);
+    Moment updateDate = new Moment(updatedCharge.getUpdateDate());
+
+    assertThat(updatedCharge.getDescription()).isEqualTo("Loyer updated");
+    assertThat(updatedCharge.getAmount()).isEqualTo(1200);
+    assertThat(updateDate.getDayOfMonth()).isEqualTo(today.getDayOfMonth());
+    assertThat(updateDate.getMonthNumber()).isEqualTo(today.getMonthNumber());
+    assertThat(updateDate.getYear()).isEqualTo(today.getYear());
+  }
 }
