@@ -15,6 +15,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.BDDMockito.given;
@@ -30,6 +33,9 @@ public class ChargeRepositoryTests {
   private IChargeRepository chargeRepository;
   private SUser sUser;
   private SAccount sAccount;
+  private List<SCharge> charges;
+  private SCharge chargeOne;
+  private SCharge chargeTwo;
 
   @Before
   public void setup() {
@@ -39,7 +45,24 @@ public class ChargeRepositoryTests {
     this.sAccount.setId(1);
     this.sAccount.setSlug("my-account");
 
+    this.chargeOne = new SCharge("Loyer", 1200, new Moment("2013-01-01").getDate());
+    this.chargeTwo = new SCharge("Internet", 40, new Moment("2017-01-01").getDate());
+    this.charges = new ArrayList<>();
+    this.charges.add(this.chargeOne);
+    this.charges.add(this.chargeTwo);
+
     this.chargeRepository = new ChargeRepository(this.sChargeRepository);
+  }
+
+  @Test
+  public void should_get_charges_of_account_of_user() {
+    given(this.sChargeRepository.findByUserUsernameAndAccountId(any(String.class), any(long.class))).willReturn(this.charges);
+
+    List<SCharge> fetchedCharges = this.chargeRepository.getChargesOfUserAndAccount(this.sUser, 1);
+
+    assertThat(fetchedCharges.size()).isEqualTo(2);
+    assertThat(fetchedCharges.get(0).getDescription()).isEqualTo("Loyer");
+    assertThat(fetchedCharges.get(1).getDescription()).isEqualTo("Internet");
   }
 
   @Test

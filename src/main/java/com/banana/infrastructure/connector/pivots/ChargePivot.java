@@ -3,6 +3,9 @@ package com.banana.infrastructure.connector.pivots;
 import com.banana.domain.models.Charge;
 import com.banana.infrastructure.orm.models.SCharge;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChargePivot {
   public static Charge fromInfrastructureToDomain(SCharge sCharge) {
     Charge charge = new Charge(sCharge.getDescription(), sCharge.getAmount(), sCharge.getStartDate());
@@ -11,6 +14,15 @@ public class ChargePivot {
     if (sCharge.getEndDate() != null)
       charge.setEndDate(sCharge.getEndDate());
     return charge;
+  }
+
+  public static List<Charge> fromInfrastructureToDomain(List<SCharge> sCharges) {
+    List<Charge> charges = new ArrayList<>();
+    for (SCharge sCharge : sCharges) {
+      Charge charge = ChargePivot.fromInfrastructureToDomain(sCharge);
+      charges.add(charge);
+    }
+    return charges;
   }
 
   public static SCharge fromDomainToInfrastructure(Charge charge) {

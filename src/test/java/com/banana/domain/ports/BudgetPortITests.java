@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class BudgetPivotITests {
+public class BudgetPortITests {
   @Autowired
   private TestEntityManager entityManager;
   @Autowired

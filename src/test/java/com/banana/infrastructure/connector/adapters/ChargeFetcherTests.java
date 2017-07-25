@@ -12,6 +12,8 @@ import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ChargeFetcherTests {
@@ -31,6 +33,17 @@ public class ChargeFetcherTests {
     this.chargeRepository = new FakeChargeRepository();
 
     this.chargeFetcher = new ChargeFetcher(this.accountRepository, this.chargeRepository);
+  }
+
+  @Test
+  public void should_get_charges_of_account_of_user() {
+    List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(this.user, 1);
+
+    assertThat(charges.size()).isEqualTo(2);
+    assertThat(charges.get(0).getDescription()).isEqualTo("Loyer");
+    assertThat(charges.get(0).getAmount()).isEqualTo(1200);
+    assertThat(charges.get(1).getDescription()).isEqualTo("Internet");
+    assertThat(charges.get(1).getAmount()).isEqualTo(40);
   }
 
   @Test

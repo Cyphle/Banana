@@ -10,6 +10,7 @@ import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.infrastructure.connector.adapters.ChargeFetcher;
 import com.banana.infrastructure.connector.repositories.*;
 import com.banana.infrastructure.orm.models.SAccount;
+import com.banana.infrastructure.orm.models.SCharge;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
 import com.banana.infrastructure.orm.repositories.SChargeRepository;
@@ -47,6 +48,7 @@ public class ChargePortITests {
   private User user;
   private SUser sUser;
   private SAccount accountOne;
+  private SCharge chargeOne;
 
   @Before
   public void setup() {
@@ -61,6 +63,10 @@ public class ChargePortITests {
     this.accountOne.setCreationDate(today.getDate());
     this.accountOne.setUpdateDate(today.getDate());
     this.entityManager.persist(this.accountOne);
+
+    this.chargeOne = new SCharge("Internet", 40, new Moment("2017-01-01").getDate());
+    this.chargeOne.setAccount(this.accountOne);
+    this.entityManager.persist(this.chargeOne);
 
     this.userRepository = new UserRepository(this.sUserRepository);
     this.accountRepository = new AccountRepository(this.sAccountRepository);
