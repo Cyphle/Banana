@@ -4,7 +4,6 @@ import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
-import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;

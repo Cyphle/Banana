@@ -88,7 +88,7 @@ public class ExpensePortITests {
     this.accountRepository = new AccountRepository(this.sAccountRepository);
     this.accountFetcher = new AccountFetcher(this.userRepository, this.accountRepository);
     this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
-    this.budgetFetcher = new BudgetFetcher(this.userRepository, this.accountRepository, this.budgetRepository);
+    this.budgetFetcher = new BudgetFetcher(this.accountRepository, this.budgetRepository);
     this.expenseRepository = new ExpenseRepository(this.sExpenseRepository);
     this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
 

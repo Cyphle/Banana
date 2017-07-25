@@ -16,12 +16,10 @@ import com.banana.infrastructure.orm.models.SUser;
 import java.util.List;
 
 public class BudgetFetcher implements IBudgetFetcher {
-  private IUserRepository userRepository;
   private IAccountRepository accountRepository;
   private IBudgetRepository budgetRepository;
 
-  public BudgetFetcher(IUserRepository userRepository, IAccountRepository accountRepository, IBudgetRepository budgetRepository) {
-    this.userRepository = userRepository;
+  public BudgetFetcher(IAccountRepository accountRepository, IBudgetRepository budgetRepository) {
     this.accountRepository = accountRepository;
     this.budgetRepository = budgetRepository;
   }

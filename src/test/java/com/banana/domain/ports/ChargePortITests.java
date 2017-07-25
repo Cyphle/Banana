@@ -1,17 +1,18 @@
 package com.banana.domain.ports;
 
 import com.banana.domain.adapters.IAccountFetcher;
+import com.banana.domain.adapters.IChargeFetcher;
 import com.banana.domain.calculators.ChargeCalculator;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Charge;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
-import com.banana.infrastructure.connector.repositories.AccountRepository;
-import com.banana.infrastructure.connector.repositories.IAccountRepository;
-import com.banana.infrastructure.connector.repositories.IUserRepository;
-import com.banana.infrastructure.connector.repositories.UserRepository;
+import com.banana.infrastructure.connector.adapters.ChargeFetcher;
+import com.banana.infrastructure.connector.repositories.*;
+import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
+import com.banana.infrastructure.orm.repositories.SChargeRepository;
 import com.banana.infrastructure.orm.repositories.SUserRepository;
 import com.banana.utils.Moment;
 import org.junit.Before;
@@ -33,14 +34,19 @@ public class ChargePortITests {
   private SAccountRepository sAccountRepository;
   @Autowired
   private SUserRepository sUserRepository;
+  @Autowired
+  private SChargeRepository sChargeRepository;
 
   private IUserRepository userRepository;
   private IAccountRepository accountRepository;
   private IAccountFetcher accountFetcher;
+  private IChargeRepository chargeRepository;
+  private IChargeFetcher chargeFetcher;
   private ChargePort chargePort;
 
   private User user;
   private SUser sUser;
+  private SAccount accountOne;
 
   @Before
   public void setup() {
@@ -48,11 +54,21 @@ public class ChargePortITests {
     this.sUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.entityManager.persist(this.sUser);
 
+    Moment today = new Moment();
+    this.accountOne = new SAccount("My Account", 100);
+    this.accountOne.setSlug("my-account");
+    this.accountOne.setUser(this.sUser);
+    this.accountOne.setCreationDate(today.getDate());
+    this.accountOne.setUpdateDate(today.getDate());
+    this.entityManager.persist(this.accountOne);
+
     this.userRepository = new UserRepository(this.sUserRepository);
     this.accountRepository = new AccountRepository(this.sAccountRepository);
     this.accountFetcher = new AccountFetcher(this.userRepository, this.accountRepository);
+    this.chargeRepository = new ChargeRepository(this.sChargeRepository);
+    this.chargeFetcher = new ChargeFetcher(this.accountRepository, this.chargeRepository);
 
-    this.chargePort = new ChargeCalculator(this.accountFetcher);
+    this.chargePort = new ChargeCalculator(this.accountFetcher, this.chargeFetcher);
   }
 
   @Test

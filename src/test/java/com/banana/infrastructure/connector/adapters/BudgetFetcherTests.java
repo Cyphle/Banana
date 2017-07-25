@@ -6,10 +6,8 @@ import com.banana.domain.models.Budget;
 import com.banana.domain.models.User;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
 import com.banana.infrastructure.connector.repositories.IBudgetRepository;
-import com.banana.infrastructure.connector.repositories.IUserRepository;
 import com.banana.utilities.FakeAccountRepository;
 import com.banana.utilities.FakeBudgetRepository;
-import com.banana.utilities.FakeUserRepository;
 import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +20,8 @@ public class BudgetFetcherTests {
   private IBudgetFetcher budgetFetcher;
   private IAccountRepository accountRepository;
   private IBudgetRepository budgetRepository;
-  private IUserRepository userRepository;
   private User user;
   private Account account;
-  private Budget budget;
 
   @Before
   public void setup() {
@@ -33,13 +29,10 @@ public class BudgetFetcherTests {
     this.account = new Account(this.user, "My account", 1000);
     this.account.setId(1);
 
-    this.budget = new Budget(1, "My budget", 300, (new Moment()).getFirstDateOfMonth().getDate());
-
     this.accountRepository = new FakeAccountRepository();
-    this.userRepository = new FakeUserRepository();
     this.budgetRepository = new FakeBudgetRepository();
 
-    this.budgetFetcher = new BudgetFetcher(this.userRepository, this.accountRepository, this.budgetRepository);
+    this.budgetFetcher = new BudgetFetcher(this.accountRepository, this.budgetRepository);
   }
 
   @Test
@@ -63,7 +56,7 @@ public class BudgetFetcherTests {
   }
 
   @Test
-  public void should_get_create_budget() {
+  public void should_create_budget() {
     Budget newBudget = new Budget("My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
     Budget createdBudget = this.budgetFetcher.createBudget(this.account.getId(), newBudget);
 
