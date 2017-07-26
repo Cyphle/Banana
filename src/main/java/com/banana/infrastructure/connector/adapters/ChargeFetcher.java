@@ -40,13 +40,6 @@ public class ChargeFetcher implements IChargeFetcher {
     return ChargePivot.fromInfrastructureToDomain(updatedCharge);
   }
 
-  private SCharge fromDomainToInfrastructure(long accountId, Charge charge) {
-    SAccount sAccount = this.accountRepository.getAccountById(accountId);
-    SCharge sCharge = ChargePivot.fromDomainToInfrastructure(charge);
-    sCharge.setAccount(sAccount);
-    return sCharge;
-  }
-
   public boolean deleteCharge(Charge charge) {
     SCharge sCharge = ChargePivot.fromDomainToInfrastructure(charge);
     sCharge.setDeleted(true);
@@ -54,5 +47,12 @@ public class ChargeFetcher implements IChargeFetcher {
     if (deletedCharge != null && deletedCharge.isDeleted())
       return true;
     return false;
+  }
+
+  private SCharge fromDomainToInfrastructure(long accountId, Charge charge) {
+    SAccount sAccount = this.accountRepository.getAccountById(accountId);
+    SCharge sCharge = ChargePivot.fromDomainToInfrastructure(charge);
+    sCharge.setAccount(sAccount);
+    return sCharge;
   }
 }

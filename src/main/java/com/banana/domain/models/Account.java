@@ -1,6 +1,7 @@
 package com.banana.domain.models;
 
 import java.util.Date;
+import java.util.List;
 
 public class Account {
   private long id;
@@ -9,6 +10,9 @@ public class Account {
   private String slug;
   private double initialAmount;
   private Date startDate;
+  private List<Budget> budgets;
+  private List<Charge> charges;
+  private List<Expense> expenses;
 
   public Account(User user, String name, double initialAmount, Date startDate) {
     this.user = user;
@@ -51,5 +55,41 @@ public class Account {
 
   public void setStartDate(Date startDate) {
     this.startDate = startDate;
+  }
+
+  public List<Budget> getBudgets() {
+    return budgets;
+  }
+
+  public void setBudgets(List<Budget> budgets) {
+    this.budgets = budgets;
+  }
+
+  public void addBudget(Budget budget) {
+    this.budgets.add(budget);
+  }
+
+  public List<Charge> getCharges() {
+    return charges;
+  }
+
+  public void setCharges(List<Charge> charges) {
+    this.charges = charges;
+  }
+
+  public void addCharge(Charge charge) {
+    this.charges.add(charge);
+  }
+
+  public List<Expense> getExpenses() {
+    return expenses;
+  }
+
+  public void setExpenses(List<Expense> expenses) {
+    this.expenses = expenses;
+  }
+
+  public void addExpense(Expense expense) {
+    this.expenses.add(expense);
   }
 }

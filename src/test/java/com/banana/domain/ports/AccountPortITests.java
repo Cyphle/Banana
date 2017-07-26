@@ -61,14 +61,14 @@ public class AccountPortITests {
 
     Moment today = new Moment();
 
-    this.accountOne = new SAccount("Account one", 100, new Moment("2016-01-01").getDate());
+    this.accountOne = new SAccount("Account one", 1000, new Moment("2016-01-01").getDate());
     this.accountOne.setSlug("account-one");
     this.accountOne.setUser(this.fakeUser);
     this.accountOne.setCreationDate(today.getDate());
     this.accountOne.setUpdateDate(today.getDate());
     this.entityManager.persist(this.accountOne);
 
-    this.accountTwo = new SAccount("Account two", 200, new Moment("2016-01-01").getDate());
+    this.accountTwo = new SAccount("Account two", 2000, new Moment("2016-01-01").getDate());
     this.accountTwo.setUser(this.fakeUser);
     this.accountTwo.setCreationDate(today.getDate());
     this.accountTwo.setUpdateDate(today.getDate());
@@ -76,6 +76,35 @@ public class AccountPortITests {
 
     this.budgetOne = new SBudget("Manger", 300, new Moment("2017-01-01").getDate());
     this.budgetOne.setAccount(this.accountOne);
+    this.entityManager.persist(this.budgetOne);
+
+    this.budgetTwo = new SBudget("Clopes", 200, new Moment("2017-02-01").getDate());
+    this.budgetTwo.setAccount(this.accountOne);
+    this.entityManager.persist(this.budgetTwo);
+
+    this.chargeOne = new SCharge("Loyer", 1200, new Moment("2016-01-01").getDate());
+    this.chargeOne.setAccount(this.accountOne);
+    this.entityManager.persist(this.chargeOne);
+
+    this.chargeTwo = new SCharge("Internet", 40, new Moment("2017-01-01").getDate());
+    this.chargeTwo.setAccount(this.accountOne);
+    this.entityManager.persist(this.chargeTwo);
+
+    this.expenseBudgetOne = new SExpense("G20", 20, new Moment("2017-01-12").getDate());
+    this.expenseBudgetOne.setBudget(this.budgetOne);
+    this.entityManager.persist(this.expenseBudgetOne);
+
+    this.expenseBudgetTwo = new SExpense("Monoprix", 30, new Moment("2017-02-13").getDate());
+    this.expenseBudgetTwo.setBudget(this.budgetOne);
+    this.entityManager.persist(this.expenseBudgetTwo);
+
+    this.expenseOne = new SExpense("Bar", 50, new Moment("2017-07-20").getDate());
+    this.expenseOne.setAccount(this.accountOne);
+    this.entityManager.persist(this.expenseOne);
+
+    this.expenseTwo = new SExpense("Retrait", 60, new Moment("2017-07-23").getDate());
+    this.expenseTwo.setAccount(this.accountOne);
+    this.entityManager.persist(this.expenseTwo);
 
     this.accountRepository = new AccountRepository(this.sAccountRepository);
     this.userRepository = new UserRepository(this.sUserRepository);
@@ -89,9 +118,30 @@ public class AccountPortITests {
 
     assertThat(fetchedAccounts.size()).isEqualTo(2);
     assertThat(fetchedAccounts.get(0).getName()).isEqualTo("Account one");
-    assertThat(fetchedAccounts.get(0).getInitialAmount()).isEqualTo(100.0);
+    assertThat(fetchedAccounts.get(0).getInitialAmount()).isEqualTo(1000.0);
     assertThat(fetchedAccounts.get(1).getName()).isEqualTo("Account two");
-    assertThat(fetchedAccounts.get(1).getInitialAmount()).isEqualTo(200.0);
+    assertThat(fetchedAccounts.get(1).getInitialAmount()).isEqualTo(2000.0);
+  }
+
+  @Test
+  public void should_get_account_by_name_with_all_its_info() {
+    Account account = this.accountPort.getAccountByUserAndAccountName(this.user, "Account one");
+    Moment accountStartDate = new Moment(account.getStartDate());
+
+    assertThat(account.getName()).isEqualTo("Account one");
+    assertThat(account.getInitialAmount()).isEqualTo(1000);
+    assertThat(account.getSlug()).isEqualTo("account-one");
+    assertThat(account.getUser().getUsername()).isEqualTo("john@doe.fr");
+    assertThat(accountStartDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(accountStartDate.getMonthNumber()).isEqualTo(1);
+    assertThat(accountStartDate.getYear()).isEqualTo(2016);
+    assertThat(account.getBudgets().size()).isEqualTo(2);
+    // TODO to finish to check everything of account
+  }
+
+  @Test
+  public void should_get_account_by_slug_with_all_its_info() {
+    Account account = this.accountPort.getAccountByUserAndAccountSlug(this.user, "account-one");
   }
 
   @Test
