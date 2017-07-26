@@ -40,7 +40,7 @@ public class ExpenseFetcherTests {
 
   @Test
   public void should_get_expenses_for_account() {
-    Account account = new Account(1, this.user, "Test", "test", 2000.0);
+    Account account = new Account(1, this.user, "Test", "test", 2000.0, new Moment("2016-01-01").getDate());
     List<Expense> expenses = this.expenseFetcher.getExpensesOfAccount(account);
 
     assertThat(expenses.size()).isEqualTo(2);

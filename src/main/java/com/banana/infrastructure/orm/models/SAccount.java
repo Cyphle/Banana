@@ -30,6 +30,8 @@ public class SAccount implements Serializable {
   private String slug;
   @Column(name = "initial_amount")
   private double initialAmount;
+  @Column(name = "start_date")
+  private Date startDate;
   @Column(name = "creation_date")
   private Date creationDate;
   @Column(name = "update_date")
@@ -41,14 +43,15 @@ public class SAccount implements Serializable {
     this.isDeleted = false;
   }
 
-  public SAccount(String name, double initialAmount) {
+  public SAccount(String name, double initialAmount, Date startDate) {
     this.name = name;
     this.initialAmount = initialAmount;
+    this.startDate = startDate;
     this.isDeleted = false;
   }
 
-  public SAccount(SUser user, String name, String slug, double initialAmount) {
-    this(name, initialAmount);
+  public SAccount(SUser user, String name, String slug, double initialAmount, Date startDate) {
+    this(name, initialAmount, startDate);
     this.user = user;
     this.slug = slug;
   }
@@ -91,6 +94,14 @@ public class SAccount implements Serializable {
 
   public void setInitialAmount(double initialAmount) {
     this.initialAmount = initialAmount;
+  }
+
+  public Date getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
   }
 
   public Date getCreationDate() {

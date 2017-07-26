@@ -37,7 +37,7 @@ public class SBudgetRepositoryTests {
     this.user = new SUser("Doe", "John", "john@doe.fr");
     this.entityManager.persist(this.user);
 
-    this.account = new SAccount(this.user, "My Account", "my-account", 2000);
+    this.account = new SAccount(this.user, "My Account", "my-account", 2000, new Moment("2016-01-01").getDate());
     this.entityManager.persist(this.account);
 
     this.budgetOne = new SBudget("Budget one", 200, (new Moment()).getFirstDateOfMonth().getDate());

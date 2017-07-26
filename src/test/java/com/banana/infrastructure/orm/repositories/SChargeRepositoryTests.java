@@ -38,7 +38,7 @@ public class SChargeRepositoryTests {
     this.user = new SUser("Doe", "John", "john@doe.fr");
     this.entityManager.persist(this.user);
 
-    this.account = new SAccount(this.user, "My Account", "my-account", 2000);
+    this.account = new SAccount(this.user, "My Account", "my-account", 2000, new Moment("2016-01-01").getDate());
     this.entityManager.persist(this.account);
 
     this.chargeOne = new SCharge("Loyer", 1200, new Moment("2013-01-01").getDate());

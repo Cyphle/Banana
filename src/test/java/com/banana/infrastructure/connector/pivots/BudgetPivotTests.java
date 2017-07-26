@@ -16,7 +16,7 @@ public class BudgetPivotTests {
   @Test
   public void should_pivot_budget_from_infrastructure_to_domain() {
     SUser sUser = new SUser("Doe", "John", "john&doe.fr");
-    SAccount sAccount = new SAccount("Account", 2000);
+    SAccount sAccount = new SAccount("Account", 2000, new Moment("2016-01-01").getDate());
     sAccount.setId(1);
     sAccount.setUser(sUser);
     sAccount.setSlug("account");
@@ -39,7 +39,7 @@ public class BudgetPivotTests {
   @Test
   public void should_pivot_budgets_from_infrastructure_to_domain() {
     SUser sUser = new SUser("Doe", "John", "john&doe.fr");
-    SAccount sAccount = new SAccount("Account", 2000);
+    SAccount sAccount = new SAccount("Account", 2000, new Moment("2016-01-01").getDate());
     sAccount.setId(1);
     sAccount.setUser(sUser);
     sAccount.setSlug("account");

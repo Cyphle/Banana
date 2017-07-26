@@ -74,7 +74,7 @@ public class BudgetPortITests {
     this.entityManager.persist(fakeUser);
 
     Moment today = new Moment();
-    this.accountOne = new SAccount("My Account", 100);
+    this.accountOne = new SAccount("My Account", 100, new Moment("2016-01-01").getDate());
     this.accountOne.setSlug("my-account");
     this.accountOne.setUser(this.fakeUser);
     this.accountOne.setCreationDate(today.getDate());

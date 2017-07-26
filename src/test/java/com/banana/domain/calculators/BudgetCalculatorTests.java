@@ -39,7 +39,7 @@ public class BudgetCalculatorTests {
   @Before
   public void setup() {
     this.user = new User("Doe", "John", "john@doe.fr");
-    this.account = new Account(user, "Account", 1000);
+    this.account = new Account(user, "Account", 1000, new Moment("2016-01-01").getDate());
 
     this.budgetOne = new Budget(2, "Budget one", 200, (new Moment("2017-01-01")).getFirstDateOfMonth().getDate());
     this.budgetTwo = new Budget(3, "Budget two", 300, (new Moment("2017-02-01")).getFirstDateOfMonth().getDate());

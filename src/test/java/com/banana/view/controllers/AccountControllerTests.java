@@ -3,6 +3,7 @@ package com.banana.view.controllers;
 import com.banana.BananaApplication;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
+import com.banana.utils.Moment;
 import com.banana.view.services.AccountService;
 import com.banana.view.controllers.AccountController;
 import org.junit.Before;
@@ -52,8 +53,8 @@ public class AccountControllerTests {
 
     this.user = new User(1, "John", "Doe", "john@doe.fr");
     this.accounts = new ArrayList<>();
-    this.accounts.add(new Account(1, this.user, "Account one", "account-one", 1000.0));
-    this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0));
+    this.accounts.add(new Account(1, this.user, "Account one", "account-one", 1000.0, new Moment("2016-01-01").getDate()));
+    this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0, new Moment("2016-01-01").getDate()));
   }
 
   @Test

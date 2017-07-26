@@ -40,11 +40,11 @@ public class AccountRepositoryTests {
     this.sUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.sUser.setId(1);
     this.sAccounts = new ArrayList<>();
-    this.sAccounts.add(new SAccount("Account one", 100));
-    this.sAccounts.add(new SAccount("Account two", 200));
+    this.sAccounts.add(new SAccount("Account one", 100, new Moment("2016-01-01").getDate()));
+    this.sAccounts.add(new SAccount("Account two", 200, new Moment("2016-01-01").getDate()));
     this.sAccounts.get(0).setUser(this.sUser);
     this.sAccounts.get(1).setUser(this.sUser);
-    this.sAccount = new SAccount("Account three", 300);
+    this.sAccount = new SAccount("Account three", 300, new Moment("2016-01-01").getDate());
     this.sAccount.setUser(this.sUser);
 
     this.accountRepository = new AccountRepository(sAccountRepository);
@@ -100,7 +100,7 @@ public class AccountRepositoryTests {
   @Test
   public void should_create_account_of_user() {
     SUser user = new SUser("Doe", "John", "johndoe");
-    SAccount sAccount = new SAccount("Account", 1000.0);
+    SAccount sAccount = new SAccount("Account", 1000.0, new Moment("2016-01-01").getDate());
     sAccount.setUser(user);
     sAccount.setSlug("account");
     Moment today = new Moment();
@@ -127,7 +127,7 @@ public class AccountRepositoryTests {
   @Test
   public void should_update_account_of_user() {
     SUser user = new SUser("Doe", "John", "johndoe");
-    SAccount sAccount = new SAccount("Account", 1000.0);
+    SAccount sAccount = new SAccount("Account", 1000.0, new Moment("2016-01-01").getDate());
     sAccount.setUser(user);
     sAccount.setSlug("account");
     Moment today = new Moment();

@@ -3,6 +3,7 @@ package com.banana.utilities;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
+import com.banana.utils.Moment;
 
 import java.util.List;
 
@@ -10,14 +11,14 @@ public class FakeAccountRepository implements IAccountRepository {
   public List<SAccount> getAccountsOfUser(SUser user) { return null; }
 
   public SAccount getAccountByUserAndId(SUser user, long accountId) {
-    SAccount account = new SAccount("Account test", 3000.0);
+    SAccount account = new SAccount("Account test", 3000.0, new Moment("2016-01-01").getDate());
     account.setSlug("account-test");
     account.setId(1);
     return account;
   }
 
   public SAccount getAccountById(long accountId) {
-    SAccount account = new SAccount("Account test", 3000.0);
+    SAccount account = new SAccount("Account test", 3000.0, new Moment("2016-01-01").getDate());
     account.setSlug("account-test");
     account.setId(1);
     return account;

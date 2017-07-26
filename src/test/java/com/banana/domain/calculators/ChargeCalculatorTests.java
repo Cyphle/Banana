@@ -36,7 +36,7 @@ public class ChargeCalculatorTests {
   @Before
   public void setup() {
     this.user = new User("Doe", "John", "john@doe.fr");
-    this.account = new Account(1, this.user, "My account", "my-account", 2000);
+    this.account = new Account(1, this.user, "My account", "my-account", 2000, new Moment("2016-01-01").getDate());
 
     this.chargeOne = new Charge(1, "Loyer", 1200, new Moment("2013-01-01").getDate());
     this.chargeTwo = new Charge(2, "Internet", 40, new Moment("2017-01-01").getDate());

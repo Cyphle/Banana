@@ -26,7 +26,7 @@ public class BudgetFetcherTests {
   @Before
   public void setup() {
     this.user = new User(1, "Doe", "John", "john@doe.fr");
-    this.account = new Account(this.user, "My account", 1000);
+    this.account = new Account(this.user, "My account", 1000, new Moment("2016-01-01").getDate());
     this.account.setId(1);
 
     this.accountRepository = new FakeAccountRepository();

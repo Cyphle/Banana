@@ -13,6 +13,7 @@ import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
 import com.banana.infrastructure.orm.repositories.SUserRepository;
+import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,15 +50,15 @@ public class AccountPortTests {
     this.user = new User(1, "Doe", "John", "john@doe.fr");
     this.suser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.accounts = new ArrayList<>();
-    SAccount accountOne = new SAccount("Account one", 1000.0);
+    SAccount accountOne = new SAccount("Account one", 1000.0, new Moment("2016-01-01").getDate());
     accountOne.setId(1);
     accountOne.setUser(this.suser);
     this.accounts.add(accountOne);
-    SAccount accountTwo = new SAccount("Account two", 2000.0);
+    SAccount accountTwo = new SAccount("Account two", 2000.0, new Moment("2016-01-01").getDate());
     accountTwo.setId(2);
     accountTwo.setUser(this.suser);
     this.accounts.add(accountTwo);
-    this.account = new SAccount("Account three", 3000.0);
+    this.account = new SAccount("Account three", 3000.0, new Moment("2016-01-01").getDate());
     this.account.setSlug("account-three");
     this.account.setUser(this.suser);
 
@@ -104,14 +105,14 @@ public class AccountPortTests {
 
   @Test
   public void should_create_account() {
-    SAccount sAccount = new SAccount("Account create", 1500.0);
+    SAccount sAccount = new SAccount("Account create", 1500.0, new Moment("2016-01-01").getDate());
     sAccount.setSlug("account-create");
     sAccount.setUser(this.suser);
 
     given(this.sAccountRepository.findByUserUsernameAndSlug(any(String.class), any(String.class))).willReturn(null);
     given(this.sAccountRepository.save(any(SAccount.class))).willReturn(sAccount);
 
-    Account accountToCreate = new Account(this.user, "Account create", 1500.0);
+    Account accountToCreate = new Account(this.user, "Account create", 1500.0, new Moment("2016-01-01").getDate());
     AccountPort aPort = new AccountCalculator(this.accountFetcher);
 
     Account createdAccount = aPort.createAccount(accountToCreate);
@@ -124,7 +125,7 @@ public class AccountPortTests {
 
   @Test
   public void should_update_account() {
-    SAccount sAccount = new SAccount("My Account", 2000);
+    SAccount sAccount = new SAccount("My Account", 2000, new Moment("2016-01-01").getDate());
     sAccount.setId(1);
     sAccount.setSlug("my-account");
     sAccount.setUser(this.suser);
@@ -132,7 +133,7 @@ public class AccountPortTests {
 
     AccountPort aPort = new AccountCalculator(this.accountFetcher);
 
-    Account accountToUpdate = new Account(this.user, "Account update", 1500.0);
+    Account accountToUpdate = new Account(this.user, "Account update", 1500.0, new Moment("2016-01-01").getDate());
     accountToUpdate.setId(1);
     given(this.sAccountRepository.save(any(SAccount.class))).willReturn(AccountPivot.fromDomainToInfrastructure(accountToUpdate));
 

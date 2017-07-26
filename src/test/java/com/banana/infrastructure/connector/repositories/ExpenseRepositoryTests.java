@@ -39,7 +39,7 @@ public class ExpenseRepositoryTests {
 
   @Before
   public void setup() {
-    this.account = new SAccount("My account", 2000);
+    this.account = new SAccount("My account", 2000, new Moment("2016-01-01").getDate());
     this.budget = new SBudget("My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
     this.expenseOne = new SExpense("Courses", 24, (new Moment("2017-07-12")).getDate());
     this.expenseTwo = new SExpense("Bar", 40, (new Moment("2017-07-13")).getDate());

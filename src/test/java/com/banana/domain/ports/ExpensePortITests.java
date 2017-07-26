@@ -69,7 +69,7 @@ public class ExpensePortITests {
     this.sUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.entityManager.persist(this.sUser);
 
-    this.sAccount = new SAccount(this.sUser, "My account", "my-account", 2000);
+    this.sAccount = new SAccount(this.sUser, "My account", "my-account", 2000, new Moment("2016-01-01").getDate());
     this.entityManager.persist(this.sAccount);
 
     this.sBudget = new SBudget("My budget", 200, (new Moment("2017-07-01")).getDate());

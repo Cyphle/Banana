@@ -9,8 +9,7 @@ import com.banana.infrastructure.connector.repositories.AccountRepository;
 import com.banana.infrastructure.connector.repositories.IAccountRepository;
 import com.banana.infrastructure.connector.repositories.IUserRepository;
 import com.banana.infrastructure.connector.repositories.UserRepository;
-import com.banana.infrastructure.orm.models.SAccount;
-import com.banana.infrastructure.orm.models.SUser;
+import com.banana.infrastructure.orm.models.*;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
 import com.banana.infrastructure.orm.repositories.SUserRepository;
 import com.banana.utils.Moment;
@@ -45,6 +44,14 @@ public class AccountPortITests {
   private SUser fakeUser;
   private SAccount accountOne;
   private SAccount accountTwo;
+  private SBudget budgetOne;
+  private SBudget budgetTwo;
+  private SCharge chargeOne;
+  private SCharge chargeTwo;
+  private SExpense expenseBudgetOne;
+  private SExpense expenseBudgetTwo;
+  private SExpense expenseOne;
+  private SExpense expenseTwo;
 
   @Before
   public void setUp() {
@@ -54,17 +61,21 @@ public class AccountPortITests {
 
     Moment today = new Moment();
 
-    this.accountOne = new SAccount("Account one", 100);
+    this.accountOne = new SAccount("Account one", 100, new Moment("2016-01-01").getDate());
     this.accountOne.setSlug("account-one");
     this.accountOne.setUser(this.fakeUser);
     this.accountOne.setCreationDate(today.getDate());
     this.accountOne.setUpdateDate(today.getDate());
-    this.accountTwo = new SAccount("Account two", 200);
+    this.entityManager.persist(this.accountOne);
+
+    this.accountTwo = new SAccount("Account two", 200, new Moment("2016-01-01").getDate());
     this.accountTwo.setUser(this.fakeUser);
     this.accountTwo.setCreationDate(today.getDate());
     this.accountTwo.setUpdateDate(today.getDate());
-    this.entityManager.persist(this.accountOne);
     this.entityManager.persist(this.accountTwo);
+
+    this.budgetOne = new SBudget("Manger", 300, new Moment("2017-01-01").getDate());
+    this.budgetOne.setAccount(this.accountOne);
 
     this.accountRepository = new AccountRepository(this.sAccountRepository);
     this.userRepository = new UserRepository(this.sUserRepository);
@@ -85,10 +96,11 @@ public class AccountPortITests {
 
   @Test
   public void should_create_account() {
-    Account accountToCreate = new Account(this.user, "Account create", 1000.0);
+    Account accountToCreate = new Account(this.user, "Account create", 1000.0, new Moment("2016-01-20").getDate());
 
     Account createdAccount = this.accountPort.createAccount(accountToCreate);
     SAccount sCreatedAccount = this.sAccountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "account-create");
+    Moment startDate = new Moment(createdAccount.getStartDate());
 
     assertThat(createdAccount).isNotNull();
     assertThat(createdAccount.getId()).isGreaterThan(0);
@@ -96,6 +108,9 @@ public class AccountPortITests {
     assertThat(createdAccount.getSlug()).isEqualTo("account-create");
     assertThat(createdAccount.getInitialAmount()).isEqualTo(1000.0);
     assertThat(createdAccount.getUser().getUsername()).isEqualTo("john@doe.fr");
+    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getMonthNumber()).isEqualTo(1);
+    assertThat(startDate.getYear()).isEqualTo(2016);
     assertThat(sCreatedAccount.getId()).isEqualTo(createdAccount.getId());
     assertThat(sCreatedAccount.getInitialAmount()).isEqualTo(createdAccount.getInitialAmount());
     assertThat(sCreatedAccount.getSlug()).isEqualTo(createdAccount.getSlug());
@@ -105,7 +120,7 @@ public class AccountPortITests {
   public void should_update_account() {
     SAccount accountToUpdate = this.sAccountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "account-one");
 
-    Account accountWithNewData = new Account(this.user, "New account name", 2000.0);
+    Account accountWithNewData = new Account(this.user, "New account name", 2000.0, new Moment("2016-01-01").getDate());
     accountWithNewData.setId(accountToUpdate.getId());
 
     Account updatedAccount = this.accountPort.updateAccount(accountWithNewData);

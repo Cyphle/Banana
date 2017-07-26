@@ -28,7 +28,7 @@ public class ChargeFetcherTests {
   @Before
   public void setup() {
     this.user = new User(1, "Doe", "John", "john@doe.fr");
-    this.account = new Account(1, this.user, "My account", "my-account", 1000);
+    this.account = new Account(1, this.user, "My account", "my-account", 1000, new Moment("2016-01-01").getDate());
 
     this.accountRepository = new FakeAccountRepository();
     this.chargeRepository = new FakeChargeRepository();

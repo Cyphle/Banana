@@ -40,7 +40,7 @@ public class ChargeRepositoryTests {
   @Before
   public void setup() {
     this.sUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
-    this.sAccount = new SAccount("My account", 2000);
+    this.sAccount = new SAccount("My account", 2000, new Moment("2016-01-01").getDate());
     this.sAccount.setUser(this.sUser);
     this.sAccount.setId(1);
     this.sAccount.setSlug("my-account");

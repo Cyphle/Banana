@@ -33,7 +33,7 @@ public class ExpenseCalculatorTests {
   @Before
   public void setup() {
     this.user = new User("Doe", "John", "john@doe.fr");
-    this.account = new Account(1, this.user, "My account", "my-account", 2000);
+    this.account = new Account(1, this.user, "My account", "my-account", 2000, new Moment("2016-01-01").getDate());
     this.budgetOne = new Budget(2, "Budget one", 200, (new Moment()).getFirstDateOfMonth().getDate());
 
     this.accountFetcher = new FakeAccountFetcher();

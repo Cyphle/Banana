@@ -12,7 +12,7 @@ public class AccountPivot {
   public static Account fromInfrastructureToDomain(SAccount sAccount) {
     if (sAccount != null) {
       User user = UserPivot.fromInfrastructureToDomain(sAccount.getUser());
-      return new Account(sAccount.getId(), user, sAccount.getName(), sAccount.getSlug(), sAccount.getInitialAmount());
+      return new Account(sAccount.getId(), user, sAccount.getName(), sAccount.getSlug(), sAccount.getInitialAmount(), sAccount.getStartDate());
     } else
       return null;
   }
@@ -29,7 +29,7 @@ public class AccountPivot {
   public static SAccount fromDomainToInfrastructure(Account account) {
     if (account != null) {
       SUser sUser = new SUser(account.getUser().getLastname(), account.getUser().getFirstname(), account.getUser().getUsername());
-      SAccount sAccount = new SAccount(account.getName(), account.getInitialAmount());
+      SAccount sAccount = new SAccount(account.getName(), account.getInitialAmount(), account.getStartDate());
       sAccount.setSlug(account.getSlug());
       sAccount.setUser(sUser);
       if (account.getId() > 0)

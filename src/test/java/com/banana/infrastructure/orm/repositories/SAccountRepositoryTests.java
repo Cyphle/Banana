@@ -2,6 +2,7 @@ package com.banana.infrastructure.orm.repositories;
 
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
+import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +34,12 @@ public class SAccountRepositoryTests {
     this.fakeUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.entityManager.persist(fakeUser);
 
-    this.accountOne = new SAccount("Account one", 100);
+    this.accountOne = new SAccount("Account one", 100, new Moment("2016-01-01").getDate());
     this.accountOne.setSlug("account-one");
     this.accountOne.setUser(this.fakeUser);
-    this.accountTwo = new SAccount("Account two", 200);
+    this.accountTwo = new SAccount("Account two", 200, new Moment("2016-01-01").getDate());
     this.accountTwo.setUser(this.fakeUser);
-    this.accountThree = new SAccount("Account three", 300);
+    this.accountThree = new SAccount("Account three", 300, new Moment("2016-01-01").getDate());
     this.accountThree.setSlug("account-three");
     this.entityManager.persist(this.accountOne);
     this.entityManager.persist(this.accountTwo);
@@ -105,7 +106,7 @@ public class SAccountRepositoryTests {
 
   @Test
   public void should_create_a_new_account() {
-    SAccount newAccount = new SAccount("Account created", 1000.0);
+    SAccount newAccount = new SAccount("Account created", 1000.0, new Moment("2016-01-01").getDate());
     newAccount.setUser(this.fakeUser);
     newAccount.setSlug("account-created");
 

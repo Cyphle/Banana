@@ -9,6 +9,7 @@ import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.utilities.FakeAccountRepository;
 import com.banana.utilities.FakeUserRepository;
+import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ public class AccountFetcherTests {
 
   @Test
   public void should_return_account_after_its_creation() {
-    Account account = new Account(this.user, "Account test", 3000.0);
+    Account account = new Account(this.user, "Account test", 3000.0, new Moment("2016-01-01").getDate());
     account.setSlug("account-test");
     Account createdAccount = this.accountFetcher.createAccount(account);
 
@@ -53,7 +54,7 @@ public class AccountFetcherTests {
 
   @Test
   public void should_return_account_after_its_update() {
-    Account accountToUpdate = new Account(1, this.user, "Account update", "account-update", 3000.0);
+    Account accountToUpdate = new Account(1, this.user, "Account update", "account-update", 3000.0, new Moment("2016-01-01").getDate());
     Account updatedAccount = this.accountFetcher.updateAccount(accountToUpdate);
 
     assertThat(updatedAccount.getName()).isEqualTo("Account update");

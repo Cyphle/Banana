@@ -9,6 +9,7 @@ import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.AccountPort;
+import com.banana.utils.Moment;
 import com.github.slugify.Slugify;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public class AccountCalculator implements AccountPort {
       Slugify slg = new Slugify();
       String accountSlug = slg.slugify(account.getName());
       account.setSlug(accountSlug);
+      account.setStartDate(new Moment(account.getStartDate()).getFirstDateOfMonth().getDate());
       return this.accountFetcher.createAccount(account);
     }
   }

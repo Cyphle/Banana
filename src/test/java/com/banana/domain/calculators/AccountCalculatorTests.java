@@ -7,6 +7,7 @@ import com.banana.domain.models.User;
 import com.banana.domain.ports.AccountPort;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.utilities.FakeAccountFetcher;
+import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,9 +28,9 @@ public class AccountCalculatorTests {
   public void setup() {
     this.user = new User(1, "John", "Doe", "john@doe.fr");
     this.accounts = new ArrayList<>();
-    this.accounts.add(new Account(1, this.user, "Account one", "account-one", 1000.0));
-    this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0));
-    this.account = new Account(3, this.user, "Account test", "account-three", 3000.0);
+    this.accounts.add(new Account(1, this.user, "Account one", "account-one", 1000.0, new Moment("2016-01-01").getDate()));
+    this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0, new Moment("2016-01-01").getDate()));
+    this.account = new Account(3, this.user, "Account test", "account-three", 3000.0, new Moment("2016-01-01").getDate());
   }
 
   @Test
@@ -94,18 +95,22 @@ public class AccountCalculatorTests {
     IAccountFetcher accountFetcher = new AccountFetcher(null, null);
     accountFetcher = Mockito.spy(accountFetcher);
 
-    Account accountToCreate = new Account(this.user, "Account create", 1500.0);
+    Account accountToCreate = new Account(this.user, "Account create", 1500.0, new Moment("2016-01-10").getDate());
     Mockito.doReturn(accountToCreate).when(accountFetcher).createAccount(any(Account.class));
     Mockito.doReturn(null).when(accountFetcher).getAccountByUserAndAccountSlug(accountToCreate.getUser(), accountToCreate.getSlug());
 
     AccountPort aPort = new AccountCalculator(accountFetcher);
 
     Account createdAccount = aPort.createAccount(accountToCreate);
+    Moment startDate = new Moment(createdAccount.getStartDate());
 
     assertThat(createdAccount).isNotNull();
     assertThat(createdAccount.getName()).isEqualTo("Account create");
     assertThat(createdAccount.getInitialAmount()).isEqualTo(1500.0);
     assertThat(createdAccount.getSlug()).isEqualTo("account-create");
+    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getMonthNumber()).isEqualTo(1);
+    assertThat(startDate.getYear()).isEqualTo(2016);
   }
 
   @Test
@@ -113,7 +118,7 @@ public class AccountCalculatorTests {
     IAccountFetcher accountFetcher = new AccountFetcher(null, null);
     accountFetcher = Mockito.spy(accountFetcher);
 
-    Account accountToCreate = new Account(1, this.user, "Account create", "account-create", 1500.0);
+    Account accountToCreate = new Account(1, this.user, "Account create", "account-create", 1500.0, new Moment("2016-01-01").getDate());
     Mockito.doReturn(accountToCreate).when(accountFetcher).createAccount(any(Account.class));
     Mockito.doReturn(accountToCreate).when(accountFetcher).getAccountByUserAndAccountSlug(accountToCreate.getUser(), accountToCreate.getSlug());
 
@@ -132,7 +137,7 @@ public class AccountCalculatorTests {
     IAccountFetcher accountFetcher = new AccountFetcher(null, null);
     accountFetcher = Mockito.spy(accountFetcher);
 
-    Account accountToUpdate = new Account(this.user, "Account to update", 1500.0);
+    Account accountToUpdate = new Account(this.user, "Account to update", 1500.0, new Moment("2016-01-01").getDate());
     accountToUpdate.setId(1);
 
     Mockito.doReturn(accountToUpdate).when(accountFetcher).updateAccount(any(Account.class));
