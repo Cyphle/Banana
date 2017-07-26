@@ -3,12 +3,12 @@ package com.banana.view.services;
 import com.banana.domain.models.Account;
 import com.banana.infrastructure.orm.models.SAccount;
 import com.banana.infrastructure.orm.models.SUser;
-import com.banana.infrastructure.orm.repositories.SAccountRepository;
-import com.banana.infrastructure.orm.repositories.SUserRepository;
+import com.banana.infrastructure.orm.repositories.*;
 import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -22,10 +22,17 @@ import static org.mockito.Matchers.any;
 @RunWith(SpringRunner.class)
 public class AccountServiceTests {
   @MockBean
-  private SAccountRepository sAccountRepository;
-
-  @MockBean
   private SUserRepository sUserRepository;
+  @MockBean
+  private SAccountRepository sAccountRepository;
+  @MockBean
+  private SBudgetRepository sBudgetRepository;
+  @MockBean
+  private SChargeRepository sChargeRepository;
+  @MockBean
+  private SCreditRepository sCreditRepository;
+  @MockBean
+  private SExpenseRepository sExpenseRepository;
 
   private AccountService accountService;
   private SUser suser;
@@ -33,7 +40,7 @@ public class AccountServiceTests {
 
   @Before
   public void setup() {
-    this.accountService = new AccountService(this.sUserRepository, this.sAccountRepository);
+    this.accountService = new AccountService(this.sUserRepository, this.sAccountRepository, sBudgetRepository, sChargeRepository, sCreditRepository, sExpenseRepository);
     this.suser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.accounts = new ArrayList<>();
     SAccount accountOne = new SAccount("Account one", 1000.0, new Moment("2016-01-01").getDate());

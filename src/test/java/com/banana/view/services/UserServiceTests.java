@@ -2,9 +2,7 @@ package com.banana.view.services;
 
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.models.SUserRole;
-import com.banana.infrastructure.orm.repositories.SAccountRepository;
-import com.banana.infrastructure.orm.repositories.SUserRepository;
-import com.banana.infrastructure.orm.repositories.SUserRoleRepository;
+import com.banana.infrastructure.orm.repositories.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,6 +46,14 @@ public class UserServiceTests {
 
   @MockBean
   private SAccountRepository accountRepository;
+  @MockBean
+  private SBudgetRepository budgetRepository;
+  @MockBean
+  private SChargeRepository chargeRepository;
+  @MockBean
+  private SCreditRepository creditRepository;
+  @MockBean
+  private SExpenseRepository expenseRepository;
 
   private UserService userService;
   private SUser user;

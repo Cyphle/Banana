@@ -45,4 +45,12 @@ public class Budget {
   public Date getEndDate() { return this.endDate; }
 
   public void setEndDate(Date endDate) { this.endDate = endDate; }
+
+  public List<Expense> getExpenses() {
+    return expenses;
+  }
+
+  public void setExpenses(List<Expense> expenses) {
+    this.expenses = expenses;
+  }
 }

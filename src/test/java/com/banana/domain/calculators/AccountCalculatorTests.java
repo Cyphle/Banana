@@ -1,12 +1,12 @@
 package com.banana.domain.calculators;
 
-import com.banana.domain.adapters.IAccountFetcher;
+import com.banana.domain.adapters.*;
 import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.AccountPort;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
-import com.banana.utilities.FakeAccountFetcher;
+import com.banana.utilities.*;
 import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +23,13 @@ public class AccountCalculatorTests {
   private User user;
   private List<Account> accounts;
   private Account account;
+  private AccountPort accountPort;
+
+  private IAccountFetcher accountFetcher;
+  private IBudgetFetcher budgetFetcher;
+  private IChargeFetcher chargeFetcher;
+  private ICreditFetcher creditFetcher;
+  private IExpenseFetcher expenseFetcher;
 
   @Before
   public void setup() {
@@ -31,46 +38,29 @@ public class AccountCalculatorTests {
     this.accounts.add(new Account(1, this.user, "Account one", "account-one", 1000.0, new Moment("2016-01-01").getDate()));
     this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0, new Moment("2016-01-01").getDate()));
     this.account = new Account(3, this.user, "Account test", "account-three", 3000.0, new Moment("2016-01-01").getDate());
+
+    this.accountFetcher = new FakeAccountFetcher();
+    this.budgetFetcher = new FakeBudgetFetcher();
+    this.chargeFetcher = new FakeChargeFetcher();
+    this.creditFetcher = new FakeCreditFetcher();
+    this.expenseFetcher = new FakeExpenseFetcher();
+    this.accountPort = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
   }
 
   @Test
   public void should_get_accounts_of_user() {
-    AccountPort banker = new AccountCalculator(new FakeAccountFetcher());
-    List<Account> fetchedAccounts = banker.getAccountsOfUser(this.user);
+    List<Account> fetchedAccounts = this.accountPort.getAccountsOfUser(this.user);
 
     assertThat(fetchedAccounts.size()).isEqualTo(2);
-    assertThat(fetchedAccounts.get(0).getName()).isEqualTo("Account one");
-    assertThat(fetchedAccounts.get(0).getInitialAmount()).isEqualTo(1000.0);
     assertThat(fetchedAccounts.get(1).getName()).isEqualTo("Account two");
     assertThat(fetchedAccounts.get(1).getInitialAmount()).isEqualTo(2000.0);
-  }
-
-  @Test
-  public void should_get_accounts_of_user_from_fake_account_library() {
-    IAccountFetcher accountFetcher = new AccountFetcher(null, null);
-    accountFetcher = Mockito.spy(accountFetcher);
-    Mockito.doReturn(this.accounts).when(accountFetcher).getAccountsOfUser(this.user);
-
-    AccountPort banker = new AccountCalculator(accountFetcher);
-
-    List<Account> fetchedAccounts = banker.getAccountsOfUser(this.user);
-
-    assertThat(fetchedAccounts.size()).isEqualTo(2);
     assertThat(fetchedAccounts.get(0).getName()).isEqualTo("Account one");
     assertThat(fetchedAccounts.get(0).getInitialAmount()).isEqualTo(1000.0);
-    assertThat(fetchedAccounts.get(1).getName()).isEqualTo("Account two");
-    assertThat(fetchedAccounts.get(1).getInitialAmount()).isEqualTo(2000.0);
   }
 
   @Test
   public void should_get_an_account_of_user_by_name() {
-    IAccountFetcher accountFetcher = new AccountFetcher(null,null);
-    accountFetcher = Mockito.spy(accountFetcher);
-    Mockito.doReturn(this.account).when(accountFetcher).getAccountByUserAndAccountName(this.user, "Account test");
-
-    AccountPort banker = new AccountCalculator(accountFetcher);
-
-    Account fetchedAccount = banker.getAccountByUserAndAccountName(this.user, "Account test");
+    Account fetchedAccount = this.accountPort.getAccountByUserAndAccountName(this.user, "Account test");
 
     assertThat(fetchedAccount.getName()).isEqualTo("Account test");
     assertThat(fetchedAccount.getInitialAmount()).isEqualTo(3000.0);
@@ -78,13 +68,7 @@ public class AccountCalculatorTests {
 
   @Test
   public void should_get_an_account_of_user_by_account_slug() {
-    IAccountFetcher accountFetcher = new AccountFetcher(null,null);
-    accountFetcher = Mockito.spy(accountFetcher);
-    Mockito.doReturn(this.account).when(accountFetcher).getAccountByUserAndAccountSlug(this.user, "account-test");
-
-    AccountPort banker = new AccountCalculator(accountFetcher);
-
-    Account fetchedAccount = banker.getAccountByUserAndAccountSlug(this.user, "account-test");
+    Account fetchedAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "account-test");
 
     assertThat(fetchedAccount.getName()).isEqualTo("Account test");
     assertThat(fetchedAccount.getInitialAmount()).isEqualTo(3000.0);
@@ -99,7 +83,7 @@ public class AccountCalculatorTests {
     Mockito.doReturn(accountToCreate).when(accountFetcher).createAccount(any(Account.class));
     Mockito.doReturn(null).when(accountFetcher).getAccountByUserAndAccountSlug(accountToCreate.getUser(), accountToCreate.getSlug());
 
-    AccountPort aPort = new AccountCalculator(accountFetcher);
+    AccountPort aPort = new AccountCalculator(accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
 
     Account createdAccount = aPort.createAccount(accountToCreate);
     Moment startDate = new Moment(createdAccount.getStartDate());
@@ -122,7 +106,7 @@ public class AccountCalculatorTests {
     Mockito.doReturn(accountToCreate).when(accountFetcher).createAccount(any(Account.class));
     Mockito.doReturn(accountToCreate).when(accountFetcher).getAccountByUserAndAccountSlug(accountToCreate.getUser(), accountToCreate.getSlug());
 
-    AccountPort aPort = new AccountCalculator(accountFetcher);
+    AccountPort aPort = new AccountCalculator(accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
 
     try {
       aPort.createAccount(accountToCreate);
@@ -143,7 +127,7 @@ public class AccountCalculatorTests {
     Mockito.doReturn(accountToUpdate).when(accountFetcher).updateAccount(any(Account.class));
     Mockito.doReturn(accountToUpdate).when(accountFetcher).getAccountByUserAndId(accountToUpdate.getUser(), accountToUpdate.getId());
 
-    AccountPort aPort = new AccountCalculator(accountFetcher);
+    AccountPort aPort = new AccountCalculator(accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
 
     Account updatedAccount = aPort.updateAccount(accountToUpdate);
 

@@ -1,6 +1,5 @@
 package com.banana.domain.adapters;
 
-import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.User;
 

@@ -1,17 +1,12 @@
 package com.banana.domain.ports;
 
+import com.banana.domain.adapters.*;
 import com.banana.domain.calculators.AccountCalculator;
-import com.banana.domain.models.Account;
-import com.banana.infrastructure.connector.adapters.AccountFetcher;
-import com.banana.domain.adapters.IAccountFetcher;
-import com.banana.domain.models.User;
-import com.banana.infrastructure.connector.repositories.AccountRepository;
-import com.banana.infrastructure.connector.repositories.IAccountRepository;
-import com.banana.infrastructure.connector.repositories.IUserRepository;
-import com.banana.infrastructure.connector.repositories.UserRepository;
+import com.banana.domain.models.*;
+import com.banana.infrastructure.connector.adapters.*;
+import com.banana.infrastructure.connector.repositories.*;
 import com.banana.infrastructure.orm.models.*;
-import com.banana.infrastructure.orm.repositories.SAccountRepository;
-import com.banana.infrastructure.orm.repositories.SUserRepository;
+import com.banana.infrastructure.orm.repositories.*;
 import com.banana.utils.Moment;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +17,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -32,14 +29,32 @@ public class AccountPortITests {
 
   @Autowired
   private SAccountRepository sAccountRepository;
-
   @Autowired
   private SUserRepository sUserRepository;
+  @Autowired
+  private SBudgetRepository sBudgetRepository;
+  @Autowired
+  private SChargeRepository sChargeRepository;
+  @Autowired
+  private SCreditRepository sCreditRepository;
+  @Autowired
+  private SExpenseRepository sExpenseRepository;
 
-  private IAccountRepository accountRepository;
   private IUserRepository userRepository;
+  private IAccountRepository accountRepository;
+  private IBudgetRepository budgetRepository;
+  private IChargeRepository chargeRepository;
+  private ICreditRepository creditRepository;
+  private IExpenseRepository expenseRepository;
+
   private IAccountFetcher accountFetcher;
+  private IBudgetFetcher budgetFetcher;
+  private IChargeFetcher chargeFetcher;
+  private ICreditFetcher creditFetcher;
+  private IExpenseFetcher expenseFetcher;
+
   private AccountPort accountPort;
+
   private User user;
   private SUser fakeUser;
   private SAccount accountOne;
@@ -52,6 +67,7 @@ public class AccountPortITests {
   private SExpense expenseBudgetTwo;
   private SExpense expenseOne;
   private SExpense expenseTwo;
+  private SCredit creditOne;
 
   @Before
   public void setUp() {
@@ -106,10 +122,22 @@ public class AccountPortITests {
     this.expenseTwo.setAccount(this.accountOne);
     this.entityManager.persist(this.expenseTwo);
 
-    this.accountRepository = new AccountRepository(this.sAccountRepository);
+    this.creditOne = new SCredit("Salaire", 2400, new Moment("2017-06-30").getDate());
+    this.creditOne.setAccount(this.accountOne);
+    this.entityManager.persist(this.creditOne);
+
     this.userRepository = new UserRepository(this.sUserRepository);
+    this.accountRepository = new AccountRepository(this.sAccountRepository);
+    this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
+    this.chargeRepository = new ChargeRepository(this.sChargeRepository);
+    this.creditRepository = new CreditRepository(this.sCreditRepository);
+    this.expenseRepository = new ExpenseRepository(this.sExpenseRepository);
     this.accountFetcher = new AccountFetcher(this.userRepository, this.accountRepository);
-    this.accountPort = new AccountCalculator(this.accountFetcher);
+    this.budgetFetcher = new BudgetFetcher(this.accountRepository, this.budgetRepository);
+    this.chargeFetcher = new ChargeFetcher(this.accountRepository, this.chargeRepository);
+    this.creditFetcher = new CreditFetcher(this.accountRepository, this.creditRepository);
+    this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
+    this.accountPort = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
   }
 
   @Test
@@ -136,12 +164,85 @@ public class AccountPortITests {
     assertThat(accountStartDate.getMonthNumber()).isEqualTo(1);
     assertThat(accountStartDate.getYear()).isEqualTo(2016);
     assertThat(account.getBudgets().size()).isEqualTo(2);
-    // TODO to finish to check everything of account
+    assertThat(account.getExpenses().size()).isEqualTo(2);
+    assertThat(account.getCharges().size()).isEqualTo(2);
+    assertThat(account.getCredits().size()).isEqualTo(1);
+
+    // BUDGETS
+    Budget budgetManger = account.getBudgets().stream().filter(budget -> budget.getName() == "Manger").collect(Collectors.toList()).get(0);
+    Budget budgetClopes = account.getBudgets().stream().filter(budget -> budget.getName() == "Clopes").collect(Collectors.toList()).get(0);
+    assertThat(budgetManger.getInitialAmount()).isEqualTo(300);
+    assertThat(budgetManger.getExpenses().size()).isEqualTo(2);
+    assertThat(budgetClopes.getInitialAmount()).isEqualTo(200);
+
+    // BUDGET EXPENSES
+    Expense expenseG20 = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "G20").collect(Collectors.toList()).get(0);
+    Expense expenseMonoprix = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "Monoprix").collect(Collectors.toList()).get(0);
+    assertThat(expenseG20.getAmount()).isEqualTo(20);
+    assertThat(expenseMonoprix.getAmount()).isEqualTo(30);
+
+    // EXPENSES
+    Expense expenseBar = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Bar").collect(Collectors.toList()).get(0);
+    Expense expenseRetrait = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Retrait").collect(Collectors.toList()).get(0);
+    assertThat(expenseBar.getAmount()).isEqualTo(50);
+    assertThat(expenseRetrait.getAmount()).isEqualTo(60);
+
+    // CHARGES
+    Charge chargeLoyer = account.getCharges().stream().filter(charge -> charge.getDescription() == "Loyer").collect(Collectors.toList()).get(0);
+    Charge chargeInternet = account.getCharges().stream().filter(charge -> charge.getDescription() == "Internet").collect(Collectors.toList()).get(0);
+    assertThat(chargeLoyer.getAmount()).isEqualTo(1200);
+    assertThat(chargeInternet.getAmount()).isEqualTo(40);
+
+    // CREDITS
+    Credit creditSalaire = account.getCredits().get(0);
+    assertThat(creditSalaire.getAmount()).isEqualTo(2400);
   }
 
   @Test
   public void should_get_account_by_slug_with_all_its_info() {
     Account account = this.accountPort.getAccountByUserAndAccountSlug(this.user, "account-one");
+    Moment accountStartDate = new Moment(account.getStartDate());
+
+    assertThat(account.getName()).isEqualTo("Account one");
+    assertThat(account.getInitialAmount()).isEqualTo(1000);
+    assertThat(account.getSlug()).isEqualTo("account-one");
+    assertThat(account.getUser().getUsername()).isEqualTo("john@doe.fr");
+    assertThat(accountStartDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(accountStartDate.getMonthNumber()).isEqualTo(1);
+    assertThat(accountStartDate.getYear()).isEqualTo(2016);
+    assertThat(account.getBudgets().size()).isEqualTo(2);
+    assertThat(account.getExpenses().size()).isEqualTo(2);
+    assertThat(account.getCharges().size()).isEqualTo(2);
+    assertThat(account.getCredits().size()).isEqualTo(1);
+
+    // BUDGETS
+    Budget budgetManger = account.getBudgets().stream().filter(budget -> budget.getName() == "Manger").collect(Collectors.toList()).get(0);
+    Budget budgetClopes = account.getBudgets().stream().filter(budget -> budget.getName() == "Clopes").collect(Collectors.toList()).get(0);
+    assertThat(budgetManger.getInitialAmount()).isEqualTo(300);
+    assertThat(budgetManger.getExpenses().size()).isEqualTo(2);
+    assertThat(budgetClopes.getInitialAmount()).isEqualTo(200);
+
+    // BUDGET EXPENSES
+    Expense expenseG20 = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "G20").collect(Collectors.toList()).get(0);
+    Expense expenseMonoprix = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "Monoprix").collect(Collectors.toList()).get(0);
+    assertThat(expenseG20.getAmount()).isEqualTo(20);
+    assertThat(expenseMonoprix.getAmount()).isEqualTo(30);
+
+    // EXPENSES
+    Expense expenseBar = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Bar").collect(Collectors.toList()).get(0);
+    Expense expenseRetrait = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Retrait").collect(Collectors.toList()).get(0);
+    assertThat(expenseBar.getAmount()).isEqualTo(50);
+    assertThat(expenseRetrait.getAmount()).isEqualTo(60);
+
+    // CHARGES
+    Charge chargeLoyer = account.getCharges().stream().filter(charge -> charge.getDescription() == "Loyer").collect(Collectors.toList()).get(0);
+    Charge chargeInternet = account.getCharges().stream().filter(charge -> charge.getDescription() == "Internet").collect(Collectors.toList()).get(0);
+    assertThat(chargeLoyer.getAmount()).isEqualTo(1200);
+    assertThat(chargeInternet.getAmount()).isEqualTo(40);
+
+    // CREDITS
+    Credit creditSalaire = account.getCredits().get(0);
+    assertThat(creditSalaire.getAmount()).isEqualTo(2400);
   }
 
   @Test

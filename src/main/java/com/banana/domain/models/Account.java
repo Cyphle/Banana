@@ -13,6 +13,7 @@ public class Account {
   private List<Budget> budgets;
   private List<Charge> charges;
   private List<Expense> expenses;
+  private List<Credit> credits;
 
   public Account(User user, String name, double initialAmount, Date startDate) {
     this.user = user;
@@ -65,20 +66,12 @@ public class Account {
     this.budgets = budgets;
   }
 
-  public void addBudget(Budget budget) {
-    this.budgets.add(budget);
-  }
-
   public List<Charge> getCharges() {
     return charges;
   }
 
   public void setCharges(List<Charge> charges) {
     this.charges = charges;
-  }
-
-  public void addCharge(Charge charge) {
-    this.charges.add(charge);
   }
 
   public List<Expense> getExpenses() {
@@ -89,7 +82,11 @@ public class Account {
     this.expenses = expenses;
   }
 
-  public void addExpense(Expense expense) {
-    this.expenses.add(expense);
+  public List<Credit> getCredits() {
+    return credits;
+  }
+
+  public void setCredits(List<Credit> credits) {
+    this.credits = credits;
   }
 }

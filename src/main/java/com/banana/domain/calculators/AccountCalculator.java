@@ -1,13 +1,9 @@
 package com.banana.domain.calculators;
 
-import com.banana.domain.adapters.IAccountFetcher;
-import com.banana.domain.adapters.IBudgetFetcher;
-import com.banana.domain.adapters.IChargeFetcher;
-import com.banana.domain.adapters.IExpenseFetcher;
+import com.banana.domain.adapters.*;
 import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.exceptions.NoElementFoundException;
-import com.banana.domain.models.Account;
-import com.banana.domain.models.User;
+import com.banana.domain.models.*;
 import com.banana.domain.ports.AccountPort;
 import com.banana.utils.Moment;
 import com.github.slugify.Slugify;
@@ -18,10 +14,15 @@ public class AccountCalculator implements AccountPort {
   private IAccountFetcher accountFetcher;
   private IChargeFetcher chargeFetcher;
   private IBudgetFetcher budgetFetcher;
+  private ICreditFetcher creditFetcher;
   private IExpenseFetcher expenseFetcher;
 
-  public AccountCalculator(IAccountFetcher accountFetcher) {
+  public AccountCalculator(IAccountFetcher accountFetcher, IBudgetFetcher budgetFetcher, IChargeFetcher chargeFetcher, ICreditFetcher creditFetcher, IExpenseFetcher expenseFetcher) {
     this.accountFetcher = accountFetcher;
+    this.budgetFetcher = budgetFetcher;
+    this.chargeFetcher = chargeFetcher;
+    this.creditFetcher = creditFetcher;
+    this.expenseFetcher = expenseFetcher;
   }
 
   public List<Account> getAccountsOfUser(User user) {
@@ -29,13 +30,15 @@ public class AccountCalculator implements AccountPort {
   }
 
   public Account getAccountByUserAndAccountName(User user, String accountName) {
-    // TODO add budgets, expenses, and all
-    return this.accountFetcher.getAccountByUserAndAccountName(user, accountName);
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountName(user, accountName);
+    this.getAccountItems(user, myAccount);
+    return myAccount;
   }
 
   public Account getAccountByUserAndAccountSlug(User user, String accountSlug) {
-    // TODO add budgets, expenses, and all (NOT TO PUT IN FETCHER BUT HERE)
-    return this.accountFetcher.getAccountByUserAndAccountSlug(user, accountSlug);
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(user, accountSlug);
+    this.getAccountItems(user, myAccount);
+    return myAccount;
   }
 
   public Account createAccount(Account account) throws CreationException {
@@ -63,5 +66,25 @@ public class AccountCalculator implements AccountPort {
       accountToUpdate.setSlug(accountSlug);
       return this.accountFetcher.updateAccount(accountToUpdate);
     }
+  }
+
+  private void getAccountItems(User user, Account myAccount) {
+    // BUDGETS
+    List<Budget> budgets = this.budgetFetcher.getBudgetsOfUserAndAccount(user, myAccount.getId());
+
+    for (Budget budget : budgets) {
+      List<Expense> budgetExpenses = this.expenseFetcher.getExpensesOfBudget(budget);
+      budget.setExpenses(budgetExpenses);
+    }
+    myAccount.setBudgets(budgets);
+    // CHARGES
+    List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(user, myAccount.getId());
+    myAccount.setCharges(charges);
+    // CREDITS
+    List<Credit> credits = this.creditFetcher.getCreditsOfUserAndAccount(user, myAccount.getId());
+    myAccount.setCredits(credits);
+    // EXPENSES
+    List<Expense> expenses = this.expenseFetcher.getExpensesOfAccount(myAccount);
+    myAccount.setExpenses(expenses);
   }
 }

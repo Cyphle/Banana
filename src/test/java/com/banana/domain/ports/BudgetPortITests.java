@@ -56,7 +56,6 @@ public class BudgetPortITests {
   private IBudgetFetcher budgetFetcher;
   private IExpenseRepository expenseRepository;
   private IExpenseFetcher expenseFetcher;
-  private AccountPort accountPort;
   private BudgetPort budgetPort;
 
   private User user;
@@ -98,7 +97,6 @@ public class BudgetPortITests {
     this.accountRepository = new AccountRepository(this.sAccountRepository);
     this.userRepository = new UserRepository(this.sUserRepository);
     this.accountFetcher = new AccountFetcher(this.userRepository, this.accountRepository);
-    this.accountPort = new AccountCalculator(this.accountFetcher);
 
     this.expenseRepository = new ExpenseRepository(this.sExpenseRepository);
     this.budgetRepository = new BudgetRepository(this.sBudgetRepository);
@@ -110,7 +108,7 @@ public class BudgetPortITests {
   @Test
   public void should_create_new_budget() {
     Moment today = new Moment();
-    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
     Budget newBudget = new Budget("My budget", 200, today.getFirstDateOfMonth().getDate());
 
     Budget createdBudget = this.budgetPort.createBudget(this.user, myAccount.getId(), newBudget);
@@ -124,7 +122,7 @@ public class BudgetPortITests {
 
   @Test
   public void should_update_a_budget_name() {
-    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
     List<Budget> existingBudgets = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId());
     Budget budgetToUpdate = null;
     for (Budget tempBudget : existingBudgets) {
@@ -151,7 +149,7 @@ public class BudgetPortITests {
 
   @Test
   public void should_create_a_new_budget_if_amount_is_modified_and_old_budget_is_stopped() {
-    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
     Budget budgetToUpdate = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
     Moment initialStartDate = new Moment(budget.getStartDate());
 
@@ -189,7 +187,7 @@ public class BudgetPortITests {
 
   @Test
   public void should_delete_expenses_before_new_budget_start_date() {
-    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
     Budget budgetToUpdate = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
 
     budgetToUpdate.setStartDate(new Moment("2017-08-01").getDate());
@@ -208,7 +206,7 @@ public class BudgetPortITests {
 
   @Test
   public void should_delete_expenses_after_new_budget_end_date() {
-    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
     Budget budgetToUpdate = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
 
     budgetToUpdate.setEndDate(new Moment("2017-08-20").getDate());
@@ -227,7 +225,7 @@ public class BudgetPortITests {
 
   @Test
   public void should_delete_budget_by_stopping_its_end_date() {
-    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
     Budget budgetToUpdate = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
 
     budgetToUpdate.setEndDate(new Moment("2017-08-20").getDate());
