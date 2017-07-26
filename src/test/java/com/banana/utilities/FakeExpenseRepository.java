@@ -38,8 +38,4 @@ public class FakeExpenseRepository implements IExpenseRepository {
     sExpenses.add(sExpenseTwo);
     return sExpenses;
   }
-
-  public SExpense deleteExpense(SExpense expense) {
-    return expense;
-  }
 }

@@ -51,7 +51,7 @@ public class ExpenseCalculatorTests {
     Mockito.doReturn(null).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
 
     try {
-      Expense createdExpense = this.expensePort.createExpense(this.user, 1, 1, newExpense);
+      this.expensePort.createExpense(this.user, 1, 1, newExpense);
       fail("Should throw error when budget does not exists");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("No budget found with id");
@@ -64,7 +64,7 @@ public class ExpenseCalculatorTests {
     Mockito.doReturn(this.budgetOne).when(this.budgetFetcher).getBudgetOfUserAndAccountById(any(User.class), any(long.class), any(long.class));
 
     try {
-      Expense createdExpense = this.expensePort.createExpense(this.user, 1, 1, newExpense);
+      this.expensePort.createExpense(this.user, 1, 1, newExpense);
       fail("Should throw error if total expenses are higher than budget amount");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("Budget amount has been exceeded. Total amount would be : 324");
@@ -88,7 +88,7 @@ public class ExpenseCalculatorTests {
     Expense expenseToUpdate = new Expense(1, "Bar", 40, (new Moment("2017-07-18")).getDate());
 
     try {
-      Expense updatedExpense = this.expensePort.updateExpense(this.user, 1, 1, expenseToUpdate);
+      this.expensePort.updateExpense(this.user, 1, 1, expenseToUpdate);
       fail("Should throw an error if there is no budget for the expense update");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("No budget found");
@@ -102,7 +102,7 @@ public class ExpenseCalculatorTests {
     Expense expenseToUpdate = new Expense(1, "Bar", 300, (new Moment("2017-07-18")).getDate());
 
     try {
-      Expense updatedExpense = this.expensePort.updateExpense(this.user, 1, 1, expenseToUpdate);
+      this.expensePort.updateExpense(this.user, 1, 1, expenseToUpdate);
       fail("Should throw error if total expenses are higher than budget amount");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("Budget amount has been exceeded. Total amount would be : 324");
@@ -126,7 +126,7 @@ public class ExpenseCalculatorTests {
     Expense expenseToUpdate = new Expense(1, "Bar", 40, (new Moment("2017-07-18")).getDate());
 
     try {
-      Expense updatedExpense = this.expensePort.updateExpense(this.user, 1, -1, expenseToUpdate);
+      this.expensePort.updateExpense(this.user, 1, -1, expenseToUpdate);
       fail("Should throw an error if there is no account for the expense update");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("No account for user and id");

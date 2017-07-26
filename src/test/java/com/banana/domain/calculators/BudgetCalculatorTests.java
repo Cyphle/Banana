@@ -74,7 +74,7 @@ public class BudgetCalculatorTests {
     Budget newBudget = new Budget("My budget", -200, today.getFirstDateOfMonth().getDate());
 
     try {
-      Budget createdBudget = this.budgetPort.createBudget(this.user, 1, newBudget);
+      this.budgetPort.createBudget(this.user, 1, newBudget);
       fail("Should throw creation exception with negative amoun");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("Budget initial amount cannot be negative");
@@ -87,7 +87,7 @@ public class BudgetCalculatorTests {
     Budget budgetToUpdate = new Budget(1,"My budget", 200, (new Moment()).getFirstDateOfMonth().getDate());
 
     try {
-      Budget updatedBudget = this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
+      this.budgetPort.updateBudget(this.user, 1, budgetToUpdate);
       fail("Should throw no element found exception if there is no budget with this id for the given account and user");
     } catch (UpdateException e) {
       assertThat(e.getMessage()).contains("No budget found with id");
@@ -166,7 +166,20 @@ public class BudgetCalculatorTests {
     assertThat(endDate.getYear()).isEqualTo(2017);
   }
 
-  /*
-  ADD EXpense should throw error if adding expense is over budget amount
-   */
+  @Test
+  public void should_delete_budget_by_setting_end_date() {
+    Budget budgetToUpdate = new Budget(2,"Budget one", 200, (new Moment("2017-01-01")).getDate());
+    budgetToUpdate.setEndDate((new Moment("2018-02-20")).getDate());
+    Mockito.doReturn(this.budgets).when(this.budgetFetcher).getBudgetsOfUserAndAccount(any(User.class), any(long.class));
+
+    Budget deletedBudget = this.budgetPort.deleteBudget(this.user, 1, budgetToUpdate);
+    Moment endDate = new Moment(deletedBudget.getEndDate());
+
+    assertThat(deletedBudget.getId()).isEqualTo(budgetToUpdate.getId());
+    assertThat(deletedBudget.getName()).isEqualTo("Budget one");
+    assertThat(deletedBudget.getInitialAmount()).isEqualTo(200);
+    assertThat(endDate.getDayOfMonth()).isEqualTo(28);
+    assertThat(endDate.getMonthNumber()).isEqualTo(2);
+    assertThat(endDate.getYear()).isEqualTo(2018);
+  }
 }

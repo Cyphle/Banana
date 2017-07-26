@@ -52,10 +52,11 @@ public class ChargeCalculator implements ChargePort {
     }
   }
 
-  public boolean deleteCharge(User user, long accountId, Charge charge) throws NoElementFoundException {
+  public Charge deleteCharge(User user, long accountId, Charge charge) throws NoElementFoundException {
     if (charge.getId() > 0) {
       this.accountVerifier.verifyAccount(user, accountId);
-      return this.chargeFetcher.deleteCharge(charge);
+      charge.setEndDate(new Moment(charge.getEndDate()).getLastDateOfMonth().getDate());
+      return this.chargeFetcher.updateCharge(accountId, charge);
     } else
       throw new NoElementFoundException("No such charge");
   }

@@ -165,12 +165,14 @@ public class ChargePortITests {
   @Test
   public void should_delete_charge() {
     Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
-    Charge chargeToUpdate = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId()).get(0);
+    Charge chargeToDelete = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId()).get(0);
+    chargeToDelete.setEndDate(new Moment("2017-07-20").getDate());
 
-    boolean isDeleted = this.chargePort.deleteCharge(this.user, myAccount.getId(), chargeToUpdate);
-    List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId());
+    Charge charge = this.chargePort.deleteCharge(this.user, myAccount.getId(), chargeToDelete);
+    Moment endDate = new Moment(charge.getEndDate());
 
-    assertThat(isDeleted).isTrue();
-    assertThat(charges.size()).isEqualTo(0);
+    assertThat(endDate.getDayOfMonth()).isEqualTo(31);
+    assertThat(endDate.getMonthNumber()).isEqualTo(7);
+    assertThat(endDate.getYear()).isEqualTo(2017);
   }
 }

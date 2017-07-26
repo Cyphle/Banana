@@ -40,6 +40,7 @@ public class BudgetCalculator implements BudgetPort {
   }
 
   public Budget updateBudget(User user, long accountId, Budget budget) throws UpdateException {
+    this.accountVerifier.verifyAccount(user, accountId);
     List<Budget> budgets = this.budgetFetcher
             .getBudgetsOfUserAndAccount(user, accountId)
             .stream()
@@ -58,17 +59,24 @@ public class BudgetCalculator implements BudgetPort {
           Budget newBudget = this.updateBudgetAmount(budget, account, oldBudget);
           return this.budgetFetcher.createBudget(accountId, newBudget);
         } else {
-          Budget budgetToUpdate = this.updateBudgetProperties(budget, account, oldBudget, budget);
+          Budget budgetToUpdate = this.updateBudgetProperties(budget, oldBudget, budget);
           return this.budgetFetcher.updateBudget(accountId, budgetToUpdate);
         }
       }
     }
   }
 
-  private Budget updateBudgetProperties(Budget budget, Account account, Budget oldBudget, Budget budgetToUpdate) {
+  public Budget deleteBudget(User user, long accountId, Budget budget) {
+    this.accountVerifier.verifyAccount(user, accountId);
+    Moment newEndDate = new Moment(budget.getEndDate()).getLastDateOfMonth();
+    return this.updateBudgetEndDate(budget, newEndDate);
+  }
+
+  private Budget updateBudgetProperties(Budget budget, Budget oldBudget, Budget budgetToUpdate) {
     Moment oldStartDate = new Moment(oldBudget.getStartDate());
     Moment oldEndDate = null;
     if (oldBudget.getEndDate() != null) oldEndDate = new Moment(oldBudget.getEndDate());
+
     Moment newStartDate = new Moment(budget.getStartDate()).getFirstDateOfMonth().getFirstDateOfMonth();
     Moment newEndDate = null;
     if (budget.getEndDate() != null) newEndDate = new Moment(budget.getEndDate()).getLastDateOfMonth();

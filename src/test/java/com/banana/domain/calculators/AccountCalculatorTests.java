@@ -120,7 +120,7 @@ public class AccountCalculatorTests {
     AccountPort aPort = new AccountCalculator(accountFetcher);
 
     try {
-      Account createdAccount = aPort.createAccount(accountToCreate);
+      aPort.createAccount(accountToCreate);
       fail("Should throw exception when account already exists");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("Account already exists with this name");

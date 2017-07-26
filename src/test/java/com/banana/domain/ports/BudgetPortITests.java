@@ -225,8 +225,21 @@ public class BudgetPortITests {
     assertThat(expenses.get(1).getDescription()).isEqualTo("Retrait");
   }
 
-  /*
-    Should delete budget
-    -> modify endDate to end at given date
-   */
+  @Test
+  public void should_delete_budget_by_stopping_its_end_date() {
+    Account myAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Budget budgetToUpdate = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
+
+    budgetToUpdate.setEndDate(new Moment("2017-08-20").getDate());
+    Budget deletedBudget = this.budgetPort.deleteBudget(this.user, myAccount.getId(), budgetToUpdate);
+    Moment newEndDate = new Moment(deletedBudget.getEndDate());
+    List<Expense> expenses = this.expenseFetcher.getExpensesOfBudget(budgetToUpdate);
+
+    assertThat(newEndDate.getDayOfMonth()).isEqualTo(31);
+    assertThat(newEndDate.getMonthNumber()).isEqualTo(8);
+    assertThat(newEndDate.getYear()).isEqualTo(2017);
+    assertThat(expenses.size()).isEqualTo(2);
+    assertThat(expenses.get(0).getDescription()).isEqualTo("Bar");
+    assertThat(expenses.get(1).getDescription()).isEqualTo("Retrait");
+  }
 }

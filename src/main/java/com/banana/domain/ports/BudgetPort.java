@@ -7,4 +7,5 @@ import com.banana.domain.models.User;
 public interface BudgetPort {
   Budget createBudget(User user, long accountId, Budget budget);
   Budget updateBudget(User user, long accountId, Budget budget);
+  Budget deleteBudget(User user, long accountId, Budget budget);
 }

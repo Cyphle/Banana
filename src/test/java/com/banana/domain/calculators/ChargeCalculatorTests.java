@@ -60,7 +60,7 @@ public class ChargeCalculatorTests {
     Charge newCharge = new Charge("Loyer", 1200, (new Moment("2013-02-10")).getDate());
 
     try {
-      Charge createdCharge = this.chargePort.createCharge(this.user, this.account.getId(), newCharge);
+      this.chargePort.createCharge(this.user, this.account.getId(), newCharge);
       fail("Should throw error if account does not exists");
     } catch (CreationException e) {
       assertThat(e.getMessage()).contains("No account for user and id");
@@ -86,7 +86,7 @@ public class ChargeCalculatorTests {
     Mockito.doReturn(this.charges).when(this.chargeFetcher).getChargesOfUserAndAccount(any(User.class), any(long.class));
 
     try {
-      Charge updatedCharge = this.chargePort.updateCharge(this.user, 1, chargeToUpdate);
+      this.chargePort.updateCharge(this.user, 1, chargeToUpdate);
       fail("Should throw update exception if there is no charge with this id for the given account and user");
     } catch (UpdateException e) {
       assertThat(e.getMessage()).contains("No charge found with id");
@@ -135,11 +135,15 @@ public class ChargeCalculatorTests {
   @Test
   public void should_delete_charge() {
     Charge chargeToUpdate = new Charge(1, "Loyer update", 1200, (new Moment("2017-08-01")).getDate());
+    chargeToUpdate.setEndDate(new Moment("2018-03-10").getDate());
     Mockito.doReturn(this.account).when(this.accountFetcher).getAccountByUserAndId(any(User.class), any(long.class));
     Mockito.doReturn(this.charges).when(this.chargeFetcher).getChargesOfUserAndAccount(any(User.class), any(long.class));
 
-    boolean isDeleted = this.chargePort.deleteCharge(this.user, 1, chargeToUpdate);
+    Charge deletedCharge = this.chargePort.deleteCharge(this.user, 1, chargeToUpdate);
+    Moment endDate = new Moment(deletedCharge.getEndDate());
 
-    assertThat(isDeleted).isTrue();
+    assertThat(endDate.getDayOfMonth()).isEqualTo(31);
+    assertThat(endDate.getMonthNumber()).isEqualTo(3);
+    assertThat(endDate.getYear()).isEqualTo(2018);
   }
 }
