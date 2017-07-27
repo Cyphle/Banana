@@ -6,6 +6,7 @@ import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.AccountPort;
 import com.banana.infrastructure.connector.adapters.*;
+import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.connector.repositories.*;
 import com.banana.infrastructure.orm.models.SExpense;
 import com.banana.infrastructure.orm.repositories.*;
@@ -36,6 +37,7 @@ public class AccountService {
   private ICreditFetcher creditFetcher;
   private IExpenseFetcher expenseFetcher;
 
+  private UserService userService;
   private AccountPort banker;
 
   @Autowired
@@ -45,7 +47,8 @@ public class AccountService {
           SBudgetRepository sBudgetRepository,
           SChargeRepository sChargeRepository,
           SCreditRepository sCreditRepository,
-          SExpenseRepository sExpenseRepository
+          SExpenseRepository sExpenseRepository,
+          UserService userService
   ) {
     this.sUserRepository = sUserRepository;
     this.sAccountRepository = sAccountRepository;
@@ -68,11 +71,16 @@ public class AccountService {
     this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
 
     this.banker = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
+    this.userService = userService;
   }
 
   public List<Account> getAccountsOfUser() {
-    User user = new User(1, "John", "Doe", "john@doe.fr");
-
+    User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
     return this.banker.getAccountsOfUser(user);
+  }
+
+  public Account getAccountBySlug(String slug) {
+    User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
+    return this.banker.getAccountByUserAndAccountSlug(user, slug);
   }
 }

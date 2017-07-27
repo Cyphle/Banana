@@ -11,4 +11,5 @@ public interface AccountPort {
   Account getAccountByUserAndAccountSlug(User user, String accountSlug);
   Account createAccount(Account account);
   Account updateAccount(Account account);
+  boolean deleteAccount(User user, long accountId);
 }

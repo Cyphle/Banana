@@ -12,4 +12,5 @@ public interface IAccountFetcher {
   Account getAccountByUserAndAccountSlug(User user, String accountSlug);
   Account createAccount(Account account);
   Account updateAccount(Account account);
+  boolean deleteAccount(Account account);
 }

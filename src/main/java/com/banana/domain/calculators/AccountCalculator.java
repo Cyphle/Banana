@@ -5,6 +5,7 @@ import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.*;
 import com.banana.domain.ports.AccountPort;
+import com.banana.domain.validators.AccountVerifier;
 import com.banana.utils.Moment;
 import com.github.slugify.Slugify;
 
@@ -66,6 +67,35 @@ public class AccountCalculator implements AccountPort {
       accountToUpdate.setSlug(accountSlug);
       return this.accountFetcher.updateAccount(accountToUpdate);
     }
+  }
+
+  public boolean deleteAccount(User user, long accountId) {
+    Account myAccount = this.accountFetcher.getAccountByUserAndId(user, accountId);
+    boolean isDeleted = false;
+    if (myAccount != null) {
+      for (Budget budget : myAccount.getBudgets()) {
+        for (Expense expense : budget.getExpenses()) {
+          isDeleted = this.expenseFetcher.deleteExpense(expense);
+          if (!isDeleted) break;
+        }
+        isDeleted = this.budgetFetcher.deleteBudget(budget);
+        if (!isDeleted) break;
+      }
+      for (Charge charge : myAccount.getCharges()) {
+        isDeleted = this.chargeFetcher.deleteCharge(charge);
+        if (!isDeleted) break;
+      }
+      for (Credit credit : myAccount.getCredits()) {
+        isDeleted = this.creditFetcher.deleteCredit(credit);
+        if (!isDeleted) break;
+      }
+      for (Expense expense : myAccount.getExpenses()) {
+        isDeleted = this.expenseFetcher.deleteExpense(expense);
+        if (!isDeleted) break;
+      }
+      isDeleted = this.accountFetcher.deleteAccount(myAccount);
+    }
+    return isDeleted;
   }
 
   private void getAccountItems(User user, Account myAccount) {

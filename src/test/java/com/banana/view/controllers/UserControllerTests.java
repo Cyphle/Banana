@@ -154,4 +154,9 @@ public class UserControllerTests {
             .andExpect(content().string(containsString("john@doe.fr")))
             .andExpect(content().string(containsString("profilepicture.jpg")));
   }
+
+  @Test
+  public void should_update_profile() throws Exception {
+    // TODO
+  }
 }

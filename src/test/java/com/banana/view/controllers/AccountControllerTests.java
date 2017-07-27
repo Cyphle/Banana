@@ -57,12 +57,27 @@ public class AccountControllerTests {
   }
 
   @Test
-  public void should_get_page_that_displays_accounts() throws Exception {
+  public void should_get_accounts_page() throws Exception {
     given(this.accountService.getAccountsOfUser()).willReturn(this.accounts);
 
     this.mvc.perform(get("/accounts"))
             .andExpect(status().isOk())
             .andExpect(view().name("account/accounts"))
             .andExpect(MockMvcResultMatchers.model().attribute("accounts", this.accounts));
+  }
+
+  @Test
+  public void should_create_a_new_account() throws Exception {
+    // TODO
+  }
+
+  @Test
+  public void should_update_an_account() throws Exception {
+    // TODO
+  }
+
+  @Test
+  public void should_delete_an_account() throws Exception {
+    // TODO
   }
 }

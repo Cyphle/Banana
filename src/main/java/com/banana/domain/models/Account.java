@@ -1,5 +1,6 @@
 package com.banana.domain.models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,10 @@ public class Account {
     this.name = name;
     this.initialAmount = initialAmount;
     this.startDate = startDate;
+    this.budgets = new ArrayList<>();
+    this.charges = new ArrayList<>();
+    this.credits = new ArrayList<>();
+    this.expenses = new ArrayList<>();
   }
 
   public Account(long id, User user, String name, String slug, double initialAmount, Date startDate) {

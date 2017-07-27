@@ -40,6 +40,15 @@ public class BudgetFetcher implements IBudgetFetcher {
     return BudgetPivot.fromInfrastructureToDomain(createdBudget);
   }
 
+  public boolean deleteBudget(Budget budget) {
+    SBudget sBudget = BudgetPivot.fromDomainToInfrastructure(budget);
+    sBudget.setDeleted(true);
+    SBudget deletedBudget = this.budgetRepository.updateBudget(sBudget);
+    if (deletedBudget != null && deletedBudget.isDeleted())
+      return true;
+    return false;
+  }
+
   public Budget updateBudget(long accountId, Budget budget) {
     SBudget budgetToUpdate = this.fromDomainToInfrastructure(accountId, budget);
     SBudget updatedBudget = this.budgetRepository.updateBudget(budgetToUpdate);

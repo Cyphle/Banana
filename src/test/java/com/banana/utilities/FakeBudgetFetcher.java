@@ -25,4 +25,8 @@ public class FakeBudgetFetcher implements IBudgetFetcher {
   public Budget updateBudget(long accountId, Budget budget) {
     return budget;
   }
+
+  public boolean deleteBudget(Budget budget) {
+    return true;
+  }
 }

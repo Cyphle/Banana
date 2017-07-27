@@ -1,5 +1,6 @@
 package com.banana.domain.models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class Budget {
     this.name = name;
     this.initialAmount = initialAmount;
     this.startDate = startDate;
+    this.expenses = new ArrayList<>();
   }
 
   public Budget(long id, String name, double initialAmount, Date startDate) {

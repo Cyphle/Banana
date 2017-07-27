@@ -62,6 +62,15 @@ public class AccountFetcher implements IAccountFetcher {
     return AccountPivot.fromInfrastructureToDomain(updatedAccount);
   }
 
+  public boolean deleteAccount(Account account) {
+    SAccount sAccount = AccountPivot.fromDomainToInfrastructure(account);
+    sAccount.setDeleted(true);
+    SAccount deleteAccount = this.accountRepository.updateAccount(sAccount);
+    if (deleteAccount != null && deleteAccount.isDeleted())
+      return true;
+    return false;
+  }
+
   private SAccount fromDomainToInfrastructure(Account account) {
     // from domain to infra
     SAccount sAccount = AccountPivot.fromDomainToInfrastructure(account);

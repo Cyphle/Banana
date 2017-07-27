@@ -282,9 +282,12 @@ public class AccountPortITests {
     assertThat(updatedAccount.getInitialAmount()).isEqualTo(2000.0);
   }
 
-  // TODO delete account
-  /*
-    - delete account
-      -> set is_deleted to true for account and its budgets, its expenses, ...
-   */
+  @Test
+  public void should_delete_an_account() {
+    SAccount myAccount = this.sAccountRepository.findByUserUsernameAndSlug(this.user.getUsername(), "account-one");
+
+    boolean isDeleted = this.accountPort.deleteAccount(this.user, myAccount.getId());
+
+    assertThat(isDeleted).isTrue();
+  }
 }

@@ -17,7 +17,7 @@ public class FakeAccountFetcher implements IAccountFetcher {
   }
 
   public Account getAccountByUserAndId(User user, long accountId) {
-    return null;
+    return new Account(3, user, "Account test", "account-test", 3000.0, new Moment("2016-01-01").getDate());
   }
 
   public Account getAccountByUserAndAccountName(User user, String accountName) {
@@ -31,4 +31,6 @@ public class FakeAccountFetcher implements IAccountFetcher {
   public Account createAccount(Account account) { return account; }
 
   public Account updateAccount(Account account) { return null; }
+
+  public boolean deleteAccount(Account account) { return true; }
 }

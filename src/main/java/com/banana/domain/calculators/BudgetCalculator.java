@@ -69,7 +69,7 @@ public class BudgetCalculator implements BudgetPort {
   public Budget deleteBudget(User user, long accountId, Budget budget) {
     this.accountVerifier.verifyAccount(user, accountId);
     Moment newEndDate = new Moment(budget.getEndDate()).getLastDateOfMonth();
-    return this.updateBudgetEndDate(budget, newEndDate);
+    return this.budgetFetcher.updateBudget(accountId, this.updateBudgetEndDate(budget, newEndDate));
   }
 
   private Budget updateBudgetProperties(Budget budget, Budget oldBudget, Budget budgetToUpdate) {

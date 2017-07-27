@@ -10,4 +10,5 @@ public interface IBudgetFetcher {
   Budget getBudgetOfUserAndAccountById(User user, long accountId, long budgetId);
   Budget createBudget(long accountId, Budget budget);
   Budget updateBudget(long accountId, Budget budget);
+  boolean deleteBudget(Budget budget);
 }

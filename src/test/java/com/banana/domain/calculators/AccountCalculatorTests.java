@@ -136,4 +136,10 @@ public class AccountCalculatorTests {
     assertThat(updatedAccount.getInitialAmount()).isEqualTo(1500.0);
     assertThat(updatedAccount.getSlug()).isEqualTo("account-to-update");
   }
+
+  @Test
+  public void should_delete_account() {
+    boolean isDeleted = this.accountPort.deleteAccount(this.user, 1);
+    assertThat(isDeleted).isTrue();
+  }
 }

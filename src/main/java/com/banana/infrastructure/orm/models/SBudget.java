@@ -64,7 +64,7 @@ public class SBudget {
 
   public void setUpdateDate(Date updateDate) { this.updateDate = updateDate; }
 
-  public boolean isDelete() { return this.isDeleted; }
+  public boolean isDeleted() { return this.isDeleted; }
 
   public void setDeleted(boolean deleted) { this.isDeleted = deleted; }
 }
