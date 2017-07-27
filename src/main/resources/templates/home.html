@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>Content page</title>
+</head>
+<body>
+<div layout:fragment="content" class="presentation">
+    <div class="home-catchline">
+        <h1>Banana, gestionnaire de comptes simple</h1>
+        <p>
+            Oubliez vos carnets, vos post-its, vos Excels<br />Utilisez
+            Banana pour plus de simplicité
+        </p>
+        <div>
+            <!-- <a th:href="@{/register}">S'inscrire</a>  -->
+            <p th:text="${toto}"></p>
+            <p th:text="${username}"></p>
+        </div>
+    </div>
+    <div class="home-images">
+        <img th:src="@{/img/BananaScreenshot.png}" alt="Excel sheets" />
+        <img th:src="@{/img/BananaScreenshot.png}" alt="Banana screenshot" />
+    </div>
+</div>
+</body>
+</html>

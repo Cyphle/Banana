@@ -5,7 +5,6 @@ import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
 import com.banana.utils.Moment;
 import com.banana.view.services.AccountService;
-import com.banana.view.controllers.AccountController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
