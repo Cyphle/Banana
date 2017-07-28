@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -119,5 +120,15 @@ public class APIAccountControllerTests {
             .andExpect(jsonPath("$.credits", hasSize(1)))
             .andExpect(jsonPath("$.credits[0].description", is("Salaire")))
             .andExpect(jsonPath("$.credits[0].amount", is(2400.0)));
+  }
+
+  @Test
+  public void should_delete_an_account() throws Exception {
+    given(this.accountService.deleteAccount(any(long.class))).willReturn(true);
+
+    this.mvc.perform(delete("/accounts/" + this.account.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(jsonPath("$.status", is(200)));
   }
 }

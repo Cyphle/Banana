@@ -1,6 +1,7 @@
 package com.banana.view.controllers;
 
 import com.banana.domain.models.Account;
+import com.banana.utils.Status;
 import com.banana.view.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,11 @@ public class APIAccountController {
 
   @RequestMapping(value = "/{accountSlug}", method = RequestMethod.GET)
   public Account getAccount(@PathVariable String accountSlug) {
-    Account account = this.accountService.getAccountBySlug(accountSlug);
-    return account;
+    return this.accountService.getAccountBySlug(accountSlug);
+  }
+
+  @RequestMapping(value = "/{accountId}", method = RequestMethod.DELETE)
+  public Status deleteAccount(@PathVariable long accountId) {
+    return new Status(this.accountService.deleteAccount(accountId), "Delete account of id : " + accountId);
   }
 }

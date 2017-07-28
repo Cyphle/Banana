@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layout">
+<head>
+  <title>Account</title>
+</head>
+<body>
+<div layout:fragment="content" class="page-form">
+  <h1 th:if="${account}">
+    Edition du compte <span th:text="${account.name}"></span>
+  </h1>
+  <h1 th:if="!${account}">Création de compte</h1>
+  <div layout:fragment="account-form"></div>
+</div>
+</body>
+</html>
