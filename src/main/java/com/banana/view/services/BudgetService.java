@@ -79,6 +79,11 @@ public class BudgetService {
     this.userService = userService;
   }
 
+  public Budget getBudget(long accountId, long budgetId) {
+    User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
+    return this.budgetPort.getBudgetById(user, accountId, budgetId);
+  }
+
   public Account createBudget(BudgetForm budgetForm) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
     Budget budget = new Budget(budgetForm.getName(), budgetForm.getInitialAmount(), budgetForm.getStartDate());
@@ -90,6 +95,13 @@ public class BudgetService {
   }
 
   public Account updateBudget(BudgetForm budgetForm) {
+    User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
+    Budget budget = new Budget(budgetForm.getName(), budgetForm.getInitialAmount(), budgetForm.getStartDate());
+    budget.setId(budgetForm.getId());
+    if (budgetForm.getEndDate() != null) budget.setEndDate(budgetForm.getEndDate());
+    Budget updatedBudget = this.budgetPort.updateBudget(user, budgetForm.getAccountId(), budget);
+    if (updatedBudget != null)
+      return this.accountPort.getAccountByUserAndAccountId(user, budgetForm.getAccountId());
     return null;
   }
 

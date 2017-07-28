@@ -106,6 +106,17 @@ public class BudgetPortITests {
   }
 
   @Test
+  public void should_get_budget_by_id() {
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Budget myBudget = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
+
+    Budget budget = this.budgetPort.getBudgetById(this.user, myAccount.getId(), myBudget.getId());
+
+    assertThat(budget.getName()).isEqualTo("Budget one");
+    assertThat(budget.getInitialAmount()).isEqualTo(300);
+  }
+
+  @Test
   public void should_create_new_budget() {
     Moment today = new Moment();
     Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");

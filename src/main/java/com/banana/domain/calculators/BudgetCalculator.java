@@ -30,6 +30,10 @@ public class BudgetCalculator implements BudgetPort {
     this.accountVerifier = new AccountVerifier(this.accountFetcher);
   }
 
+  public Budget getBudgetById(User user, long accountId, long budgetId) {
+    return this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
+  }
+
   public Budget createBudget(User user, long accountId, Budget budget) throws CreationException {
     this.accountVerifier.verifyAccount(user, accountId);
     if (this.isInitialAmountNegative(budget))

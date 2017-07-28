@@ -21,9 +21,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -64,7 +61,7 @@ public class BudgetControllerTests {
 
   @Test
   public void should_get_budget_creation_page() throws  Exception {
-    this.mvc.perform(get("/budgets/create"))
+    this.mvc.perform(get("/budgets/create/1"))
             .andExpect(status().isOk())
             .andExpect(view().name("budget/create-budget"));
   }
@@ -85,22 +82,27 @@ public class BudgetControllerTests {
 
   @Test
   public void should_get_update_budget_page() throws Exception {
-//    given(this.budgetService.getAccountBySlug(any(String.class))).willReturn(this.account);
-//
-//    this.mvc.perform(get("/accounts/update/my-account"))
-//            .andExpect(status().isOk())
-//            .andExpect(view().name("account/update-account"));
-    // TODO
+    given(this.budgetService.getBudget(any(long.class), any(long.class))).willReturn(this.budget);
+
+    this.mvc.perform(get("/budgets/update/1/1"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("budget/update-budget"));
   }
 
   @Test
   public void should_update_budget() throws Exception {
-    // TODO
-  }
+    given(this.budgetService.updateBudget(any(BudgetForm.class))).willReturn(this.account);
 
-  @Test
-  public void should_delete_budget() throws Exception {
-    // TODO
+    this.mvc.perform(post("/budgets/update")
+            .param("id", "1")
+            .param("accountId", "1")
+            .param("name", this.budget.getName())
+            .param("initialAmount", new Double(this.budget.getInitialAmount()).toString())
+            .param("startDate", "01/01/2017")
+            .param("endDate", "01/06/2018")
+            .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(header().string("Location", "/accounts/my-account"));
   }
 
   @Test
@@ -112,32 +114,4 @@ public class BudgetControllerTests {
   public void should_update_budget_expense() throws Exception {
     // TODO
   }
-
-  @Test
-  public void should_delete_budget_expense() throws Exception {
-    // TODO
-  }
-
-  /*
-  @Test
-  public void should_get_update_account_page() throws Exception {
-    given(this.accountService.getAccountBySlug(any(String.class))).willReturn(this.account);
-
-    this.mvc.perform(get("/accounts/update/my-account"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("account/update-account"));
-  }
-
-  @Test
-  public void should_update_an_account() throws Exception {
-    given(this.accountService.updateAccount(any(AccountForm.class))).willReturn(this.account);
-
-    this.mvc.perform(post("/accounts/update")
-            .param("name", this.account.getName())
-            .param("initialAmount", new Double(this.account.getInitialAmount()).toString())
-            .with(csrf())
-    ).andExpect(status().is3xxRedirection())
-            .andExpect(header().string("Location", "/accounts/my-account"));
-  }
-   */
 }

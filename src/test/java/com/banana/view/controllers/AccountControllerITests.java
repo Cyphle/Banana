@@ -136,6 +136,6 @@ public class AccountControllerITests {
 
     Account updatedAccount = this.accountService.getAccountsOfUser().stream().filter(account -> account.getName() == "Account update").collect(Collectors.toList()).get(0);
     assertThat(updatedAccount.getSlug()).isEqualTo("account-update");
-    assertThat(updatedAccount.getInitialAmount()).isEqualTo(3000);
+    assertThat(updatedAccount.getInitialAmount()).isEqualTo(3000.0);
   }
 }

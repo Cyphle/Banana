@@ -5,6 +5,7 @@ import com.banana.config.WebSecurityConfig;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.infrastructure.orm.models.SAccount;
+import com.banana.infrastructure.orm.models.SBudget;
 import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.SAccountRepository;
 import com.banana.infrastructure.orm.repositories.SBudgetRepository;
@@ -85,6 +86,10 @@ public class BudgetControllerITests {
     SAccount account = new SAccount(this.fakeUser, "My account", "my-account", 2000, new Moment("2017-01-01").getDate());
     this.accountRepository.save(account);
 
+    SBudget budget = new SBudget("Clopes", 200, new Moment("2017-01-01").getDate());
+    budget.setAccount(account);
+    this.budgetRepository.save(budget);
+
     given(this.userService.isAuthenticated()).willReturn(true);
     given(this.userService.getAuthenticatedUser()).willReturn(this.fakeUser);
   }
@@ -112,12 +117,28 @@ public class BudgetControllerITests {
             .andExpect(header().string("Location", "/accounts/my-account"));
 
     Account account = this.accountService.getAccountBySlug("my-account");
-    assertThat(account.getBudgets().size()).isEqualTo(1);
+    assertThat(account.getBudgets().size()).isEqualTo(2);
   }
 
   @Test
+  @WithMockUser(username = "john@doe.fr", roles = {"USER", "ADMIN"})
   public void should_update_budget() throws Exception {
-    // TODO
+    SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
+    SBudget sBudget = this.budgetRepository.findByUserUsernameAndAccountId(this.fakeUser.getUsername(), sAccount.getId()).get(0);
+
+    this.mvc.perform(post("/budgets/update")
+            .param("id", new Long(sBudget.getId()).toString())
+            .param("accountId", new Long(sAccount.getId()).toString())
+            .param("name", "Manger")
+            .param("initialAmount", new Double(300.0).toString())
+            .param("startDate", "01/02/2017")
+            .param("endDate", "01/06/2018")
+            .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(header().string("Location", "/accounts/my-account"));
+
+    Account account = this.accountService.getAccountBySlug("my-account");
+    assertThat(account.getBudgets().size()).isEqualTo(2);
   }
 
   @Test
