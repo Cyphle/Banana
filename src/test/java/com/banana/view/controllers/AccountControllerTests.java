@@ -87,8 +87,8 @@ public class AccountControllerTests {
     this.mvc.perform(post("/accounts/create")
             .param("name", this.account.getName())
             .param("initialAmount", new Double(this.account.getInitialAmount()).toString())
-            .with(csrf())
-    ).andExpect(status().is3xxRedirection())
+            .with(csrf()))
+            .andExpect(status().is3xxRedirection())
             .andExpect(header().string("Location", "/accounts/my-account"));
   }
 
@@ -108,8 +108,8 @@ public class AccountControllerTests {
     this.mvc.perform(post("/accounts/update")
             .param("name", this.account.getName())
             .param("initialAmount", new Double(this.account.getInitialAmount()).toString())
-            .with(csrf())
-    ).andExpect(status().is3xxRedirection())
+            .with(csrf()))
+            .andExpect(status().is3xxRedirection())
             .andExpect(header().string("Location", "/accounts/my-account"));
   }
 }

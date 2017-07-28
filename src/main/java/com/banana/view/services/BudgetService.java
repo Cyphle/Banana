@@ -2,23 +2,24 @@ package com.banana.view.services;
 
 import com.banana.domain.adapters.*;
 import com.banana.domain.calculators.AccountCalculator;
+import com.banana.domain.calculators.BudgetCalculator;
 import com.banana.domain.models.Account;
+import com.banana.domain.models.Budget;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.AccountPort;
+import com.banana.domain.ports.BudgetPort;
 import com.banana.infrastructure.connector.adapters.*;
 import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.connector.repositories.*;
-import com.banana.infrastructure.orm.models.SExpense;
 import com.banana.infrastructure.orm.repositories.*;
-import com.banana.utils.Moment;
-import com.banana.view.forms.AccountForm;
+import com.banana.view.forms.BudgetForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Date;
 
 @Service
-public class AccountService {
+public class BudgetService {
   private SUserRepository sUserRepository;
   private SAccountRepository sAccountRepository;
   private SBudgetRepository sBudgetRepository;
@@ -40,10 +41,11 @@ public class AccountService {
   private IExpenseFetcher expenseFetcher;
 
   private UserService userService;
-  private AccountPort banker;
+  private AccountPort accountPort;
+  private BudgetPort budgetPort;
 
   @Autowired
-  public AccountService(
+  public BudgetService(
           SUserRepository sUserRepository,
           SAccountRepository sAccountRepository,
           SBudgetRepository sBudgetRepository,
@@ -72,38 +74,34 @@ public class AccountService {
     this.creditFetcher = new CreditFetcher(this.accountRepository, this.creditRepository);
     this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
 
-    this.banker = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
+    this.accountPort = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
+    this.budgetPort = new BudgetCalculator(this.accountFetcher, this.budgetFetcher,this.expenseFetcher);
     this.userService = userService;
   }
 
-  public List<Account> getAccountsOfUser() {
+  public Account createBudget(BudgetForm budgetForm) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    return this.banker.getAccountsOfUser(user);
+    Budget budget = new Budget(budgetForm.getName(), budgetForm.getInitialAmount(), budgetForm.getStartDate());
+    if (budgetForm.getEndDate() != null) budget.setEndDate(budgetForm.getEndDate());
+    Budget createdBudget = this.budgetPort.createBudget(user, budgetForm.getAccountId(), budget);
+    if (createdBudget != null)
+      return this.accountPort.getAccountByUserAndAccountId(user, budgetForm.getAccountId());
+    return null;
   }
 
-  public Account getAccountBySlug(String slug) {
-    User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    return this.banker.getAccountByUserAndAccountSlug(user, slug);
+  public Account updateBudget(BudgetForm budgetForm) {
+    return null;
   }
 
-  public Account createAccount(AccountForm accountForm) {
-    if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
+  public boolean deleteBudget(long accountId, long budgetId, Date endDate) {
+    // TODO for budgetAPI /budgets/id?end-date=....
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
-    Account account = new Account(user, accountForm.getName(), accountForm.getInitialAmount(), accountForm.getStartDate());
-    return this.banker.createAccount(account);
-  }
-
-  public Account updateAccount(AccountForm accountForm) {
-    if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
-    User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    Account account = new Account(user, accountForm.getName(), accountForm.getInitialAmount(), accountForm.getStartDate());
-    account.setId(accountForm.getId());
-    return this.banker.updateAccount(account);
-  }
-
-  public boolean deleteAccount(long accountId) {
-    User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    return this.banker.deleteAccount(user, accountId);
+    Budget budget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
+    budget.setEndDate(endDate);
+    Budget deletedBudget = this.budgetPort.deleteBudget(user, accountId, budget);
+    if (deletedBudget != null)
+      return true;
+    else
+      return false;
   }
 }

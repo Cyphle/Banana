@@ -44,8 +44,7 @@ public class AccountController {
     Account createdAccount = this.accountService.createAccount(accountForm);
     if (createdAccount != null)
       return "redirect:/accounts/" + createdAccount.getSlug();
-    else
-      return "account/create-account";
+    return "account/create-account";
   }
 
   @RequestMapping(value = "/update/{accountSlug}", method = RequestMethod.GET)
@@ -64,7 +63,6 @@ public class AccountController {
     Account updatedAccount = this.accountService.updateAccount(accountForm);
     if (updatedAccount != null)
       return "redirect:/accounts/" + updatedAccount.getSlug();
-    else
-      return "account/update-account";
+    return "account/update-account";
   }
 }

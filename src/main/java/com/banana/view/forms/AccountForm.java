@@ -1,7 +1,5 @@
 package com.banana.view.forms;
 
-import com.banana.utils.Moment;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;

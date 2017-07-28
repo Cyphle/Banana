@@ -29,6 +29,10 @@ public class SBudget {
   @Column(name = "is_deleted")
   private boolean isDeleted;
 
+  public SBudget() {
+    this.isDeleted = false;
+  }
+
   public SBudget(String name, double initialAmount, Date startDate) {
     this.name = name;
     this.initialAmount = initialAmount;

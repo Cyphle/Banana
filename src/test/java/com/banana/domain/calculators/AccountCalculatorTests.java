@@ -75,6 +75,14 @@ public class AccountCalculatorTests {
   }
 
   @Test
+  public void should_get_an_account_of_user_by_account_id() {
+    Account fetchedAccount = this.accountPort.getAccountByUserAndAccountId(this.user, 3);
+
+    assertThat(fetchedAccount.getName()).isEqualTo("Account test");
+    assertThat(fetchedAccount.getInitialAmount()).isEqualTo(3000.0);
+  }
+
+  @Test
   public void should_create_and_account_for_user() {
     IAccountFetcher accountFetcher = new AccountFetcher(null, null);
     accountFetcher = Mockito.spy(accountFetcher);

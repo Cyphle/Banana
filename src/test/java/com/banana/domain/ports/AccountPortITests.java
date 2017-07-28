@@ -156,46 +156,7 @@ public class AccountPortITests {
     Account account = this.accountPort.getAccountByUserAndAccountName(this.user, "Account one");
     Moment accountStartDate = new Moment(account.getStartDate());
 
-    assertThat(account.getName()).isEqualTo("Account one");
-    assertThat(account.getInitialAmount()).isEqualTo(1000);
-    assertThat(account.getSlug()).isEqualTo("account-one");
-    assertThat(account.getUser().getUsername()).isEqualTo("john@doe.fr");
-    assertThat(accountStartDate.getDayOfMonth()).isEqualTo(1);
-    assertThat(accountStartDate.getMonthNumber()).isEqualTo(1);
-    assertThat(accountStartDate.getYear()).isEqualTo(2016);
-    assertThat(account.getBudgets().size()).isEqualTo(2);
-    assertThat(account.getExpenses().size()).isEqualTo(2);
-    assertThat(account.getCharges().size()).isEqualTo(2);
-    assertThat(account.getCredits().size()).isEqualTo(1);
-
-    // BUDGETS
-    Budget budgetManger = account.getBudgets().stream().filter(budget -> budget.getName() == "Manger").collect(Collectors.toList()).get(0);
-    Budget budgetClopes = account.getBudgets().stream().filter(budget -> budget.getName() == "Clopes").collect(Collectors.toList()).get(0);
-    assertThat(budgetManger.getInitialAmount()).isEqualTo(300);
-    assertThat(budgetManger.getExpenses().size()).isEqualTo(2);
-    assertThat(budgetClopes.getInitialAmount()).isEqualTo(200);
-
-    // BUDGET EXPENSES
-    Expense expenseG20 = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "G20").collect(Collectors.toList()).get(0);
-    Expense expenseMonoprix = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "Monoprix").collect(Collectors.toList()).get(0);
-    assertThat(expenseG20.getAmount()).isEqualTo(20);
-    assertThat(expenseMonoprix.getAmount()).isEqualTo(30);
-
-    // EXPENSES
-    Expense expenseBar = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Bar").collect(Collectors.toList()).get(0);
-    Expense expenseRetrait = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Retrait").collect(Collectors.toList()).get(0);
-    assertThat(expenseBar.getAmount()).isEqualTo(50);
-    assertThat(expenseRetrait.getAmount()).isEqualTo(60);
-
-    // CHARGES
-    Charge chargeLoyer = account.getCharges().stream().filter(charge -> charge.getDescription() == "Loyer").collect(Collectors.toList()).get(0);
-    Charge chargeInternet = account.getCharges().stream().filter(charge -> charge.getDescription() == "Internet").collect(Collectors.toList()).get(0);
-    assertThat(chargeLoyer.getAmount()).isEqualTo(1200);
-    assertThat(chargeInternet.getAmount()).isEqualTo(40);
-
-    // CREDITS
-    Credit creditSalaire = account.getCredits().get(0);
-    assertThat(creditSalaire.getAmount()).isEqualTo(2400);
+    assertCompleteAccount(account, accountStartDate);
   }
 
   @Test
@@ -203,46 +164,16 @@ public class AccountPortITests {
     Account account = this.accountPort.getAccountByUserAndAccountSlug(this.user, "account-one");
     Moment accountStartDate = new Moment(account.getStartDate());
 
-    assertThat(account.getName()).isEqualTo("Account one");
-    assertThat(account.getInitialAmount()).isEqualTo(1000);
-    assertThat(account.getSlug()).isEqualTo("account-one");
-    assertThat(account.getUser().getUsername()).isEqualTo("john@doe.fr");
-    assertThat(accountStartDate.getDayOfMonth()).isEqualTo(1);
-    assertThat(accountStartDate.getMonthNumber()).isEqualTo(1);
-    assertThat(accountStartDate.getYear()).isEqualTo(2016);
-    assertThat(account.getBudgets().size()).isEqualTo(2);
-    assertThat(account.getExpenses().size()).isEqualTo(2);
-    assertThat(account.getCharges().size()).isEqualTo(2);
-    assertThat(account.getCredits().size()).isEqualTo(1);
+    this.assertCompleteAccount(account, accountStartDate);
+  }
 
-    // BUDGETS
-    Budget budgetManger = account.getBudgets().stream().filter(budget -> budget.getName() == "Manger").collect(Collectors.toList()).get(0);
-    Budget budgetClopes = account.getBudgets().stream().filter(budget -> budget.getName() == "Clopes").collect(Collectors.toList()).get(0);
-    assertThat(budgetManger.getInitialAmount()).isEqualTo(300);
-    assertThat(budgetManger.getExpenses().size()).isEqualTo(2);
-    assertThat(budgetClopes.getInitialAmount()).isEqualTo(200);
+  @Test
+  public void should_get_account_by_id_with_all_its_info() {
+    Account tempAccount = this.accountPort.getAccountByUserAndAccountSlug(this.user, "account-one");
+    Account account = this.accountPort.getAccountByUserAndAccountId(this.user, tempAccount.getId());
+    Moment accountStartDate = new Moment(account.getStartDate());
 
-    // BUDGET EXPENSES
-    Expense expenseG20 = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "G20").collect(Collectors.toList()).get(0);
-    Expense expenseMonoprix = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "Monoprix").collect(Collectors.toList()).get(0);
-    assertThat(expenseG20.getAmount()).isEqualTo(20);
-    assertThat(expenseMonoprix.getAmount()).isEqualTo(30);
-
-    // EXPENSES
-    Expense expenseBar = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Bar").collect(Collectors.toList()).get(0);
-    Expense expenseRetrait = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Retrait").collect(Collectors.toList()).get(0);
-    assertThat(expenseBar.getAmount()).isEqualTo(50);
-    assertThat(expenseRetrait.getAmount()).isEqualTo(60);
-
-    // CHARGES
-    Charge chargeLoyer = account.getCharges().stream().filter(charge -> charge.getDescription() == "Loyer").collect(Collectors.toList()).get(0);
-    Charge chargeInternet = account.getCharges().stream().filter(charge -> charge.getDescription() == "Internet").collect(Collectors.toList()).get(0);
-    assertThat(chargeLoyer.getAmount()).isEqualTo(1200);
-    assertThat(chargeInternet.getAmount()).isEqualTo(40);
-
-    // CREDITS
-    Credit creditSalaire = account.getCredits().get(0);
-    assertThat(creditSalaire.getAmount()).isEqualTo(2400);
+    this.assertCompleteAccount(account, accountStartDate);
   }
 
   @Test
@@ -289,5 +220,48 @@ public class AccountPortITests {
     boolean isDeleted = this.accountPort.deleteAccount(this.user, myAccount.getId());
 
     assertThat(isDeleted).isTrue();
+  }
+
+  private void assertCompleteAccount(Account account, Moment accountStartDate) {
+    assertThat(account.getName()).isEqualTo("Account one");
+    assertThat(account.getInitialAmount()).isEqualTo(1000);
+    assertThat(account.getSlug()).isEqualTo("account-one");
+    assertThat(account.getUser().getUsername()).isEqualTo("john@doe.fr");
+    assertThat(accountStartDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(accountStartDate.getMonthNumber()).isEqualTo(1);
+    assertThat(accountStartDate.getYear()).isEqualTo(2016);
+    assertThat(account.getBudgets().size()).isEqualTo(2);
+    assertThat(account.getExpenses().size()).isEqualTo(2);
+    assertThat(account.getCharges().size()).isEqualTo(2);
+    assertThat(account.getCredits().size()).isEqualTo(1);
+
+    // BUDGETS
+    Budget budgetManger = account.getBudgets().stream().filter(budget -> budget.getName() == "Manger").collect(Collectors.toList()).get(0);
+    Budget budgetClopes = account.getBudgets().stream().filter(budget -> budget.getName() == "Clopes").collect(Collectors.toList()).get(0);
+    assertThat(budgetManger.getInitialAmount()).isEqualTo(300);
+    assertThat(budgetManger.getExpenses().size()).isEqualTo(2);
+    assertThat(budgetClopes.getInitialAmount()).isEqualTo(200);
+
+    // BUDGET EXPENSES
+    Expense expenseG20 = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "G20").collect(Collectors.toList()).get(0);
+    Expense expenseMonoprix = budgetManger.getExpenses().stream().filter(expense -> expense.getDescription() == "Monoprix").collect(Collectors.toList()).get(0);
+    assertThat(expenseG20.getAmount()).isEqualTo(20);
+    assertThat(expenseMonoprix.getAmount()).isEqualTo(30);
+
+    // EXPENSES
+    Expense expenseBar = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Bar").collect(Collectors.toList()).get(0);
+    Expense expenseRetrait = account.getExpenses().stream().filter(expense -> expense.getDescription() == "Retrait").collect(Collectors.toList()).get(0);
+    assertThat(expenseBar.getAmount()).isEqualTo(50);
+    assertThat(expenseRetrait.getAmount()).isEqualTo(60);
+
+    // CHARGES
+    Charge chargeLoyer = account.getCharges().stream().filter(charge -> charge.getDescription() == "Loyer").collect(Collectors.toList()).get(0);
+    Charge chargeInternet = account.getCharges().stream().filter(charge -> charge.getDescription() == "Internet").collect(Collectors.toList()).get(0);
+    assertThat(chargeLoyer.getAmount()).isEqualTo(1200);
+    assertThat(chargeInternet.getAmount()).isEqualTo(40);
+
+    // CREDITS
+    Credit creditSalaire = account.getCredits().get(0);
+    assertThat(creditSalaire.getAmount()).isEqualTo(2400);
   }
 }

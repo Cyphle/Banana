@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="budget/form">
+<head>
+  <title>credits</title>
+</head>
+<body>
+<div layout:fragment="budget-form" class="page-form">
+  <form th:action="@{/budgets/update}" method="POST">
+    <input type="hidden" name="accountId" th:value="${budget.account.id}" />
+    <input type="hidden" name="budgetId" th:value="${budget.id}" />
+    <div>
+      <input type="text" name="startDate" placeholder="Date de début" id="start-date" th:value="${budget != null and budget.startDate != null ? #dates.format(budget.startDate, 'MM/yyyy') : ''}" />
+    </div>
+    <div>
+      <input type="text" name="endDate" placeholder="Date de find" id="end-date" th:value="${budget != null and budget.endDate != null ? #dates.format(budget.endDate, 'MM/yyyy') : ''}" />
+    </div>
+    <div>
+      <input type="text" name="name" placeholder="Nom" th:value="${budget != null ? budget.name : ''}" />
+    </div>
+    <div>
+      <input type="text" name="initialAmount" placeholder="Montant" th:value="${budget != null ? budget.initialAmount : ''}" />
+    </div>
+    <div>
+      <input type="submit" value="Update" />
+    </div>
+  </form>
+</div>
+</body>
+</html>

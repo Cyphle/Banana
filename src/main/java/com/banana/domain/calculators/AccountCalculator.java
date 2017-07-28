@@ -42,6 +42,12 @@ public class AccountCalculator implements AccountPort {
     return myAccount;
   }
 
+  public Account getAccountByUserAndAccountId(User user, long accountId) {
+    Account myAccount = this.accountFetcher.getAccountByUserAndId(user, accountId);
+    this.getAccountItems(user, myAccount);
+    return myAccount;
+  }
+
   public Account createAccount(Account account) throws CreationException {
     Account checkAccount = this.accountFetcher.getAccountByUserAndAccountSlug(account.getUser(), account.getSlug());
     if (checkAccount != null)
