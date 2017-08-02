@@ -25,3 +25,8 @@ nbdist/
 
 .DS_Store
 application*
+static/node_modules
+static/coverage
+static/javascript/build
+static/javascript/dist
+static/css
