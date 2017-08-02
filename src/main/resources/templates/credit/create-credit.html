@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="credit/form">
+<head>
+  <title>Crédit</title>
+</head>
+<body>
+<div layout:fragment="credit-form" class="page-form">
+  <form th:action="@{/credits/create}" method="POST">
+    <input type="hidden" name="accountId" th:value="${creditForm.accountId > 0 ? creditForm.accountId : -1}" />
+    <div>
+      <input type="text" name="creditDate" placeholder="Date de crédit" id="credit-date" />
+    </div>
+    <div>
+      <input type="text" name="description" placeholder="Description" />
+    </div>
+    <div>
+      <input type="text" name="amount" placeholder="Montant" />
+    </div>
+    <div>
+      <input type="submit" value="Create" />
+    </div>
+  </form>
+</div>
+</body>
+</html>

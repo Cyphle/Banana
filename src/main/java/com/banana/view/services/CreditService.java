@@ -2,23 +2,22 @@ package com.banana.view.services;
 
 import com.banana.domain.adapters.*;
 import com.banana.domain.calculators.AccountCalculator;
-import com.banana.domain.calculators.ChargeCalculator;
+import com.banana.domain.calculators.CreditCalculator;
 import com.banana.domain.models.Account;
-import com.banana.domain.models.Charge;
+import com.banana.domain.models.Credit;
 import com.banana.domain.models.User;
 import com.banana.domain.ports.AccountPort;
-import com.banana.domain.ports.ChargePort;
+import com.banana.domain.ports.CreditPort;
 import com.banana.infrastructure.connector.adapters.*;
 import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.connector.repositories.*;
 import com.banana.infrastructure.orm.repositories.*;
-import com.banana.utils.Moment;
-import com.banana.view.forms.ChargeForm;
-import com.banana.view.pivots.ChargeFormPivot;
+import com.banana.view.forms.CreditForm;
+import com.banana.view.pivots.CreditFormPivot;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ChargeService {
+public class CreditService {
   private SUserRepository sUserRepository;
   private SAccountRepository sAccountRepository;
   private SBudgetRepository sBudgetRepository;
@@ -41,15 +40,16 @@ public class ChargeService {
 
   private UserService userService;
   private AccountPort accountPort;
-  private ChargePort chargePort;
+  private CreditPort creditPort;
 
-  public ChargeService(SUserRepository sUserRepository,
-                       SAccountRepository sAccountRepository,
-                       SBudgetRepository sBudgetRepository,
-                       SChargeRepository sChargeRepository,
-                       SCreditRepository sCreditRepository,
-                       SExpenseRepository sExpenseRepository,
-                       UserService userService
+  public CreditService(
+          SUserRepository sUserRepository,
+          SAccountRepository sAccountRepository,
+          SBudgetRepository sBudgetRepository,
+          SChargeRepository sChargeRepository,
+          SCreditRepository sCreditRepository,
+          SExpenseRepository sExpenseRepository,
+          UserService userService
   ) {
     this.sUserRepository = sUserRepository;
     this.sAccountRepository = sAccountRepository;
@@ -72,41 +72,36 @@ public class ChargeService {
     this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
 
     this.accountPort = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
-    this.chargePort = new ChargeCalculator(this.accountFetcher, this.chargeFetcher);
+    this.creditPort = new CreditCalculator(this.accountFetcher, this.creditFetcher);
     this.userService = userService;
   }
 
-  public Charge getCharge(long accountId, long chargeId) {
+  public Credit getCredit(long accountId, long creditId) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    return this.chargePort.getChargeById(user, accountId, chargeId);
+    return this.creditPort.getCreditById(user, accountId, creditId);
   }
 
-  public Account createCharge(ChargeForm chargeForm) {
+  public Account createCredit(CreditForm creditForm) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    Charge charge = ChargeFormPivot.fromViewToDomain(chargeForm);
-    Charge createdCharge = this.chargePort.createCharge(user, chargeForm.getAccountId(), charge);
-    if (createdCharge != null)
-      return this.accountPort.getAccountByUserAndAccountId(user, chargeForm.getAccountId());
+    Credit credit = CreditFormPivot.fromViewToDomain(creditForm);
+    Credit createdCredit = this.creditPort.createCredit(user, creditForm.getAccountId(), credit);
+    if (createdCredit != null)
+      return this.accountPort.getAccountByUserAndAccountId(user, creditForm.getAccountId());
     return null;
   }
 
-  public Account updateCharge(ChargeForm chargeForm) {
+  public Account updateCredit(CreditForm creditForm) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    Charge charge = ChargeFormPivot.fromViewToDomain(chargeForm);
-    Charge updatedCharge = this.chargePort.updateCharge(user, chargeForm.getAccountId(), charge);
-    if (updatedCharge != null)
-      return this.accountPort.getAccountByUserAndAccountId(user, chargeForm.getAccountId());
+    Credit credit = CreditFormPivot.fromViewToDomain(creditForm);
+    Credit updatedCredit = this.creditPort.updateCredit(user, creditForm.getAccountId(), credit);
+    if (updatedCredit != null)
+      return this.accountPort.getAccountByUserAndAccountId(user, creditForm.getAccountId());
     return null;
   }
 
-  public boolean deleteCharge(long accountId, long chargeId, String endDate) {
+  public boolean deleteCredit(long accountId, long creditId) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    Charge charge = this.getCharge(accountId, chargeId);
-    if (endDate != null && endDate.length() > 0) charge.setEndDate(new Moment(endDate).getDate());
-    else charge.setEndDate(new Moment().getLastDayOfPrecedingMonth().getDate());
-    Charge deletedCharge = this.chargePort.deleteCharge(user, accountId, charge);
-    if (deletedCharge != null)
-      return true;
-    return false;
+    Credit credit = this.getCredit(accountId, creditId);
+    return this.creditPort.deleteCredit(user, accountId, credit);
   }
 }

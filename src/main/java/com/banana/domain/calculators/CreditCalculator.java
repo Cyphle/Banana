@@ -24,6 +24,11 @@ public class CreditCalculator implements CreditPort {
     this.accountVerifier = new AccountVerifier(this.accountFetcher);
   }
 
+  public Credit getCreditById(User user, long accountId, long creditId) {
+    this.accountVerifier.verifyAccount(user, accountId);
+    return this.creditFetcher.getCreditsOfUserAndAccount(user, accountId).stream().filter(credit -> credit.getId() == creditId).collect(Collectors.toList()).get(0);
+  }
+
   public Credit createCredit(User user, long accountId, Credit credit) {
     this.accountVerifier.verifyAccount(user, accountId);
     credit.setAmount(Math.abs(credit.getAmount()));

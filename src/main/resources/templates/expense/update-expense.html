@@ -11,7 +11,7 @@
   <form th:action="@{/expenses/update}" method="POST">
     <input type="hidden" name="accountId" th:value="${expenseForm.accountId}" />
     <input type="hidden" name="accountId" th:value="${expenseForm.budgetId > 0 ? expenseForm.budgetId : -1}" />
-    <input type="hidden" name="transactionId" th:value="${expenseForm.id}" />
+    <input type="hidden" name="id" th:value="${expenseForm.id}" />
     <div>
       <input type="text" name="expenseDate" placeholder="Date de dépense" id="expense-date" th:value="${expenseForm != null ? #dates.format(expenseForm.expenseDate, 'dd/MM/yyyy') : ''}"/>
     </div>

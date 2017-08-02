@@ -10,7 +10,7 @@
 <div layout:fragment="charge-form" class="page-form">
   <form th:action="@{/charges/update}" method="POST">
     <input type="hidden" name="accountId" th:value="${chargeForm.accountId}" />
-    <input type="hidden" name="chargeId" th:value="${chargeForm.id}" />
+    <input type="hidden" name="id" th:value="${chargeForm.id}" />
     <div>
       <input type="text" name="startDate" placeholder="Date de début" id="start-date" th:value="${chargeForm != null and chargeForm.startDate != null ? #dates.format(chargeForm.startDate, 'dd/MM/yyyy') : ''}" />
     </div>
