@@ -32,6 +32,10 @@ public class SExpense {
   @Column(name = "is_deleted")
   private boolean isDeleted;
 
+  public SExpense() {
+    this.isDeleted = false;
+  }
+
   public SExpense(String description, double amount, Date expenseDate) {
     this.description = description;
     this.amount = amount;

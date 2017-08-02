@@ -28,7 +28,7 @@ public class AccountPivot {
 
   public static SAccount fromDomainToInfrastructure(Account account) {
     if (account != null) {
-      SUser sUser = new SUser(account.getUser().getLastname(), account.getUser().getFirstname(), account.getUser().getUsername());
+      SUser sUser = UserPivot.fromDomainToInfrastructure(account.getUser());
       SAccount sAccount = new SAccount(account.getName(), account.getInitialAmount(), account.getStartDate());
       sAccount.setSlug(account.getSlug());
       sAccount.setUser(sUser);

@@ -18,7 +18,8 @@ public class APIAccountController {
 
   @RequestMapping(value = "/{accountSlug}", method = RequestMethod.GET)
   public Account getAccount(@PathVariable String accountSlug) {
-    return this.accountService.getAccountBySlug(accountSlug);
+    Account account = this.accountService.getAccountBySlug(accountSlug);
+    return account;
   }
 
   @RequestMapping(value = "/{accountId}", method = RequestMethod.DELETE)

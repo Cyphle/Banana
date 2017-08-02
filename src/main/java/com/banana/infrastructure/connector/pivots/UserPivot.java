@@ -7,6 +7,7 @@ public class UserPivot {
   public static SUser fromDomainToInfrastructure(User user) {
     if (user != null) {
       SUser sUser = new SUser(user.getLastname(), user.getFirstname(), user.getUsername());
+      if (user.getId() > 0) sUser.setId(user.getId());
       return sUser;
     } else
       return null;

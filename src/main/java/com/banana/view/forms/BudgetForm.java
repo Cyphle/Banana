@@ -12,11 +12,11 @@ public class BudgetForm {
   @NotNull
   private String name;
   @NotNull
-  private float initialAmount;
+  private double initialAmount;
   @NotNull
-  @DateTimeFormat(pattern = "dd/MM/yyyy")
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private Date startDate;
-  @DateTimeFormat(pattern = "dd/MM/yyyy")
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private Date endDate;
 
   public long getId() {
@@ -43,11 +43,11 @@ public class BudgetForm {
     this.name = name;
   }
 
-  public float getInitialAmount() {
+  public double getInitialAmount() {
     return initialAmount;
   }
 
-  public void setInitialAmount(float initialAmount) {
+  public void setInitialAmount(double initialAmount) {
     this.initialAmount = initialAmount;
   }
 

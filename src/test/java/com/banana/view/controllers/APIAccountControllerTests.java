@@ -1,19 +1,25 @@
 package com.banana.view.controllers;
 
 import com.banana.BananaApplication;
+import com.banana.config.WebSecurityConfig;
 import com.banana.domain.models.*;
 import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.orm.models.*;
+import com.banana.infrastructure.orm.repositories.*;
 import com.banana.utilities.TestUtil;
 import com.banana.utils.Moment;
 import com.banana.view.services.AccountService;
+import com.banana.view.services.UserService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,10 +39,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes={BananaApplication.class})
-@WebMvcTest(APIAccountController.class)
+@ContextConfiguration(classes = {BananaApplication.class, WebSecurityConfig.class})
+@SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class APIAccountControllerTests {
   private MockMvc mvc;
@@ -45,10 +52,36 @@ public class APIAccountControllerTests {
   private WebApplicationContext context;
 
   @MockBean
+  private SUserRoleRepository userRoleRepository;
+
+  @MockBean
+  private UserDetailsService userDetailsService;
+
+  @Autowired
+  private SAccountRepository accountRepository;
+
+  @Autowired
+  private SBudgetRepository budgetRepository;
+
+  @Autowired
+  private SExpenseRepository expenseRepository;
+
+  @Autowired
+  private SChargeRepository chargeRepository;
+
+  @Autowired
+  private SCreditRepository creditRepository;
+
+  @Autowired
+  private SUserRepository userRepository;
+
+  @Autowired
   private AccountService accountService;
 
-  private Account account;
-  private SUser suser;
+  @MockBean
+  private UserService userService;
+
+  private SUser fakeUser;
 
   @Before
   public void setup() {
@@ -56,43 +89,63 @@ public class APIAccountControllerTests {
             .webAppContextSetup(context)
             .build();
 
-    this.suser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
-    this.account = new Account(UserPivot.fromInfrastructureToDomain(this.suser), "My account", 2000, new Moment("2013-01-01").getDate());
-    this.account.setId(1);
+    this.fakeUser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
+    this.userRepository.save(this.fakeUser);
 
-    List<Budget> budgets = new ArrayList<>();
-    budgets.add(new Budget("Manger", 300, new Moment("2017-01-01").getDate()));
-    budgets.add(new Budget("Clopes", 200, new Moment("2017-02-01").getDate()));
+    SAccount account = new SAccount(this.fakeUser, "My account", "my-account", 2000, new Moment("2013-01-01").getDate());
+    this.accountRepository.save(account);
 
-    List<Expense> budgetExpenses = new ArrayList<>();
-    budgetExpenses.add(new Expense("G20", 20, new Moment("2017-01-12").getDate()));
-    budgetExpenses.add(new Expense("Monoprix", 30, new Moment("2017-02-13").getDate()));
-    budgets.get(0).setExpenses(budgetExpenses);
-    this.account.setBudgets(budgets);
+    SBudget budgetOne = new SBudget("Manger", 300, new Moment("2017-01-01").getDate());
+    budgetOne.setAccount(account);
+    this.budgetRepository.save(budgetOne);
+    SBudget budgetTwo = new SBudget("Clopes", 200, new Moment("2017-02-01").getDate());
+    budgetTwo.setAccount(account);
+    this.budgetRepository.save(budgetTwo);
 
-    List<Charge> charges = new ArrayList<>();
-    charges.add(new Charge("Loyer", 1200, new Moment("2016-01-01").getDate()));
-    charges.add(new Charge("Internet", 40, new Moment("2017-01-01").getDate()));
-    this.account.setCharges(charges);
+    SExpense budgetExpenseOne = new SExpense("G20", 20, new Moment("2017-01-12").getDate());
+    budgetExpenseOne.setBudget(budgetOne);
+    this.expenseRepository.save(budgetExpenseOne);
+    SExpense budgetExenseTwo = new SExpense("Monoprix", 30, new Moment("2017-02-13").getDate());
+    budgetExenseTwo.setBudget(budgetOne);
+    this.expenseRepository.save(budgetExenseTwo);
 
-    List<Expense> expenses = new ArrayList<>();
-    expenses.add(new Expense("Bar", 50, new Moment("2017-07-20").getDate()));
-    expenses.add(new Expense("Retrait", 60, new Moment("2017-07-23").getDate()));
-    this.account.setExpenses(expenses);
+    SCharge chargeOne = new SCharge("Loyer", 1200, new Moment("2016-01-01").getDate());
+    chargeOne.setAccount(account);
+    this.chargeRepository.save(chargeOne);
+    SCharge chargeTwo = new SCharge("Internet", 40, new Moment("2017-01-01").getDate());
+    chargeTwo.setAccount(account);
+    this.chargeRepository.save(chargeTwo);
 
-    List<Credit> credits = new ArrayList<>();
-    credits.add(new Credit("Salaire", 2400, new Moment("2017-06-30").getDate()));
-    this.account.setCredits(credits);
+    SExpense expenseOne = new SExpense("Bar", 50, new Moment("2017-07-20").getDate());
+    expenseOne.setAccount(account);
+    this.expenseRepository.save(expenseOne);
+    SExpense expenseTwo = new SExpense("Retrait", 60, new Moment("2017-07-23").getDate());
+    expenseTwo.setAccount(account);
+    this.expenseRepository.save(expenseTwo);
+
+    SCredit creditOne = new SCredit("Salaire", 2400, new Moment("2017-06-30").getDate());
+    creditOne.setAccount(account);
+    this.creditRepository.save(creditOne);
+
+    given(this.userService.isAuthenticated()).willReturn(true);
+    given(this.userService.getAuthenticatedUser()).willReturn(this.fakeUser);
+  }
+
+  @After
+  public void unset() {
+    this.creditRepository.deleteAll();
+    this.chargeRepository.deleteAll();
+    this.expenseRepository.deleteAll();
+    this.budgetRepository.deleteAll();
+    this.accountRepository.deleteAll();
+    this.userRepository.deleteAll();
   }
 
   @Test
   public void should_get_an_account_in_json_format() throws Exception {
-    given(this.accountService.getAccountBySlug(any(String.class))).willReturn(this.account);
-
-    this.mvc.perform(get("/accounts/my-account"))
+    this.mvc.perform(get("/accounts/my-account").with(user("john@doe.fr")))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-            .andExpect(jsonPath("$.id", is(1)))
             .andExpect(jsonPath("$.user.username", is("john@doe.fr")))
             .andExpect(jsonPath("$.name", is("My account")))
             .andExpect(jsonPath("$.initialAmount", is(2000.0)))
@@ -124,9 +177,9 @@ public class APIAccountControllerTests {
 
   @Test
   public void should_delete_an_account() throws Exception {
-    given(this.accountService.deleteAccount(any(long.class))).willReturn(true);
+    SAccount myAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
 
-    this.mvc.perform(delete("/accounts/" + this.account.getId()))
+    this.mvc.perform(delete("/accounts/" + myAccount.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));

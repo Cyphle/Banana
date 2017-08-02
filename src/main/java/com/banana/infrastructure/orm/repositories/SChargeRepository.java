@@ -7,6 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface SChargeRepository extends CrudRepository<SCharge, Long> {
-  @Query("Select c from SCharge c where c.account.user.username = ?1 and c.account.id = ?2")
+  @Query("Select c from SCharge c where c.account.user.username = ?1 and c.account.id = ?2 and c.isDeleted = false")
   List<SCharge> findByUserUsernameAndAccountId(String username, long accountId);
 }

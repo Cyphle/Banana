@@ -1,10 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="expense/form">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Dépense</title>
 </head>
 <body>
-$END$
+<div layout:fragment="expense-form" class="page-form">
+  <form th:action="@{/expenses/create}" method="POST">
+    <input type="hidden" name="accountId" th:value="${expenseForm.accountId > 0 ? expenseForm.accountId : -1}" />
+    <input type="hidden" name="budgetId" th:value="${expenseForm.budgetId > 0 ? expenseForm.budgetId : -1}" />
+    <div>
+      <input type="text" name="expenseDate" placeholder="Date de dépense" id="expense-date" />
+    </div>
+    <div>
+      <input type="text" name="debitDate" placeholder="Date de débit" id="debit-date" />
+    </div>
+    <div>
+      <input type="text" name="description" placeholder="Description" />
+    </div>
+    <div>
+      <input type="text" name="amount" placeholder="Montant" />
+    </div>
+    <div>
+      <input type="submit" value="Create" />
+    </div>
+  </form>
+</div>
 </body>
 </html>

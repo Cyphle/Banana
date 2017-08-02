@@ -27,6 +27,8 @@ public class SCredit {
   @Column(name = "is_deleted")
   private boolean isDeleted;
 
+  public SCredit() { }
+
   public SCredit(String description, double amount, Date creditDate) {
     this.description = description;
     this.amount = amount;

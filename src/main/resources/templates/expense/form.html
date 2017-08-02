@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorator="layout">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Dépense</title>
 </head>
 <body>
-$END$
+<div layout:fragment="content" class="page-form">
+  <h1 th:if="${account}">
+    Edition du compte <span th:text="${account.name}"></span>
+  </h1>
+  <h1>Création d'une dépense</h1>
+  <div layout:fragment="expense-form"></div>
+</div>
 </body>
 </html>

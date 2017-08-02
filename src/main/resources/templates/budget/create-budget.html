@@ -9,7 +9,7 @@
 <body>
 <div layout:fragment="budget-form" class="page-form">
   <form th:action="@{/budgets/create}" method="POST">
-    <input type="hidden" name="accountId" th:value="${account}" />
+    <input type="hidden" name="accountId" th:value="${budgetForm.accountId}" />
     <div>
       <input type="text" name="startDate" placeholder="Date de début" id="start-date" />
     </div>

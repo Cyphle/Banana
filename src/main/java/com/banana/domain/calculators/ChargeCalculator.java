@@ -25,6 +25,11 @@ public class ChargeCalculator implements ChargePort {
     this.accountVerifier = new AccountVerifier(this.accountFetcher);
   }
 
+  public Charge getChargeById(User user, long accountId, long chargeId) {
+    this.accountVerifier.verifyAccount(user, accountId);
+    return this.chargeFetcher.getChargesOfUserAndAccount(user, accountId).stream().filter(charge -> charge.getId() == chargeId).collect(Collectors.toList()).get(0);
+  }
+
   public Charge createCharge(User user, long accountId, Charge charge) {
     this.accountVerifier.verifyAccount(user, accountId);
     charge.setAmount(Math.abs(charge.getAmount()));

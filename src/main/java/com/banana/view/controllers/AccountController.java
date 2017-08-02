@@ -2,6 +2,7 @@ package com.banana.view.controllers;
 
 import com.banana.domain.models.Account;
 import com.banana.view.forms.AccountForm;
+import com.banana.view.pivots.AccountFormPivot;
 import com.banana.view.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,8 +50,10 @@ public class AccountController {
 
   @RequestMapping(value = "/update/{accountSlug}", method = RequestMethod.GET)
   public String updateAccount(@PathVariable String accountSlug, Model model) {
-    if (!model.containsAttribute("account"))
-      model.addAttribute("account", this.accountService.getAccountBySlug(accountSlug));
+    if (!model.containsAttribute("account")) {
+      AccountForm accountForm = AccountFormPivot.fromDomainToView(this.accountService.getAccountBySlug(accountSlug));
+      model.addAttribute("accountForm", accountForm);
+    }
     return "account/update-account";
   }
 

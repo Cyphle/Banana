@@ -8,18 +8,18 @@
 </head>
 <body>
 <div layout:fragment="account-form" class="page-form">
-  <h1 th:if="${account}">Edition du compte <span th:text="${account.name}"></span></h1>
-  <h1 th:if="!${account}">Création de compte</h1>
+  <h1 th:if="${accountForm}">Edition du compte <span th:text="${accountForm.name}"></span></h1>
+  <h1 th:if="!${accountForm}">Création de compte</h1>
   <form th:action="@{/accounts/update}" method="POST">
-    <input type="hidden" name="id" th:value="${account != null ? account.id : -1}" />
+    <input type="hidden" name="id" th:value="${accountForm != null ? accountForm.id : -1}" />
     <div>
-      <input type="text" name="name" th:value="${account != null ? account.name : ''}" placeholder="Nom du compte" />
+      <input type="text" name="name" th:value="${accountForm != null ? accountForm.name : ''}" placeholder="Nom du compte" />
     </div>
     <div>
-      <input type="text" name="initialAmount" th:value="${account != null ? account.initialAmount : ''}" placeholder="Montant initial" />
+      <input type="text" name="initialAmount" th:value="${accountForm != null ? accountForm.initialAmount : ''}" placeholder="Montant initial" />
     </div>
     <div class="submit-wrapper">
-      <input type="submit" th:value="${account != null ? 'Sauvegarder' : 'Créer'}" />
+      <input type="submit" th:value="${accountForm != null ? 'Sauvegarder' : 'Créer'}" />
     </div>
   </form>
 </div>

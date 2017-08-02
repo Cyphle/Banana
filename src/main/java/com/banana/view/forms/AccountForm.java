@@ -1,5 +1,7 @@
 package com.banana.view.forms;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -11,6 +13,7 @@ public class AccountForm {
   private String name;
   @NotNull
   private double initialAmount;
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private Date startDate;
 
   public long getId() {

@@ -12,6 +12,7 @@ import com.banana.infrastructure.orm.models.SExpense;
 import com.banana.infrastructure.orm.repositories.*;
 import com.banana.utils.Moment;
 import com.banana.view.forms.AccountForm;
+import com.banana.view.pivots.AccountFormPivot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -90,15 +91,14 @@ public class AccountService {
     if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
     if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
-    Account account = new Account(user, accountForm.getName(), accountForm.getInitialAmount(), accountForm.getStartDate());
+    Account account = AccountFormPivot.fromViewToDomain(user, accountForm);
     return this.banker.createAccount(account);
   }
 
   public Account updateAccount(AccountForm accountForm) {
     if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    Account account = new Account(user, accountForm.getName(), accountForm.getInitialAmount(), accountForm.getStartDate());
-    account.setId(accountForm.getId());
+    Account account = AccountFormPivot.fromViewToDomain(user, accountForm);
     return this.banker.updateAccount(account);
   }
 

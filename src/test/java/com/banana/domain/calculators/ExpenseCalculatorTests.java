@@ -4,6 +4,7 @@ import com.banana.domain.adapters.IAccountFetcher;
 import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
+import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
@@ -53,7 +54,7 @@ public class ExpenseCalculatorTests {
     try {
       this.expensePort.createExpense(this.user, 1, 1, newExpense);
       fail("Should throw error when budget does not exists");
-    } catch (CreationException e) {
+    } catch (NoElementFoundException e) {
       assertThat(e.getMessage()).contains("No budget found with id");
     }
   }
@@ -90,7 +91,7 @@ public class ExpenseCalculatorTests {
     try {
       this.expensePort.updateExpense(this.user, 1, 1, expenseToUpdate);
       fail("Should throw an error if there is no budget for the expense update");
-    } catch (CreationException e) {
+    } catch (NoElementFoundException e) {
       assertThat(e.getMessage()).contains("No budget found");
     }
   }

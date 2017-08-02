@@ -96,6 +96,18 @@ public class ExpensePortITests {
   }
 
   @Test
+  public void should_get_expense_by_id() {
+    Account myAccount = this.accountFetcher.getAccountByUserAndAccountSlug(this.user, "my-account");
+    Budget myBudget = this.budgetFetcher.getBudgetsOfUserAndAccount(this.user, myAccount.getId()).get(0);
+    Expense myExpense = this.expenseFetcher.getExpensesOfBudget(myBudget).get(0);
+
+    Expense fetchedExpense = this.expensePort.getExpenseById(this.user, myAccount.getId(), myBudget.getId(), myExpense.getId());
+
+    assertThat(fetchedExpense.getDescription()).isEqualTo("Courses");
+    assertThat(fetchedExpense.getAmount()).isEqualTo(40);
+  }
+
+  @Test
   public void should_add_expense_to_budget() {
     Moment today = new Moment();
     Expense newExpense = new Expense("Courses", 20, today.getDate());

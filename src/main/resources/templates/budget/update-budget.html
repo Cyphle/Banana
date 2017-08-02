@@ -9,19 +9,19 @@
 <body>
 <div layout:fragment="budget-form" class="page-form">
   <form th:action="@{/budgets/update}" method="POST">
-    <input type="hidden" name="accountId" th:value="${account}" />
-    <input type="hidden" name="budgetId" th:value="${budget.id}" />
+    <input type="hidden" name="accountId" th:value="${budgetForm.accountId}" />
+    <input type="hidden" name="budgetId" th:value="${budgetForm.id}" />
     <div>
-      <input type="text" name="startDate" placeholder="Date de début" id="start-date" th:value="${budget != null and budget.startDate != null ? #dates.format(budget.startDate, 'MM/yyyy') : ''}" />
+      <input type="text" name="startDate" placeholder="Date de début" id="start-date" th:value="${budgetForm != null and budgetForm.startDate != null ? #dates.format(budgetForm.startDate, 'MM/yyyy') : ''}" />
     </div>
     <div>
-      <input type="text" name="endDate" placeholder="Date de find" id="end-date" th:value="${budget != null and budget.endDate != null ? #dates.format(budget.endDate, 'MM/yyyy') : ''}" />
+      <input type="text" name="endDate" placeholder="Date de find" id="end-date" th:value="${budgetForm != null and budgetForm.endDate != null ? #dates.format(budgetForm.endDate, 'MM/yyyy') : ''}" />
     </div>
     <div>
-      <input type="text" name="name" placeholder="Nom" th:value="${budget != null ? budget.name : ''}" />
+      <input type="text" name="name" placeholder="Nom" th:value="${budgetForm != null ? budgetForm.name : ''}" />
     </div>
     <div>
-      <input type="text" name="initialAmount" placeholder="Montant" th:value="${budget != null ? budget.initialAmount : ''}" />
+      <input type="text" name="initialAmount" placeholder="Montant" th:value="${budgetForm != null ? budgetForm.initialAmount : ''}" />
     </div>
     <div>
       <input type="submit" value="Update" />

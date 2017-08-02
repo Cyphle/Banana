@@ -3,10 +3,13 @@ package com.banana.domain.validators;
 import com.banana.domain.adapters.IBudgetFetcher;
 import com.banana.domain.adapters.IExpenseFetcher;
 import com.banana.domain.exceptions.CreationException;
+import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
 import com.banana.utils.Moment;
+
+import java.util.stream.Collectors;
 
 public class ExpenseVerifier {
   private IBudgetFetcher budgetFetcher;
@@ -17,10 +20,19 @@ public class ExpenseVerifier {
     this.expenseFetcher = expenseFetcher;
   }
 
-  public void verifyBudget(User user, long accountId, long budgetId, Expense expense) throws CreationException {
+  public void verifyBudget(User user, long accountId, long budgetId, Expense expense) throws CreationException, NoElementFoundException {
     Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
     this.verifyBudgetExistence(budgetId, myBudget);
     this.verifyBudgetAmountIsNotExceeded(expense, myBudget);
+  }
+
+  public void verifyBudget(User user, long accountId, long budgetId, long expenseId) throws NoElementFoundException {
+    Budget myBudget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
+    this.verifyBudgetExistence(budgetId, myBudget);
+    Expense myExpense = this.expenseFetcher.getExpensesOfBudget(myBudget).stream().filter(expense -> expense.getId() == expenseId).collect(Collectors.toList()).get(0);
+    if (myExpense == null)
+      throw new NoElementFoundException("No expense found with id : " + expenseId);
+
   }
 
   private void verifyBudgetAmountIsNotExceeded(Expense expense, Budget myBudget) throws CreationException {
@@ -41,7 +53,7 @@ public class ExpenseVerifier {
 
   private void verifyBudgetExistence(long budgetId, Budget myBudget) {
     if (!this.doesBudgetExists(myBudget))
-      throw new CreationException("No budget found with id " + budgetId);
+      throw new NoElementFoundException("No budget found with id " + budgetId);
   }
 
   private boolean doesBudgetExists(Budget myBudget) {

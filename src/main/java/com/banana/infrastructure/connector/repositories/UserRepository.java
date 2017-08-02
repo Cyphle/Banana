@@ -13,6 +13,10 @@ public class UserRepository implements IUserRepository {
   }
 
   public SUser getUserByUsername(String username) {
+    SUser user = this.userRepository.findByUsername(username);
+    System.out.println("------ IN REPOSITORY ----------");
+    System.out.println(user.getId());
+    System.out.println("------ IN REPOSITORY ----------");
     return this.userRepository.findByUsername(username);
   }
 }

@@ -29,6 +29,8 @@ public class SCharge {
   @Column(name = "is_deleted")
   private boolean isDeleted;
 
+  public SCharge() { }
+
   public SCharge(String description, double amount, Date startDate) {
     this.description = description;
     this.amount = amount;

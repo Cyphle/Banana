@@ -12,11 +12,11 @@ import com.banana.infrastructure.connector.adapters.*;
 import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.connector.repositories.*;
 import com.banana.infrastructure.orm.repositories.*;
+import com.banana.utils.Moment;
 import com.banana.view.forms.BudgetForm;
+import com.banana.view.pivots.BudgetFormPivot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Service
 public class BudgetService {
@@ -86,8 +86,7 @@ public class BudgetService {
 
   public Account createBudget(BudgetForm budgetForm) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    Budget budget = new Budget(budgetForm.getName(), budgetForm.getInitialAmount(), budgetForm.getStartDate());
-    if (budgetForm.getEndDate() != null) budget.setEndDate(budgetForm.getEndDate());
+    Budget budget = BudgetFormPivot.fromViewToDomain(budgetForm);
     Budget createdBudget = this.budgetPort.createBudget(user, budgetForm.getAccountId(), budget);
     if (createdBudget != null)
       return this.accountPort.getAccountByUserAndAccountId(user, budgetForm.getAccountId());
@@ -96,20 +95,18 @@ public class BudgetService {
 
   public Account updateBudget(BudgetForm budgetForm) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    Budget budget = new Budget(budgetForm.getName(), budgetForm.getInitialAmount(), budgetForm.getStartDate());
-    budget.setId(budgetForm.getId());
-    if (budgetForm.getEndDate() != null) budget.setEndDate(budgetForm.getEndDate());
+    Budget budget = BudgetFormPivot.fromViewToDomain(budgetForm);
     Budget updatedBudget = this.budgetPort.updateBudget(user, budgetForm.getAccountId(), budget);
     if (updatedBudget != null)
       return this.accountPort.getAccountByUserAndAccountId(user, budgetForm.getAccountId());
     return null;
   }
 
-  public boolean deleteBudget(long accountId, long budgetId, Date endDate) {
-    // TODO for budgetAPI /budgets/id?end-date=....
+  public boolean deleteBudget(long accountId, long budgetId, String endDate) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    Budget budget = this.budgetFetcher.getBudgetOfUserAndAccountById(user, accountId, budgetId);
-    budget.setEndDate(endDate);
+    Budget budget = this.getBudget(accountId, budgetId);
+    if (endDate != null && endDate.length() > 0) budget.setEndDate(new Moment(endDate).getDate());
+    else budget.setEndDate(new Moment().getLastDayOfPrecedingMonth().getDate());
     Budget deletedBudget = this.budgetPort.deleteBudget(user, accountId, budget);
     if (deletedBudget != null)
       return true;
