@@ -3,14 +3,14 @@ var webpack = require('webpack');
 
 module.exports = {
     entry: {
-        main: './src/scripts/main.js',
-        'home-main': './src/scripts/home-main.js',
-        'home-second': './src/scripts/home-second.js',
-        'medias-main': './src/scripts/medias-main.js',
-        'projects-main': './src/scripts/projects-main.js',
+        homepage: './javascript/scripts/homepage.js',
+        // 'home-main': './src/scripts/home-main.js',
+        // 'home-second': './src/scripts/home-second.js',
+        // 'medias-main': './src/scripts/medias-main.js',
+        // 'projects-main': './src/scripts/projects-main.js',
     },
     output: {
-        path: path.resolve(__dirname, 'js/build'),
+        path: path.resolve(__dirname, 'javascript/build'),
         filename: '[name].bundle.js'
     },
     module: {

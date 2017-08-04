@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="layout"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <title>Content page</title>
+    <script th:src="@{/javascript/dist/homepage.bundle.min.js}"></script>
 </head>
 <body>
 <div layout:fragment="content" class="presentation">
