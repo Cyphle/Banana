@@ -178,6 +178,7 @@ public class MomentTests {
     Moment dateOne = new Moment("2017-08-10").getLastDayOfPrecedingMonth();
     Moment dateTwo = new Moment("2017-01-12").getLastDayOfPrecedingMonth();
     Moment dateThree = new Moment("2016-03-12").getLastDayOfPrecedingMonth();
+    Moment dateFour = new Moment("2017-07-31").getLastDayOfPrecedingMonth();
 
     assertThat(dateOne.getDayOfMonth()).isEqualTo(31);
     assertThat(dateOne.getMonthNumber()).isEqualTo(7);
@@ -188,6 +189,30 @@ public class MomentTests {
     assertThat(dateThree.getDayOfMonth()).isEqualTo(29);
     assertThat(dateThree.getMonthNumber()).isEqualTo(2);
     assertThat(dateThree.getYear()).isEqualTo(2016);
+    assertThat(dateFour.getDayOfMonth()).isEqualTo(30);
+    assertThat(dateFour.getMonthNumber()).isEqualTo(6);
+    assertThat(dateFour.getYear()).isEqualTo(2017);
+  }
+
+  @Test
+  public void should_get_end_of_next_month() {
+    Moment dateOne = new Moment("2017-08-10").getLastDayOfNextMonth();
+    Moment dateTwo = new Moment("2017-12-20").getLastDayOfNextMonth();
+    Moment dateThree = new Moment("2016-01-12").getLastDayOfNextMonth();
+    Moment dateFour = new Moment("2017-07-31").getLastDayOfNextMonth();
+
+    assertThat(dateOne.getDayOfMonth()).isEqualTo(30);
+    assertThat(dateOne.getMonthNumber()).isEqualTo(9);
+    assertThat(dateOne.getYear()).isEqualTo(2017);
+    assertThat(dateTwo.getDayOfMonth()).isEqualTo(31);
+    assertThat(dateTwo.getMonthNumber()).isEqualTo(1);
+    assertThat(dateTwo.getYear()).isEqualTo(2018);
+    assertThat(dateThree.getDayOfMonth()).isEqualTo(29);
+    assertThat(dateThree.getMonthNumber()).isEqualTo(2);
+    assertThat(dateThree.getYear()).isEqualTo(2016);
+    assertThat(dateFour.getDayOfMonth()).isEqualTo(31);
+    assertThat(dateFour.getMonthNumber()).isEqualTo(8);
+    assertThat(dateFour.getYear()).isEqualTo(2017);
   }
 
   @Test
@@ -212,5 +237,23 @@ public class MomentTests {
     Moment compareTo = new Moment("2017-02-12");
 
     assertThat(date.compareTo(compareTo)).isEqualTo(1);
+  }
+
+  @Test
+  public void should_calculate_number_of_month_between_two_dates_minus_current_month() {
+    Moment date = new Moment("2017-03-02");
+    Moment dateAfter = new Moment("2017-08-10");
+    Moment dateAfterTwo = new Moment("2018-01-04");
+    Moment dateWayAfter = new Moment("2018-12-23");
+    Moment dateBefore = new Moment("2016-05-18");
+    Moment dateWayBefore = new Moment("2015-02-03");
+    Moment dateEqual = new Moment("2017-03-19");
+
+    assertThat(date.getNumberOfMonthsBetweenExcludingCurrent(dateAfter)).isEqualTo(5);
+    assertThat(date.getNumberOfMonthsBetweenExcludingCurrent(dateAfterTwo)).isEqualTo(10);
+    assertThat(date.getNumberOfMonthsBetweenExcludingCurrent(dateWayAfter)).isEqualTo(21);
+    assertThat(date.getNumberOfMonthsBetweenExcludingCurrent(dateBefore)).isEqualTo(10);
+    assertThat(date.getNumberOfMonthsBetweenExcludingCurrent(dateWayBefore)).isEqualTo(25);
+    assertThat(date.getNumberOfMonthsBetweenExcludingCurrent(dateEqual)).isEqualTo(0);
   }
 }

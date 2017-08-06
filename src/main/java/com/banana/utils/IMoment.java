@@ -14,5 +14,8 @@ public interface IMoment {
   int getLastDayOfMonth();
   boolean isInMonthOfYear(int month, int year);
   Moment getLastDayOfPrecedingMonth();
+  Moment getLastDayOfNextMonth();
   int compareTo(Moment momentCompare);
+  int getNumberOfMonthsBetweenExcludingCurrent(Moment momentToCalculate);
+  String toString();
 }

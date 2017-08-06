@@ -4,6 +4,7 @@ import com.banana.domain.models.*;
 import com.banana.infrastructure.orm.models.*;
 import com.banana.infrastructure.orm.repositories.*;
 import com.banana.utils.Moment;
+import com.banana.view.models.AccountView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -104,7 +105,7 @@ public class AccountServiceTests {
     given(this.userService.getAuthenticatedUser()).willReturn(this.suser);
     given(this.sAccountRepository.findByUserUsername(any(String.class))).willReturn(this.accounts);
 
-    List<Account> fetchedAccounts = this.accountService.getAccountsOfUser();
+    List<AccountView> fetchedAccounts = this.accountService.getAccountsOfUser();
 
     assertThat(fetchedAccounts.size()).isEqualTo(2);
     assertThat(fetchedAccounts.get(0).getName()).isEqualTo("Account one");

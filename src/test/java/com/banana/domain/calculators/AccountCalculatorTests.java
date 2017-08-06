@@ -2,8 +2,7 @@ package com.banana.domain.calculators;
 
 import com.banana.domain.adapters.*;
 import com.banana.domain.exceptions.CreationException;
-import com.banana.domain.models.Account;
-import com.banana.domain.models.User;
+import com.banana.domain.models.*;
 import com.banana.domain.ports.AccountPort;
 import com.banana.infrastructure.connector.adapters.AccountFetcher;
 import com.banana.utilities.*;
@@ -37,7 +36,6 @@ public class AccountCalculatorTests {
     this.accounts = new ArrayList<>();
     this.accounts.add(new Account(1, this.user, "Account one", "account-one", 1000.0, new Moment("2016-01-01").getDate()));
     this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0, new Moment("2016-01-01").getDate()));
-    this.account = new Account(3, this.user, "Account test", "account-three", 3000.0, new Moment("2016-01-01").getDate());
 
     this.accountFetcher = new FakeAccountFetcher();
     this.budgetFetcher = new FakeBudgetFetcher();
@@ -45,6 +43,53 @@ public class AccountCalculatorTests {
     this.creditFetcher = new FakeCreditFetcher();
     this.expenseFetcher = new FakeExpenseFetcher();
     this.accountPort = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
+
+    this.account = new Account(3, this.user, "Account test", "account-three", 3000.0, new Moment("2016-01-01").getDate());
+
+    List<Budget> budgets = new ArrayList<>();
+    Budget budgetOne = new Budget(1, "Manger", 400, new Moment("2016-01-01").getDate());
+    List<Expense> budgetOneExpenses = new ArrayList<>();
+    budgetOneExpenses.add(new Expense(1, "G20", 30, new Moment("2016-02-20").getDate()));
+    budgetOneExpenses.add(new Expense(2, "Monoprix", 40, new Moment("2017-07-03").getDate()));
+    budgetOneExpenses.add(new Expense(3, "G20", 50, new Moment("2017-08-02").getDate()));
+    budgetOne.setExpenses(budgetOneExpenses);
+    budgets.add(budgetOne);
+
+    Budget budgetTwo = new Budget(2, "Resto", 300, new Moment("2016-01-01").getDate());
+    List<Expense> budgetTwoExpenses = new ArrayList<>();
+    budgetTwoExpenses.add(new Expense(4, "Nove", 70, new Moment("2017-07-20").getDate()));
+    budgetTwoExpenses.add(new Expense(5, "Ange20", 100, new Moment("2016-06-28").getDate()));
+    budgetTwo.setExpenses(budgetTwoExpenses);
+    budgets.add(budgetTwo);
+
+    Budget budgetThree = new Budget(3, "Clopes", 200, new Moment("2016-01-01").getDate());
+    budgetThree.setEndDate(new Moment("2016-12-31").getDate());
+    List<Expense> budgetThreeExpenses = new ArrayList<>();
+    budgetThreeExpenses.add(new Expense(6, "Clopes", 35, new Moment("2017-04-12").getDate()));
+    budgetThreeExpenses.add(new Expense(7, "Clopes", 35, new Moment("2016-10-28").getDate()));
+    budgetThree.setExpenses(budgetThreeExpenses);
+    budgets.add(budgetThree);
+    this.account.setBudgets(budgets);
+
+    List<Charge> charges = new ArrayList<>();
+    Charge chargeOne = new Charge(1, "Loyer", 1200, new Moment("2017-01-01").getDate());
+    charges.add(chargeOne);
+    Charge chargeTwo = new Charge(2, "Internet", 30, new Moment("2016-02-01").getDate());
+    chargeTwo.setEndDate(new Moment("2017-03-03").getDate());
+    charges.add(chargeTwo);
+    this.account.setCharges(charges);
+
+    List<Credit> credits = new ArrayList<>();
+    credits.add(new Credit(1, "Salaire", 2400, new Moment("2017-06-30").getDate()));
+    credits.add(new Credit(2, "Maman", 500, new Moment("2017-03-18").getDate()));
+    credits.add(new Credit(3, "Salaire", 2400, new Moment("2017-08-31").getDate()));
+    this.account.setCredits(credits);
+
+    List<Expense> expenses = new ArrayList<>();
+    expenses.add(new Expense(1, "Bar 1", 100, new Moment("2017-04-13").getDate()));
+    expenses.add(new Expense(2, "Bar 2", 50, new Moment("2017-05-19").getDate()));
+    expenses.add(new Expense(3, "Uber", 60, new Moment("2017-08-05").getDate()));
+    this.account.setExpenses(expenses);
   }
 
   @Test
@@ -149,5 +194,68 @@ public class AccountCalculatorTests {
   public void should_delete_account() {
     boolean isDeleted = this.accountPort.deleteAccount(this.user, 1);
     assertThat(isDeleted).isTrue();
+  }
+
+  @Test
+  public void should_calculate_start_amount_of_today_month() {
+    Moment today = new Moment("2017-08-06");
+    double startAmount = this.accountPort.calculateGivenMonthStartAmount(this.account, today.getDate());
+    assertThat(startAmount).isEqualTo(-3380);
+  }
+
+  @Test
+  public void should_calculate_start_amount_of_given_month_after_today() {
+    Moment nextMonth = new Moment("2017-09-06");
+    double startAmount = this.accountPort.calculateGivenMonthStartAmount(this.account, nextMonth.getDate());
+    assertThat(startAmount).isEqualTo(-2290);
+  }
+
+  @Test
+  public void should_calculate_start_amount_of_given_month_before_today() {
+    Moment previousMonth = new Moment("2017-07-06");
+    double startAmount = this.accountPort.calculateGivenMonthStartAmount(this.account, previousMonth.getDate());
+    assertThat(startAmount).isEqualTo(-2070);
+  }
+
+  @Test
+  public void should_calculate_current_amount_of_today_month() {
+    Moment today = new Moment("2017-08-06");
+    double startAmount = this.accountPort.calculateGivenMonthCurrentAmount(this.account, today.getDate());
+    assertThat(startAmount).isEqualTo(-2290);
+  }
+
+  @Test
+  public void should_calculate_current_amount_of_given_month_after_today() {
+    Moment nextMonth = new Moment("2017-09-06");
+    double startAmount = this.accountPort.calculateGivenMonthCurrentAmount(this.account, nextMonth.getDate());
+    assertThat(startAmount).isEqualTo(-3490);
+  }
+
+  @Test
+  public void should_calculate_current_amount_of_given_month_before_today() {
+    Moment previousMonth = new Moment("2017-07-06");
+    double startAmount = this.accountPort.calculateGivenMonthCurrentAmount(this.account, previousMonth.getDate());
+    assertThat(startAmount).isEqualTo(-3380);
+  }
+
+  @Test
+  public void should_calculate_free_amount_of_today_month() {
+    Moment today = new Moment("2017-08-06");
+    double startAmount = this.accountPort.calculateGivenMonthFreeAmount(this.account, today.getDate());
+    assertThat(startAmount).isEqualTo(-2940);
+  }
+
+  @Test
+  public void should_calculate_free_amount_of_given_month_after_today() {
+    Moment nextMonth = new Moment("2017-09-06");
+    double startAmount = this.accountPort.calculateGivenMonthFreeAmount(this.account, nextMonth.getDate());
+    assertThat(startAmount).isEqualTo(-4190);
+  }
+
+  @Test
+  public void should_calculate_free_amount_of_given_month_before_today() {
+    Moment previousMonth = new Moment("2017-07-06");
+    double startAmount = this.accountPort.calculateGivenMonthFreeAmount(this.account, previousMonth.getDate());
+    assertThat(startAmount).isEqualTo(-3970);
   }
 }

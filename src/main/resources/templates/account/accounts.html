@@ -8,10 +8,24 @@
 </head>
 <body>
 <section layout:fragment="content" class="page-accounts">
-  <h1>Liste de mes comptes</h1>
+  <h1>Liste des comptes</h1>
 
-  <div class="table-wrapper">
-    <p th:each="account : ${accounts}"><span th:text="${account.name}"></span> - <span th:text="${account.slug}"></span></p>
+  <div class="container">
+      <div class="row">
+        <div class="col s6" th:each="account : ${accounts}">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title" th:text="${account.name}"></span>
+              <p><span th:text="${account.initialAmount}"></span> et puis montant actuel, restant pour le mois courant</p>
+            </div>
+            <div class="card-action">
+              <a th:href="@{/accounts/{slug}(slug=${account.slug})}">Consulter</a>
+              <a th:href="@{/accounts/update/{slug}(slug=${account.slug})}">Modifier</a>
+              <button class="button-delete" th:attr="data-slug=${account.slug}">Supprimer</button>
+            </div>
+          </div>
+        </div>
+      </div>
   </div>
 </section>
 </body>

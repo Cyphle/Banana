@@ -94,7 +94,20 @@ public class Moment implements IMoment {
       --year;
     } else
       --month;
-    LocalDate initial = LocalDate.of(year, month, this.getDayOfMonth());
+    LocalDate initial = LocalDate.of(year, month, 1);
+    LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
+    return new Moment(Date.from(end.atStartOfDay(this.zone).toInstant()));
+  }
+
+  public Moment getLastDayOfNextMonth() {
+    int year = this.getYear();
+    int month = this.getMonthNumber();
+    if (this.getMonthNumber() == 12) {
+      month = 1;
+      ++year;
+    } else
+      ++month;
+    LocalDate initial = LocalDate.of(year, month, 1);
     LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
     return new Moment(Date.from(end.atStartOfDay(this.zone).toInstant()));
   }
@@ -123,5 +136,15 @@ public class Moment implements IMoment {
           return 0;
       }
     }
+  }
+
+  public int getNumberOfMonthsBetweenExcludingCurrent(Moment momentToCalculate) {
+    int numberMonthBetweenYears = (momentToCalculate.getYear() - this.getYear())*12;
+    int numberOfMonthBetweenMonths = momentToCalculate.getMonthNumber() - this.getMonthNumber();
+    return Math.abs(numberMonthBetweenYears + numberOfMonthBetweenMonths);
+  }
+
+  public String toString() {
+    return this.getYear() + "/" + this.getMonthNumber() + "/" + this.getDayOfMonth();
   }
 }

@@ -9,6 +9,7 @@ import com.banana.infrastructure.orm.repositories.SAccountRepository;
 import com.banana.infrastructure.orm.repositories.SUserRepository;
 import com.banana.infrastructure.orm.repositories.SUserRoleRepository;
 import com.banana.utils.Moment;
+import com.banana.view.models.AccountView;
 import com.banana.view.services.AccountService;
 import com.banana.view.services.UserService;
 import org.junit.After;
@@ -126,7 +127,7 @@ public class AccountControllerITests {
             .andExpect(status().is3xxRedirection())
             .andExpect(header().string("Location", "/accounts/fake-account"));
 
-    List<Account> accounts = this.accountService.getAccountsOfUser();
+    List<AccountView> accounts = this.accountService.getAccountsOfUser();
     assertThat(accounts.size()).isEqualTo(3);
   }
 
@@ -143,7 +144,7 @@ public class AccountControllerITests {
             .andExpect(status().is3xxRedirection())
             .andExpect(header().string("Location", "/accounts/account-update"));
 
-    Account updatedAccount = this.accountService.getAccountsOfUser().stream().filter(account -> account.getName() == "Account update").collect(Collectors.toList()).get(0);
+    AccountView updatedAccount = this.accountService.getAccountsOfUser().stream().filter(account -> account.getName() == "Account update").collect(Collectors.toList()).get(0);
     assertThat(updatedAccount.getSlug()).isEqualTo("account-update");
     assertThat(updatedAccount.getInitialAmount()).isEqualTo(3000.0);
   }

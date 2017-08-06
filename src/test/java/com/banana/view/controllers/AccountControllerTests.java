@@ -5,6 +5,8 @@ import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
 import com.banana.utils.Moment;
 import com.banana.view.forms.AccountForm;
+import com.banana.view.models.AccountView;
+import com.banana.view.pivots.AccountViewPivot;
 import com.banana.view.services.AccountService;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +51,7 @@ public class AccountControllerTests {
   private User user;
   private List<Account> accounts;
   private Account account;
+  private List<AccountView> accountViews;
 
   @Before
   public void setup() {
@@ -61,16 +64,17 @@ public class AccountControllerTests {
     this.accounts.add(new Account(1, this.user, "Account one", "account-one", 1000.0, new Moment("2016-01-01").getDate()));
     this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0, new Moment("2016-01-01").getDate()));
     this.account = new Account(1, this.user, "My account", "my-account", 2000, new Moment("2017-01-01").getDate());
+    this.accountViews = AccountViewPivot.fromDomainToView(this.accounts);
   }
 
   @Test
   public void should_get_accounts_page() throws Exception {
-    given(this.accountService.getAccountsOfUser()).willReturn(this.accounts);
+    given(this.accountService.getAccountsOfUser()).willReturn(this.accountViews);
 
     this.mvc.perform(get("/accounts"))
             .andExpect(status().isOk())
             .andExpect(view().name("account/accounts"))
-            .andExpect(MockMvcResultMatchers.model().attribute("accounts", this.accounts));
+            .andExpect(MockMvcResultMatchers.model().attribute("accounts", this.accountViews));
   }
 
   @Test

@@ -4,29 +4,52 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
       layout:decorator="layout">
 <head>
-    <title>Identification</title>
+  <title>Connexion à Banana</title>
+  <link rel="stylesheet" th:href="@{/css/dist/user.min.css}"/>
 </head>
 <body>
-<section layout:fragment="content" class="page-login">
-    <h1>Identification</h1>
+<section layout:fragment="content">
+  <h1>Connexion</h1>
+
+  <div class="error-wrapper">
     <div th:if="${param.error}" class="form-info form-error">Oups
-        ! Le mot de passe ou l'e-mail renseignés semblent ne pas
-        correspondre</div>
-    <form th:action="@{/login}" method="post">
-        <div>
-            <input type="text" name="username" placeholder="Votre e-mail" />
+      ! Le mot de passe ou l'e-mail renseignés semblent ne pas
+      correspondre
+    </div>
+  </div>
+
+  <div class="form-wrapper container">
+    <div class="col s10 offset-s1">
+      <form th:action="@{/login}" method="POST" class="col s12">
+        <div class="row">
+          <div class="input-field col s12">
+            <input type="text" id="username" name="username" />
+            <label for="username">Identifiant</label>
+          </div>
         </div>
-        <div>
-            <input type="password" name="password"
-                   placeholder="Votre mot de passe" />
+        <div class="row">
+          <div class="input-field col s12">
+            <input type="password" id="password" name="password" />
+            <label for="password">Mot de passe</label>
+          </div>
         </div>
-        <div>
-            Se souvenir de moi : <input type="checkbox" name="remember-me" />
+
+        <div class="row">
+          <p class="col s12">
+            <input type="checkbox" id="remember-me" name="remember-me"/>
+            <label for="remember-me">Se souvenir de moi</label>
+          </p>
         </div>
-        <div class="submit-wrapper">
-            <input type="submit" value="Valider" />
+
+        <div class="row">
+          <div class="col s2 offset-s5">
+            <input class="waves-effect waves-light btn" type="submit" value="Valider"/>
+          </div>
         </div>
-    </form>
+      </form>
+    </div>
+  </div>
 </section>
+
 </body>
 </html>

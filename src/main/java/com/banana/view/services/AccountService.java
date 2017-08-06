@@ -12,7 +12,9 @@ import com.banana.infrastructure.orm.models.SExpense;
 import com.banana.infrastructure.orm.repositories.*;
 import com.banana.utils.Moment;
 import com.banana.view.forms.AccountForm;
+import com.banana.view.models.AccountView;
 import com.banana.view.pivots.AccountFormPivot;
+import com.banana.view.pivots.AccountViewPivot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,9 +79,19 @@ public class AccountService {
     this.userService = userService;
   }
 
-  public List<Account> getAccountsOfUser() {
+  public List<AccountView> getAccountsOfUser() {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    return this.banker.getAccountsOfUser(user);
+    List<AccountView> accounts = AccountViewPivot.fromDomainToView(this.banker.getAccountsOfUser(user));
+    // TODO
+    /*
+    for (AccountView account : accounts) {
+      calculate current month start amount
+      calculate current month current amount
+      calculate current month free amount
+         -> This should be part of account calculator port calculateX(Account account, Date date)
+    }
+     */
+    return accounts;
   }
 
   public Account getAccountBySlug(String slug) {

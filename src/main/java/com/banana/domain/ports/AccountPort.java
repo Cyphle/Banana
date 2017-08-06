@@ -3,6 +3,7 @@ package com.banana.domain.ports;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
 
+import java.util.Date;
 import java.util.List;
 
 public interface AccountPort {
@@ -13,4 +14,7 @@ public interface AccountPort {
   Account createAccount(Account account);
   Account updateAccount(Account account);
   boolean deleteAccount(User user, long accountId);
+  double calculateGivenMonthStartAmount(Account account, Date month);
+  double calculateGivenMonthCurrentAmount(Account account, Date month);
+  double calculateGivenMonthFreeAmount(Account account, Date month);
 }

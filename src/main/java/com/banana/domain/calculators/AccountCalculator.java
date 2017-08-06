@@ -3,12 +3,14 @@ package com.banana.domain.calculators;
 import com.banana.domain.adapters.*;
 import com.banana.domain.exceptions.CreationException;
 import com.banana.domain.exceptions.NoElementFoundException;
+import com.banana.domain.helpers.AmountCalculator;
 import com.banana.domain.models.*;
 import com.banana.domain.ports.AccountPort;
 import com.banana.domain.validators.AccountVerifier;
 import com.banana.utils.Moment;
 import com.github.slugify.Slugify;
 
+import java.util.Date;
 import java.util.List;
 
 public class AccountCalculator implements AccountPort {
@@ -104,6 +106,27 @@ public class AccountCalculator implements AccountPort {
     return isDeleted;
   }
 
+  public double calculateGivenMonthStartAmount(Account account, Date month) {
+    Moment askedDate = new Moment();
+    if (month != null) askedDate = new Moment(month);
+    final Moment calculationMonth = askedDate.getLastDayOfPrecedingMonth();
+    return this.calculateAmounts(account, calculationMonth);
+  }
+
+  public double calculateGivenMonthCurrentAmount(Account account, Date month) {
+    Moment askedDate = new Moment();
+    if (month != null) askedDate = new Moment(month);
+    final Moment calculationMonth = askedDate.getLastDateOfMonth();
+    return this.calculateAmounts(account, calculationMonth);
+  }
+
+  public double calculateGivenMonthFreeAmount(Account account, Date month) {
+    Moment askedDate = new Moment();
+    if (month != null) askedDate = new Moment(month);
+    final Moment calculationMonth = askedDate.getLastDateOfMonth();
+    return this.calculateFreeAmounts(account, calculationMonth);
+  }
+
   private void getAccountItems(User user, Account myAccount) {
     // BUDGETS
     List<Budget> budgets = this.budgetFetcher.getBudgetsOfUserAndAccount(user, myAccount.getId());
@@ -122,5 +145,31 @@ public class AccountCalculator implements AccountPort {
     // EXPENSES
     List<Expense> expenses = this.expenseFetcher.getExpensesOfAccount(myAccount);
     myAccount.setExpenses(expenses);
+  }
+
+  private double calculateAmounts(Account account, Moment calculationMonth) {
+    // If account start date if before calculating month take its initial amount, else 0.0
+    double startAmount = calculationMonth.compareTo(new Moment(account.getStartDate())) >= 0 ? account.getInitialAmount() : 0.0;
+
+    AmountCalculator calculator = new AmountCalculator(account);
+    startAmount -= calculator.calculateGivenMonthCharges(calculationMonth.getDate());
+    startAmount -= calculator.calculateGivenMonthExpenses(calculationMonth.getDate());
+    startAmount += calculator.calculateGivenMonthCredits(calculationMonth.getDate());
+    startAmount -= calculator.calculateGivenMonthBudgetExpenses(calculationMonth.getDate());
+
+    return startAmount;
+  }
+
+  private double calculateFreeAmounts(Account account, Moment calculationMonth) {
+    // If account start date if before calculating month take its initial amount, else 0.0
+    double startAmount = calculationMonth.compareTo(new Moment(account.getStartDate())) >= 0 ? account.getInitialAmount() : 0.0;
+
+    AmountCalculator calculator = new AmountCalculator(account);
+    startAmount -= calculator.calculateGivenMonthCharges(calculationMonth.getDate());
+    startAmount -= calculator.calculateGivenMonthExpenses(calculationMonth.getDate());
+    startAmount += calculator.calculateGivenMonthCredits(calculationMonth.getDate());
+    startAmount -= calculator.calculateGivenMonthFreeAmountForBudgets(calculationMonth.getLastDayOfPrecedingMonth().getDate());
+
+    return startAmount;
   }
 }
