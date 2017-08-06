@@ -7,3 +7,29 @@
 nav {
   background-color: $main-blue;
 }
+
+.side-menu {
+  ul {
+    li {
+      form {
+        margin-left: 10%;
+      }
+    }
+  }
+}
+
+.page-footer {
+  background-color: $main-blue;
+
+  .footer-copyright {
+    background-color: $light-blue-1;
+  }
+}
+
+.btn {
+  background-color: $main-green;
+
+  &:hover {
+    background-color: $dark-green-1;
+  }
+}
