@@ -96,7 +96,7 @@ public class APIChargeControllerTests {
     SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
     SCharge sCharge = this.chargeRepository.findByUserUsernameAndAccountId(this.fakeUser.getUsername(), sAccount.getId()).get(0);
 
-    this.mvc.perform(delete("/charges/" + sAccount.getId() + "/" + sCharge.getId()))
+    this.mvc.perform(delete("/api/charges/" + sAccount.getId() + "/" + sCharge.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));

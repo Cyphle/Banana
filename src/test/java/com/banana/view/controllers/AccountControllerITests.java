@@ -109,6 +109,15 @@ public class AccountControllerITests {
 
   @Test
   @WithMockUser(username = "john@doe.fr", roles = {"USER", "ADMIN"})
+  public void should_get_account_page_of_one_by_slug() throws Exception {
+    this.mvc.perform(get("/accounts/account-one"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("account/account"))
+            .andExpect(content().string(containsString("account-one")));
+  }
+
+  @Test
+  @WithMockUser(username = "john@doe.fr", roles = {"USER", "ADMIN"})
   public void should_post_new_account() throws Exception {
     this.mvc.perform(post("/accounts/create")
             .param("name", "Fake Account")

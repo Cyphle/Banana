@@ -3,28 +3,32 @@
       layout:decorator="layout"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
-    <title>Page d'accueil de Banana</title>
-    <link rel="stylesheet" th:href="@{/css/dist/homepage.min.css}"/>
-    <script th:src="@{/javascript/dist/homepage.bundle.min.js}"></script>
+  <title>Page d'accueil de Banana</title>
+  <link rel="stylesheet" th:href="@{/css/dist/homepage.min.css}"/>
 </head>
 <body>
-<div layout:fragment="content" class="presentation">
+
+  <section layout:fragment="content" class="presentation">
     <div class="home-catchline">
-        <h1>Banana, gestionnaire de comptes simple</h1>
-        <p>
-            Oubliez vos carnets, vos post-its, vos Excels<br />Utilisez
-            Banana pour plus de simplicité
-        </p>
-        <div>
-            <!-- <a th:href="@{/register}">S'inscrire</a>  -->
-            <p th:text="${toto}"></p>
-            <p th:text="${username}"></p>
-        </div>
+      <h1>Banana, gestionnaire de comptes simple</h1>
+      <p>
+        Oubliez vos carnets, vos post-its, vos Excels<br/>Utilisez
+        Banana pour plus de simplicité
+      </p>
+      <div>
+        <!-- <a th:href="@{/register}">S'inscrire</a>  -->
+        <p th:text="${toto}"></p>
+        <p th:text="${username}"></p>
+      </div>
     </div>
     <div class="home-images">
-        <img th:src="@{/img/BananaScreenshot.png}" alt="Excel sheets" />
-        <img th:src="@{/img/BananaScreenshot.png}" alt="Banana screenshot" />
+      <img th:src="@{/img/BananaScreenshot.png}" alt="Excel sheets"/>
+      <img th:src="@{/img/BananaScreenshot.png}" alt="Banana screenshot"/>
     </div>
-</div>
+  </section>
+
+  <div layout:fragment="scripts">
+    <script th:src="@{/javascript/dist/homepage.bundle.min.js}"></script>
+  </div>
 </body>
 </html>

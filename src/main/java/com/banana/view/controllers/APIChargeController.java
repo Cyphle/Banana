@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/charges")
+@RequestMapping("/api/charges")
 public class APIChargeController {
   private ChargeService chargeService;
 

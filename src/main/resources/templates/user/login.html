@@ -7,7 +7,7 @@
     <title>Identification</title>
 </head>
 <body>
-<div layout:fragment="content" class="page-login">
+<section layout:fragment="content" class="page-login">
     <h1>Identification</h1>
     <div th:if="${param.error}" class="form-info form-error">Oups
         ! Le mot de passe ou l'e-mail renseignés semblent ne pas
@@ -27,6 +27,6 @@
             <input type="submit" value="Valider" />
         </div>
     </form>
-</div>
+</section>
 </body>
 </html>

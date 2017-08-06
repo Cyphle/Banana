@@ -3,6 +3,7 @@ var webpack = require('webpack');
 
 module.exports = {
     entry: {
+        layout: './javascript/scripts/layout.js',
         homepage: './javascript/scripts/homepage.js',
         // 'home-main': './src/scripts/home-main.js',
         // 'home-second': './src/scripts/home-second.js',

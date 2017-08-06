@@ -2,12 +2,12 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
-      layout:decorator="account/form">
+      layout:decorator="layout">
 <head>
   <title>Account edition</title>
 </head>
 <body>
-<div layout:fragment="account-form" class="page-form">
+<section layout:fragment="content" class="creation-form">
   <h1 th:if="${accountForm}">Edition du compte <span th:text="${accountForm.name}"></span></h1>
   <h1 th:if="!${accountForm}">Création de compte</h1>
   <form th:action="@{/accounts/update}" method="POST">
@@ -22,6 +22,6 @@
       <input type="submit" th:value="${accountForm != null ? 'Sauvegarder' : 'Créer'}" />
     </div>
   </form>
-</div>
+</section>
 </body>
 </html>

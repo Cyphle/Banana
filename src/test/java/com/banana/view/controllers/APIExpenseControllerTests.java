@@ -98,7 +98,7 @@ public class APIExpenseControllerTests {
     SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
     SExpense sExpense = this.expenseRepository.findByAccountId(sAccount.getId()).get(0);
 
-    this.mvc.perform(delete("/expenses/" + sAccount.getId() + "/" + sExpense.getId()))
+    this.mvc.perform(delete("/api/expenses/" + sAccount.getId() + "/" + sExpense.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));

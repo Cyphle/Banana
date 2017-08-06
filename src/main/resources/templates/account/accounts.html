@@ -4,54 +4,15 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
       layout:decorator="layout">
 <head>
-    <title>Account list</title>
+  <title>Account list</title>
 </head>
 <body>
-<div layout:fragment="content" class="page-accounts">
-    <h1>Liste de mes comptes</h1>
+<section layout:fragment="content" class="page-accounts">
+  <h1>Liste de mes comptes</h1>
 
-    <div class="actions-wrapper">
-        <a th:href="@{/accounts/create}">Créer un compte</a>
-    </div>
-
-    <div class="table-wrapper">
-        <table id="accounts-table" class="display" cellspacing="0">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Montant initial</th>
-                <th>Date de création</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tfoot>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Montant initial</th>
-                <th>Date de création</th>
-                <th>Actions</th>
-            </tr>
-            </tfoot>
-            <tbody>
-            <tr th:each="account : ${accounts}">
-                <td th:text="${account.id}"></td>
-                <td th:text="${account.name}"></td>
-                <td><span th:text="${account.initialAmount}"></span>€</td>
-                <td th:text="${#dates.format(account.startDate, 'dd/MM/yyyy')}"></td>
-                <td><a
-                        th:href="@{/accounts/{slug}(slug=${account.slug})}"
-                        class="action-see">Voir</a> <a
-                        th:href="@{/accounts/update/{slug}(slug=${account.slug})}"
-                        class="action-edit">Editer</a>
-                    <button class="action-delete-account" data-action="delete"
-                            data-type="account" th:attr="data-slug=${account.slug}">Supprimer</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+  <div class="table-wrapper">
+    <p th:each="account : ${accounts}"><span th:text="${account.name}"></span> - <span th:text="${account.slug}"></span></p>
+  </div>
+</section>
 </body>
 </html>

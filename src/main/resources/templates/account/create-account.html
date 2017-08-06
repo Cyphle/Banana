@@ -2,12 +2,12 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
-      layout:decorator="account/form">
+      layout:decorator="layout">
 <head>
   <title>Account creation</title>
 </head>
 <body>
-<div layout:fragment="account-form" class="page-form">
+<section layout:fragment="content" class="creation-form">
   <form th:action="@{/accounts/create}" method="POST">
     <div>
       <input type="text" name="name" placeholder="Nom du compte" />
@@ -15,10 +15,13 @@
     <div>
       <input type="text" name="initialAmount" placeholder="Montant initial" />
     </div>
+    <div>
+      <input type="date" name="startDate" placeholder="Date de début" id="start-date" />
+    </div>
     <div class="submit-wrapper">
       <input type="submit" value="Créer" />
     </div>
   </form>
-</div>
+</section>
 </body>
 </html>

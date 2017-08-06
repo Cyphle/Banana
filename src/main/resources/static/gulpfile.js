@@ -28,6 +28,15 @@ gulp.task('minify-css', function () {
       .pipe(gulp.dest('css/dist'));
 });
 
+gulp.task('uglify-layout', function () {
+  gulp.src('javascript/build/layout.bundle.js')
+      .pipe(uglify())
+      .pipe(rename({
+        suffix: '.min'
+      }))
+      .pipe(gulp.dest('javascript/dist'))
+});
+
 gulp.task('uglify-homepage', function () {
   gulp.src('javascript/build/homepage.bundle.js')
       .pipe(uglify())
@@ -73,7 +82,7 @@ gulp.task('uglify-homepage', function () {
 //       .pipe(gulp.dest('src/dist'))
 // });
 
-gulp.task('watch', ['webpack', 'uglify-homepage', 'sass', 'minify-css'], function () {
+gulp.task('watch', ['webpack', 'uglify-homepage', 'uglify-layout', 'sass', 'minify-css'], function () {
   gulp.watch('src/scripts/**/*.js', ['webpack']);
   gulp.watch('src/build/*.js', ['uglify-homepage']);
   gulp.watch('./sass/**/*.scss', ['sass']);

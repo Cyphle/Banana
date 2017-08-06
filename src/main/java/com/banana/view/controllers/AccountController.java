@@ -31,6 +31,12 @@ public class AccountController {
     return "account/accounts";
   }
 
+  @RequestMapping(value = "{accountSlug}", method = RequestMethod.GET)
+  public String getAccount(@PathVariable String accountSlug, Model model) {
+    model.addAttribute("accountName", accountSlug);
+    return "account/account";
+  }
+
   @RequestMapping(value = "/create", method = RequestMethod.GET)
   public String createAccount(Model model) {
     return "account/create-account";
@@ -41,6 +47,8 @@ public class AccountController {
     if (errors.hasErrors()) {
       return "account/create-account";
     }
+
+    System.out.println(accountForm.getStartDate());
 
     Account createdAccount = this.accountService.createAccount(accountForm);
     if (createdAccount != null)

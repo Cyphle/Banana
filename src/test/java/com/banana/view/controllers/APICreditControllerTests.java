@@ -99,7 +99,7 @@ public class APICreditControllerTests {
     SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
     SCredit sCredit = this.creditRepository.findByUserUsernameAndAccountId(this.fakeUser.getUsername(), sAccount.getId()).get(0);
 
-    this.mvc.perform(delete("/credits/" + sAccount.getId() + "/" + sCredit.getId()))
+    this.mvc.perform(delete("/api/credits/" + sAccount.getId() + "/" + sCredit.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));

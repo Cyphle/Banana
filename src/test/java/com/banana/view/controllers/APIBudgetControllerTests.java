@@ -113,7 +113,7 @@ public class APIBudgetControllerTests {
     SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
     SBudget sBudget = this.budgetRepository.findByUserUsernameAndAccountId(this.fakeUser.getUsername(), sAccount.getId()).get(0);
 
-    this.mvc.perform(delete("/budgets/" + sAccount.getId() + "/" + sBudget.getId()))
+    this.mvc.perform(delete("/api/budgets/" + sAccount.getId() + "/" + sBudget.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));
@@ -125,7 +125,7 @@ public class APIBudgetControllerTests {
     SBudget sBudget = this.budgetRepository.findByUserUsernameAndAccountId(this.fakeUser.getUsername(), sAccount.getId()).get(0);
     SExpense sExpense = this.expenseRepository.findByBudgetId(sBudget.getId()).get(0);
 
-    this.mvc.perform(delete("/budgets/expenses/" + sAccount.getId() + "/" + sBudget.getId() + "/" + sExpense.getId()))
+    this.mvc.perform(delete("/api/budgets/expenses/" + sAccount.getId() + "/" + sBudget.getId() + "/" + sExpense.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));
