@@ -46,45 +46,20 @@ gulp.task('uglify-homepage', function () {
       .pipe(gulp.dest('javascript/dist'))
 });
 
-// gulp.task('uglify-home-main', function () {
-//   gulp.src('src/build/home-main.bundle.js')
-//       .pipe(uglify())
-//       .pipe(rename({
-//         suffix: '.min'
-//       }))
-//       .pipe(gulp.dest('src/dist'))
-// });
-//
-// gulp.task('uglify-home-second', function () {
-//   gulp.src('src/build/home-second.bundle.js')
-//       .pipe(uglify())
-//       .pipe(rename({
-//         suffix: '.min'
-//       }))
-//       .pipe(gulp.dest('src/dist'))
-// });
-//
-// gulp.task('uglify-medias-main', function () {
-//   gulp.src('src/build/medias-main.bundle.js')
-//       .pipe(uglify())
-//       .pipe(rename({
-//         suffix: '.min'
-//       }))
-//       .pipe(gulp.dest('src/dist'))
-// });
-//
-// gulp.task('uglify-projects-main', function () {
-//   gulp.src('src/build/projects-main.bundle.js')
-//       .pipe(uglify())
-//       .pipe(rename({
-//         suffix: '.min'
-//       }))
-//       .pipe(gulp.dest('src/dist'))
-// });
+gulp.task('uglify-account', function () {
+  gulp.src('javascript/build/account.bundle.js')
+      .pipe(uglify())
+      .pipe(rename({
+        suffix: '.min'
+      }))
+      .pipe(gulp.dest('javascript/dist'))
+});
 
-gulp.task('watch', ['webpack', 'uglify-homepage', 'uglify-layout', 'sass', 'minify-css'], function () {
+gulp.task('watch', ['webpack', 'uglify-homepage', 'uglify-layout', 'uglify-account', 'sass', 'minify-css'], function () {
   gulp.watch('src/scripts/**/*.js', ['webpack']);
   gulp.watch('src/build/*.js', ['uglify-homepage']);
+  gulp.watch('src/build/*.js', ['uglify-layout']);
+  gulp.watch('src/build/*.js', ['uglify-account']);
   gulp.watch('./sass/**/*.scss', ['sass']);
   gulp.watch('css/scripts/build/**.css', ['minify-css']);
 });

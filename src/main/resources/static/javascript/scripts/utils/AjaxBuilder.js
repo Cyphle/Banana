@@ -1,10 +1,10 @@
 'use strict';
 
 export default class AjaxBuilder {
-  send(path, data) {
+  send(path, method, data) {
     $.ajax({
-      url: this.host + path,
-      type: 'POST',
+      url: path,
+      type: method,
       data: data,
       success: response => {
         console.log(response)

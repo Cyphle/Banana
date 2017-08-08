@@ -8,7 +8,6 @@ import com.banana.domain.ports.AccountPort;
 import com.banana.infrastructure.connector.adapters.*;
 import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.infrastructure.connector.repositories.*;
-import com.banana.infrastructure.orm.models.SExpense;
 import com.banana.infrastructure.orm.repositories.*;
 import com.banana.utils.Moment;
 import com.banana.view.forms.AccountForm;
@@ -18,6 +17,7 @@ import com.banana.view.pivots.AccountViewPivot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -43,7 +43,7 @@ public class AccountService {
   private IExpenseFetcher expenseFetcher;
 
   private UserService userService;
-  private AccountPort banker;
+  private AccountPort accountPort;
 
   @Autowired
   public AccountService(
@@ -75,28 +75,26 @@ public class AccountService {
     this.creditFetcher = new CreditFetcher(this.accountRepository, this.creditRepository);
     this.expenseFetcher = new ExpenseFetcher(this.accountRepository, this.budgetRepository, this.expenseRepository);
 
-    this.banker = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
+    this.accountPort = new AccountCalculator(this.accountFetcher, this.budgetFetcher, this.chargeFetcher, this.creditFetcher, this.expenseFetcher);
     this.userService = userService;
   }
 
   public List<AccountView> getAccountsOfUser() {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    List<AccountView> accounts = AccountViewPivot.fromDomainToView(this.banker.getAccountsOfUser(user));
-    // TODO
-    /*
-    for (AccountView account : accounts) {
-      calculate current month start amount
-      calculate current month current amount
-      calculate current month free amount
-         -> This should be part of account calculator port calculateX(Account account, Date date)
+    List<AccountView> accounts = AccountViewPivot.fromDomainToView(this.accountPort.getAccountsOfUser(user));
+    for (AccountView accountView : accounts) {
+      Account account = getAccountBySlug(accountView.getSlug());
+      Date today = new Moment().getDate();
+      accountView.setBeginMonthAmount(this.accountPort.calculateGivenMonthStartAmount(account, today));
+      accountView.setCurrentAmount(this.accountPort.calculateGivenMonthCurrentAmount(account, today));
+      accountView.setFreeAmount(this.accountPort.calculateGivenMonthFreeAmount(account, today));
     }
-     */
     return accounts;
   }
 
   public Account getAccountBySlug(String slug) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    return this.banker.getAccountByUserAndAccountSlug(user, slug);
+    return this.accountPort.getAccountByUserAndAccountSlug(user, slug);
   }
 
   public Account createAccount(AccountForm accountForm) {
@@ -104,18 +102,18 @@ public class AccountService {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
     if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
     Account account = AccountFormPivot.fromViewToDomain(user, accountForm);
-    return this.banker.createAccount(account);
+    return this.accountPort.createAccount(account);
   }
 
   public Account updateAccount(AccountForm accountForm) {
     if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
     Account account = AccountFormPivot.fromViewToDomain(user, accountForm);
-    return this.banker.updateAccount(account);
+    return this.accountPort.updateAccount(account);
   }
 
   public boolean deleteAccount(long accountId) {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
-    return this.banker.deleteAccount(user, accountId);
+    return this.accountPort.deleteAccount(user, accountId);
   }
 }

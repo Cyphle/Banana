@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		 * .loginPage("/login") .permitAll() .and() .logout() .permitAll();
 		 */
 
-    http.authorizeRequests()
+    http.cors().and().authorizeRequests()
             .antMatchers("/hello").access("hasRole('ROLE_ADMIN')")
             .regexMatchers("/accounts.*").access("hasRole('ROLE_USER')")
             .regexMatchers("/budgets.*").access("hasRole('ROLE_USER')")

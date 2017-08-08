@@ -16,7 +16,11 @@
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
               <span class="card-title" th:text="${account.name}"></span>
-              <p><span th:text="${account.initialAmount}"></span> et puis montant actuel, restant pour le mois courant</p>
+              <p>
+                <b>Montant début de mois : </b><span th:text="${#numbers.formatDecimal(account.beginMonthAmount, 0, 'COMMA', 2, 'POINT')}">€</span><br/>
+                <b>Montant actuel : </b> <span th:text="${#numbers.formatDecimal(account.currentAmount, 0, 'COMMA', 2, 'POINT')}">€</span><br/>
+                <b>Montant libre : </b><span th:text="${#numbers.formatDecimal(account.freeAmount, 0, 'COMMA', 2, 'POINT')}">€</span>
+              </p>
             </div>
             <div class="card-action">
               <a th:href="@{/accounts/{slug}(slug=${account.slug})}">Consulter</a>

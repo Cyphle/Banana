@@ -1,13 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorator="layout">
 <head>
-  <title>Account</title>
+  <title th:text="${'Compte' + accountSlug}"></title>
+  <link rel="stylesheet" th:href="@{/css/dist/account.min.css}"/>
 </head>
 <body>
-<div layout:fragment="content" class="page-account">
+<section layout:fragment="content" class="page-account">
   <h1>
-    <span th:text="${accountName}"></span>
+    <span th:text="${accountSlug}"></span>
   </h1>
+  <div class="switch-button">
+    <button id="button-all-account">Tout voir</button>
+    <button id="button-budgets">Budgets</button>
+    <button id="button-charges">Charges</button>
+    <button id="button-expenses">Dépenses</button>
+    <button id="button-credits">Crédits</button>
+  </div>
+  <div class="account-infos-wrapper">
+    <div class="all-account-content"></div>
+    <div class="budgets-content"></div>
+    <div class="charges-content"></div>
+    <div class="expenses-content"></div>
+    <div class="credits-content"></div>
+  </div>
+</section>
+<div layout:fragment="scripts">
+  <script th:src="@{/javascript/dist/account.bundle.min.js}"></script>
 </div>
 </body>
 </html>

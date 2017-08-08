@@ -33,7 +33,10 @@
         <div class="background">
           <img th:src="@{/images/sidemenuimgbackground.jpg}" alt="Logo"/>
         </div>
-        <a href="#!user"><img class="circle" th:src="@{/images/BananaLogo.png}" /></a>
+        <a href="#!user">
+          <img sec:authorize="!isAuthenticated()" class="circle" th:src="@{/images/BananaLogo.png}" />
+          <img sec:authorize="isAuthenticated()" class="circle" th:src="@{'/images/users/' + ${user.picture}}" />
+        </a>
         <a href="#!name"><span class="white-text name"><span th:text="${user != null ? user.firstname : ''}"></span> <span th:text="${user != null ? user.lastname : ''}"></span></span></a>
         <a href="#!email"><span class="white-text email"><span th:text="${user != null ? user.username : ''}"></span></span></a>
       </div>

@@ -1,9 +1,11 @@
 package com.banana.view.controllers;
 
 import com.banana.domain.models.Account;
+import com.banana.infrastructure.orm.models.SUser;
 import com.banana.view.forms.AccountForm;
 import com.banana.view.pivots.AccountFormPivot;
 import com.banana.view.services.AccountService;
+import com.banana.view.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,21 +21,25 @@ import java.io.IOException;
 @RequestMapping("/accounts")
 public class AccountController {
   private AccountService accountService;
+  private UserService userService;
 
   @Autowired
-  public AccountController(AccountService accountService) {
+  public AccountController(AccountService accountService, UserService userService) {
     this.accountService = accountService;
+    this.userService = userService;
   }
 
   @RequestMapping(method = RequestMethod.GET)
   public String getAccounts(Model model) {
     model.addAttribute("accounts", this.accountService.getAccountsOfUser());
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
     return "account/accounts";
   }
 
   @RequestMapping(value = "{accountSlug}", method = RequestMethod.GET)
   public String getAccount(@PathVariable String accountSlug, Model model) {
-    model.addAttribute("accountName", accountSlug);
+    model.addAttribute("accountSlug", accountSlug);
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
     return "account/account";
   }
 

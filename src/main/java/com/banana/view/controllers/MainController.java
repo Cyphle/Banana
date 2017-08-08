@@ -1,5 +1,6 @@
 package com.banana.view.controllers;
 
+import com.banana.infrastructure.orm.models.SUser;
 import com.banana.view.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,9 +20,8 @@ public class MainController {
 
   @RequestMapping(method= RequestMethod.GET)
   public String home(Model model) {
-    model.addAttribute("picture", this.userService.getUserPicture());
-    model.addAttribute("username", this.userService.getAuthenticatedUser() != null ? this.userService.getAuthenticatedUser().getUsername() : "Anonyme");
-    model.addAttribute("toto", "Hello world");
+    SUser user = this.userService.getAuthenticatedUser();
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
     return "home";
   }
 }

@@ -6,6 +6,7 @@ import com.banana.view.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/api/accounts")
 public class APIAccountController {
