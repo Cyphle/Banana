@@ -55,10 +55,7 @@
     <li><a class="subheader">Gestion de compte</a></li>
     <li sec:authorize="isAuthenticated()"><a th:href="@{/accounts}" class="waves-effect">Mes comptes</a></li>
     <li sec:authorize="isAuthenticated()"><a th:href="@{/accounts/create}" class="waves-effect">Créer un compte</a></li>
-    <li sec:authorize="isAuthenticated()"><a th:href="@{/accounts}" class="waves-effect">Créer un budget</a></li>
-    <li sec:authorize="isAuthenticated()"><a th:href="@{/accounts}" class="waves-effect">Ajouter une charge</a></li>
-    <li sec:authorize="isAuthenticated()"><a th:href="@{/accounts}" class="waves-effect">Ajouter une dépense</a></li>
-    <li sec:authorize="isAuthenticated()"><a th:href="@{/accounts}" class="waves-effect">Ajouter un crédit</a></li>
+
   </ul>
 </section>
 

@@ -9,6 +9,7 @@ import com.banana.view.pivots.BudgetFormPivot;
 import com.banana.view.pivots.ExpenseFormPivot;
 import com.banana.view.services.BudgetService;
 import com.banana.view.services.ExpenseService;
+import com.banana.view.services.UserService;
 import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,9 +27,11 @@ import java.io.IOException;
 public class BudgetController {
   private BudgetService budgetService;
   private ExpenseService expenseService;
+  private UserService userService;
 
   @Autowired
-  public BudgetController(BudgetService budgetService, ExpenseService expenseService) {
+  public BudgetController(UserService userService, BudgetService budgetService, ExpenseService expenseService) {
+    this.userService = userService;
     this.budgetService = budgetService;
     this.expenseService = expenseService;
   }
@@ -38,11 +41,13 @@ public class BudgetController {
     BudgetForm budgetForm = new BudgetForm();
     budgetForm.setAccountId(accountId);
     model.addAttribute("budgetForm", budgetForm);
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
     return "budget/create-budget";
   }
 
   @RequestMapping(value = "/create", method = RequestMethod.POST)
   public String createBudgetPost(@Valid BudgetForm budgetForm, Errors errors) throws IllegalStateException, IOException {
+
     if (errors.hasErrors())
       return "budget/create-budget";
 

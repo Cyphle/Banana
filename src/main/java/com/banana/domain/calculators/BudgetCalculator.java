@@ -39,6 +39,7 @@ public class BudgetCalculator implements BudgetPort {
     if (this.isInitialAmountNegative(budget))
       throw new CreationException("Budget initial amount cannot be negative");
     else {
+      budget.setStartDate(new Moment(budget.getStartDate()).getFirstDateOfMonth().getDate());
       return this.budgetFetcher.createBudget(accountId, budget);
     }
   }

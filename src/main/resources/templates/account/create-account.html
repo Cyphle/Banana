@@ -8,20 +8,36 @@
 </head>
 <body>
 <section layout:fragment="content" class="creation-form">
-  <form th:action="@{/accounts/create}" method="POST">
-    <div>
-      <input type="text" name="name" placeholder="Nom du compte" />
+  <h1>Création de compte</h1>
+
+  <div class="form-wrapper container">
+    <div class="col s10 offset-s1">
+      <form th:action="@{/accounts/create}" method="POST" class="col s12">
+        <div class="row">
+          <div class="input-field col s12">
+            <input type="text" id="name" name="name" />
+            <label for="name">Nom du compte</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input type="text" id="initialAmount" name="initialAmount" />
+            <label for="initialAmount">Montant initial</label>
+          </div>
+          <div class="input-field col s6">
+            <input type="date" name="startDate" id="start-date" />
+            <label for="start-date">Date de prise en compte</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s2 offset-s5">
+            <input class="waves-effect waves-light btn" type="submit" value="Valider"/>
+          </div>
+        </div>
+      </form>
     </div>
-    <div>
-      <input type="text" name="initialAmount" placeholder="Montant initial" />
-    </div>
-    <div>
-      <input type="date" name="startDate" placeholder="Date de début" id="start-date" />
-    </div>
-    <div class="submit-wrapper">
-      <input type="submit" value="Créer" />
-    </div>
-  </form>
+  </div>
 </section>
 </body>
 </html>

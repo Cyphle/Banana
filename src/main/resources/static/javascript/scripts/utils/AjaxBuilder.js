@@ -2,13 +2,15 @@
 
 export default class AjaxBuilder {
   send(path, method, data) {
-    $.ajax({
-      url: path,
-      type: method,
-      data: data,
-      success: response => {
-        console.log(response)
-      }
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: path,
+        type: method,
+        data: data,
+        success: response => {
+          resolve(response);
+        }
+      });
     });
   }
 }

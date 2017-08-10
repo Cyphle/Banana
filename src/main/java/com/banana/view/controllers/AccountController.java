@@ -45,17 +45,17 @@ public class AccountController {
 
   @RequestMapping(value = "/create", method = RequestMethod.GET)
   public String createAccount(Model model) {
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
     return "account/create-account";
   }
 
   @RequestMapping(value = "/create", method = RequestMethod.POST)
-  public String createAccountPost(@Valid AccountForm accountForm, Errors errors) throws IllegalStateException, IOException {
+  public String createAccountPost(@Valid AccountForm accountForm, Errors errors, Model model) throws IllegalStateException, IOException {
     if (errors.hasErrors()) {
       return "account/create-account";
     }
 
-    System.out.println(accountForm.getStartDate());
-
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
     Account createdAccount = this.accountService.createAccount(accountForm);
     if (createdAccount != null)
       return "redirect:/accounts/" + createdAccount.getSlug();

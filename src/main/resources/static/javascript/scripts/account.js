@@ -1,12 +1,18 @@
 'use strict';
 
 import AjaxBuilder from './utils/AjaxBuilder';
+import AccountPage from './components/AccountPage';
+import MenuBuilder from './components/MenuBuilder';
+
+import { HOST } from './config/config';
 
 $(document).ready(() => {
-  let ajaxBuilder = new AjaxBuilder();
-
   let currentURLParts = window.location.href.split('?');
   let currentSlug = currentURLParts[0].split('/')[currentURLParts[0].split('/').length - 1];
-  console.log(currentSlug);
-  ajaxBuilder.send('http://localhost:8080/api/accounts/' + currentSlug, 'GET');
+
+  let ajaxBuilder = new AjaxBuilder();
+  let menuBuilder = new MenuBuilder();
+  let accountPage = new AccountPage(ajaxBuilder, menuBuilder);
+
+  accountPage.getAccountDataFromServer(HOST + 'api/accounts/' + currentSlug);
 })
