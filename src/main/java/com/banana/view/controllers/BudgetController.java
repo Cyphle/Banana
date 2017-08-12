@@ -42,56 +42,56 @@ public class BudgetController {
     budgetForm.setAccountId(accountId);
     model.addAttribute("budgetForm", budgetForm);
     model.addAttribute("user", this.userService.getAuthenticatedUser());
-    return "budget/create-budget";
+    return "budget/form-create";
   }
 
   @RequestMapping(value = "/create", method = RequestMethod.POST)
   public String createBudgetPost(@Valid BudgetForm budgetForm, Errors errors) throws IllegalStateException, IOException {
-
-    if (errors.hasErrors())
-      return "budget/create-budget";
+    if (errors.hasErrors()) return "budget/form-create";
 
     Account account = this.budgetService.createBudget(budgetForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "budget/create-budget";
+    return "budget/form-create";
   }
 
   @RequestMapping(value = "/update/{accountId}/{budgetId}", method = RequestMethod.GET)
   public String updateBudget(@PathVariable long accountId, @PathVariable long budgetId, Model model) {
     if (!model.containsAttribute("budget")) {
       BudgetForm budgetForm = BudgetFormPivot.fromDomainToView(this.budgetService.getBudget(accountId, budgetId));
+      budgetForm.setAccountId(accountId);
       model.addAttribute("budgetForm", budgetForm);
     }
-    return "budget/update-budget";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "budget/form-update";
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public String updateBudgetPost(@Valid BudgetForm budgetForm, Errors errors) throws IllegalStateException, IOException {
-    if (errors.hasErrors())
-      return "budget/update-budget";
+    if (errors.hasErrors()) return "budget/form-update";
 
     Account account = this.budgetService.updateBudget(budgetForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "budget/update-budget";
+    return "budget/form-update";
   }
 
   @RequestMapping(value = "/expenses/create/{accountId}/{budgetId}", method = RequestMethod.GET)
   public String createExpense(@PathVariable long accountId, @PathVariable long budgetId, Model model) {
     model.addAttribute("expenseForm", new ExpenseForm(accountId, budgetId));
-    return "expense/create-expense";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "expense/form-create";
   }
 
   @RequestMapping(value = "/expenses/create", method = RequestMethod.POST)
   public String createExpensePost(@Valid ExpenseForm expenseForm, Errors errors) throws IllegalStateException, IOException {
     if (errors.hasErrors())
-      return "expense/create-expense";
+      return "expense/form-create";
 
     Account account = this.expenseService.createExpense(expenseForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "expense/create-expense";
+    return "expense/form-create";
   }
 
   @RequestMapping(value = "/expenses/update/{accountId}/{budgetId}/{expenseId}", method = RequestMethod.GET)
@@ -100,17 +100,18 @@ public class BudgetController {
     expenseForm.setAccountId(accountId);
     if (budgetId > 0) expenseForm.setBudgetId(budgetId);
     model.addAttribute("expenseForm", expenseForm);
-    return "expense/update-expense";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "expense/form-update";
   }
 
   @RequestMapping(value = "/expenses/update", method = RequestMethod.POST)
   public String updateExpensePost(@Valid ExpenseForm expenseForm, Errors errors) throws IllegalStateException, IOException {
     if (errors.hasErrors())
-      return "expense/update-expense";
+      return "expense/form-update";
 
     Account account = this.expenseService.updateExpense(expenseForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "expense/update-expense";
+    return "expense/form-update";
   }
 }

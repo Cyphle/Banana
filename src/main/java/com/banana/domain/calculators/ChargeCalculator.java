@@ -33,7 +33,7 @@ public class ChargeCalculator implements ChargePort {
   public Charge createCharge(User user, long accountId, Charge charge) {
     this.accountVerifier.verifyAccount(user, accountId);
     charge.setAmount(Math.abs(charge.getAmount()));
-    charge.setStartDate(new Moment(charge.getStartDate()).getFirstDateOfMonth().getDate());
+    charge.setStartDate(new Moment(charge.getStartDate()).getDate());
     if (charge.getEndDate() != null)
       charge.setEndDate(new Moment(charge.getEndDate()).getLastDateOfMonth().getDate());
     return this.chargeFetcher.createCharge(accountId, charge);
@@ -76,7 +76,7 @@ public class ChargeCalculator implements ChargePort {
   }
 
   private Charge updateChargeProperties(long accountId, Charge charge) {
-    charge.setStartDate(new Moment(charge.getStartDate()).getFirstDateOfMonth().getDate());
+    charge.setStartDate(new Moment(charge.getStartDate()).getDate());
     if (charge.getEndDate() != null) charge.setEndDate(new Moment(charge.getEndDate()).getLastDateOfMonth().getDate());
     return this.chargeFetcher.updateCharge(accountId, charge);
   }

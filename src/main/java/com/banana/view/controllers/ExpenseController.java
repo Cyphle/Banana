@@ -4,6 +4,7 @@ import com.banana.domain.models.Account;
 import com.banana.view.forms.ExpenseForm;
 import com.banana.view.pivots.ExpenseFormPivot;
 import com.banana.view.services.ExpenseService;
+import com.banana.view.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,27 +20,30 @@ import java.io.IOException;
 @RequestMapping("/expenses")
 public class ExpenseController {
   private ExpenseService expenseService;
+  private UserService userService;
 
   @Autowired
-  public ExpenseController(ExpenseService expenseService) {
+  public ExpenseController(UserService userService, ExpenseService expenseService) {
+    this.userService = userService;
     this.expenseService = expenseService;
   }
 
   @RequestMapping(value = "/create/{accountId}", method = RequestMethod.GET)
   public String createExpense(@PathVariable long accountId, Model model) {
     model.addAttribute("expenseForm", new ExpenseForm(accountId, -1));
-    return "expense/create-expense";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "expense/form-create";
   }
 
   @RequestMapping(value = "/create", method = RequestMethod.POST)
   public String createExpensePost(@Valid ExpenseForm expenseForm, Errors errors) throws IllegalStateException, IOException {
     if (errors.hasErrors())
-      return "expense/create-expense";
+      return "expense/form-create";
 
     Account account = this.expenseService.createExpense(expenseForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "expense/create-expense";
+    return "expense/form-create";
   }
 
   @RequestMapping(value = "/update/{accountId}/{expenseId}", method = RequestMethod.GET)
@@ -48,17 +52,18 @@ public class ExpenseController {
     expenseForm.setAccountId(accountId);
     expenseForm.setBudgetId(-1);
     model.addAttribute("expenseForm", expenseForm);
-    return "expense/update-expense";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "expense/form-update";
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public String updateExpensePost(@Valid ExpenseForm expenseForm, Errors errors) throws IllegalStateException, IOException {
     if (errors.hasErrors())
-      return "expense/update-expense";
+      return "expense/form-update";
 
     Account account = this.expenseService.updateExpense(expenseForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "expense/update-expense";
+    return "expense/form-update";
   }
 }

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layout">
+<head>
+  <title>Banana - Edition de budget</title>
+</head>
+<body>
+<section layout:fragment="content" class="creation-form">
+  <h1>Edition d'un budget</h1>
+
+  <div class="form-wrapper container">
+    <div class="col s10 offset-s1">
+      <form th:action="@{/budgets/update}" method="POST" class="col s12">
+        <input type="hidden" name="accountId" th:value="${budgetForm.accountId}" />
+        <input type="hidden" name="id" th:value="${budgetForm.id > 0 ? budgetForm.id : -1}" />
+        <div class="row">
+          <div class="input-field col s6">
+            <input type="date" name="startDate" id="start-date" th:value="${budgetForm != null and budgetForm.startDate != null ? #dates.format(budgetForm.startDate, 'yyyy-MM-dd') : ''}" />
+            <label for="start-date">Date de prise en compte</label>
+          </div>
+          <div class="input-field col s6">
+            <input type="date" name="endDate" id="end-date" th:value="${budgetForm != null and budgetForm.endDate != null ? #dates.format(budgetForm.endDate, 'yyyy-MM-dd') : ''}" />
+            <label for="end-date">Date d'arrêt</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input type="text" name="name" id="name" th:value="${budgetForm != null ? budgetForm.name : ''}" />
+            <label for="name">Nom du budget</label>
+          </div>
+          <div class="input-field col s6">
+            <input type="text" name="initialAmount" id="initialAmount" th:value="${budgetForm != null ? budgetForm.initialAmount : ''}" />
+            <label for="initialAmount">Montnat initial</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s2 offset-s5">
+            <input class="waves-effect waves-light btn" type="submit" value="Valider"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+</body>
+</html>

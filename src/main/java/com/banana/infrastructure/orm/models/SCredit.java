@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "credit")
+@Table(name = "credits")
 public class SCredit {
   private static final long serialVersionUID = 1L;
 

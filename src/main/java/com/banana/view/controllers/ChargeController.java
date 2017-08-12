@@ -4,6 +4,7 @@ import com.banana.domain.models.Account;
 import com.banana.view.forms.ChargeForm;
 import com.banana.view.pivots.ChargeFormPivot;
 import com.banana.view.services.ChargeService;
+import com.banana.view.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +20,11 @@ import java.io.IOException;
 @RequestMapping("/charges")
 public class ChargeController {
   private ChargeService chargeService;
+  private UserService userService;
 
   @Autowired
-  public ChargeController(ChargeService chargeService) {
+  public ChargeController(UserService userService, ChargeService chargeService) {
+    this.userService = userService;
     this.chargeService = chargeService;
   }
 
@@ -30,18 +33,19 @@ public class ChargeController {
     ChargeForm chargeForm = new ChargeForm();
     chargeForm.setAccountId(accountId);
     model.addAttribute("chargeForm", chargeForm);
-    return "charge/create-charge";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "charge/form-create";
   }
 
   @RequestMapping(value = "/create", method = RequestMethod.POST)
   public String createChargePost(@Valid ChargeForm chargeForm, Errors errors) throws IllegalStateException, IOException {
     if (errors.hasErrors())
-      return "charge/create-charge";
+      return "charge/form-create";
 
     Account account = this.chargeService.createCharge(chargeForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "charge/create-charge";
+    return "charge/form-create";
   }
 
   @RequestMapping(value = "/update/{accountId}/{chargeId}", method = RequestMethod.GET)
@@ -51,17 +55,18 @@ public class ChargeController {
       chargeForm.setAccountId(accountId);
       model.addAttribute("chargeForm", chargeForm);
     }
-    return "charge/update-charge";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "charge/form-update";
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public String updateChargePost(@Valid ChargeForm chargeForm, Errors errors) throws IllegalStateException, IOException {
     if (errors.hasErrors())
-      return "charge/update-charge";
+      return "charge/form-update";
 
     Account account = this.chargeService.updateCharge(chargeForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "charge/update-charge";
+    return "charge/form-update";
   }
 }

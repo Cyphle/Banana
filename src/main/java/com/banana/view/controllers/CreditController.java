@@ -7,6 +7,7 @@ import com.banana.view.forms.CreditForm;
 import com.banana.view.pivots.ChargeFormPivot;
 import com.banana.view.pivots.CreditFormPivot;
 import com.banana.view.services.CreditService;
+import com.banana.view.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +23,11 @@ import java.io.IOException;
 @RequestMapping("/credits")
 public class CreditController {
   private CreditService creditService;
+  private UserService userService;
 
   @Autowired
-  public CreditController(CreditService creditService) {
+  public CreditController(UserService userService, CreditService creditService) {
+    this.userService = userService;
     this.creditService = creditService;
   }
 
@@ -33,18 +36,19 @@ public class CreditController {
     CreditForm creditForm = new CreditForm();
     creditForm.setAccountId(accountId);
     model.addAttribute("creditForm", creditForm);
-    return "credit/create-credit";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "credit/form-create";
   }
 
   @RequestMapping(value = "/create", method = RequestMethod.POST)
   public String createCreditPost(@Valid CreditForm creditForm, Errors errors) throws IllegalStateException, IOException {
     if (errors.hasErrors())
-      return "credit/create-credit";
+      return "credit/form-create";
 
     Account account = this.creditService.createCredit(creditForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "credit/create-credit";
+    return "credit/form-create";
   }
 
   @RequestMapping(value = "/update/{accountId}/{creditId}", method = RequestMethod.GET)
@@ -54,17 +58,18 @@ public class CreditController {
       creditForm.setAccountId(accountId);
       model.addAttribute("creditForm", creditForm);
     }
-    return "credit/update-credit";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "credit/form-update";
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public String updateCreditPost(@Valid CreditForm creditForm, Errors errors) throws IllegalStateException, IOException {
     if (errors.hasErrors())
-      return "credit/update-credit";
+      return "credit/form-update";
 
     Account account = this.creditService.updateCredit(creditForm);
     if (account != null)
       return "redirect:/accounts/" + account.getSlug();
-    return "credit/update-credit";
+    return "credit/form-update";
   }
 }

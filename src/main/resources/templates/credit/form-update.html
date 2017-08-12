@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layout">
+<head>
+  <title>Banana - Edition de crédit</title>
+</head>
+<body>
+<section layout:fragment="content" class="creation-form">
+  <h1>Edition de crédit</h1>
+
+  <div class="form-wrapper container">
+    <div class="col s10 offset-s1">
+      <form th:action="@{/credits/update}" method="POST" class="col s12">
+        <input type="hidden" name="accountId" th:value="${creditForm.accountId > 0 ? creditForm.accountId : -1}" />
+        <input type="hidden" name="id" th:value="${creditForm.id}" />
+        <div class="row">
+          <div class="input-field col s12">
+            <input type="text" name="description" id="description" th:value="${creditForm != null ? creditForm.description : ''}" />
+            <label for="description">Description</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input type="date" name="creditDate" id="credit-date" th:value="${creditForm != null and creditForm.creditDate != null ? #dates.format(creditForm.creditDate, 'yyyy-MM-dd') : ''}" />
+            <label for="credit-date">Date de crédit</label>
+          </div>
+          <div class="input-field col s6">
+            <input type="text" name="amount" id="amount" th:value="${creditForm != null ? creditForm.amount : ''}" />
+            <label for="amount">Montant</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s2 offset-s5">
+            <input class="waves-effect waves-light btn" type="submit" value="Valider"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+</body>
+</html>

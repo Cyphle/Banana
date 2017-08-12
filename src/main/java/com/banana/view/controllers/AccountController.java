@@ -46,20 +46,18 @@ public class AccountController {
   @RequestMapping(value = "/create", method = RequestMethod.GET)
   public String createAccount(Model model) {
     model.addAttribute("user", this.userService.getAuthenticatedUser());
-    return "account/create-account";
+    return "account/form-create";
   }
 
   @RequestMapping(value = "/create", method = RequestMethod.POST)
   public String createAccountPost(@Valid AccountForm accountForm, Errors errors, Model model) throws IllegalStateException, IOException {
-    if (errors.hasErrors()) {
-      return "account/create-account";
-    }
+    if (errors.hasErrors()) return "account/form-create";
 
     model.addAttribute("user", this.userService.getAuthenticatedUser());
     Account createdAccount = this.accountService.createAccount(accountForm);
     if (createdAccount != null)
       return "redirect:/accounts/" + createdAccount.getSlug();
-    return "account/create-account";
+    return "account/form-create";
   }
 
   @RequestMapping(value = "/update/{accountSlug}", method = RequestMethod.GET)
@@ -68,18 +66,16 @@ public class AccountController {
       AccountForm accountForm = AccountFormPivot.fromDomainToView(this.accountService.getAccountBySlug(accountSlug));
       model.addAttribute("accountForm", accountForm);
     }
-    return "account/update-account";
+    model.addAttribute("user", this.userService.getAuthenticatedUser());
+    return "account/form-update";
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.POST)
   public String updateAccountPost(@Valid AccountForm accountForm, Errors errors) throws IllegalStateException, IOException {
-    if (errors.hasErrors()) {
-      return "account/update-account";
-    }
+    if (errors.hasErrors()) return "account/form-update";
 
     Account updatedAccount = this.accountService.updateAccount(accountForm);
-    if (updatedAccount != null)
-      return "redirect:/accounts/" + updatedAccount.getSlug();
-    return "account/update-account";
+    if (updatedAccount != null) return "redirect:/accounts/" + updatedAccount.getSlug();
+    return "account/form-update";
   }
 }
