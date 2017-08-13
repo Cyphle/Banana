@@ -7,9 +7,7 @@ export default class AjaxBuilder {
         url: path,
         type: method,
         data: data,
-        success: response => {
-          resolve(response);
-        }
+        success: response => resolve(response)
       });
     });
   }

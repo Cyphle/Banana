@@ -1,10 +1,10 @@
 'use strict';
 
 export default class AccountPage {
-  constructor(ajaxBuilder, menuBuilder) {
+  constructor(ajaxBuilder, menuBuilder, accountPageBuilder) {
     this.ajaxBuilder = ajaxBuilder;
     this.menuBuilder = menuBuilder;
-    this.accountData = {};
+    this.accountPageBuilder = accountPageBuilder;
   }
 
   getAccountDataFromServer(accountURL) {
@@ -14,13 +14,54 @@ export default class AccountPage {
   }
 
   dispatchDataOnView(accountData) {
-    this.accountData = accountData;
-    console.log(JSON.stringify(this.accountData));
     this.populateMenu(accountData.id);
+    this.accountPageBuilder.setAccountData(accountData);
+    this.accountPageBuilder.buildPage();
+    this.initListeners();
   }
 
   populateMenu(accountId) {
     let sideMenu = $('.side-nav');
     sideMenu.append(this.menuBuilder.buildMenuLinks(accountId));
+  }
+
+  initListeners() {
+    this.showPart('button-allaccount');
+    $('#next-month').click(e => this.onClickNextMonth());
+    $('#previous-month').click(e => this.onClickPreviousMonth());
+    $('#button-allaccount').click(e => this.showPart(e.currentTarget.getAttribute('id')));
+    $('#button-budgets').click(e => this.showPart(e.currentTarget.getAttribute('id')));
+    $('#button-charges').click(e => this.showPart(e.currentTarget.getAttribute('id')));
+    $('#button-expenses').click(e => this.showPart(e.currentTarget.getAttribute('id')));
+    $('#button-credits').click(e => this.showPart(e.currentTarget.getAttribute('id')));
+    $('.delete-button').click(e => this.deleteElement(e.currentTarget.getAttribute('data-link')));
+  }
+
+  onClickNextMonth() {
+    this.accountPageBuilder.changeToNextMonth();
+  }
+
+  onClickPreviousMonth() {
+    this.accountPageBuilder.changeToPreviousMonth();
+  }
+
+  hideParts() {
+    $('.allaccount-content').hide();
+    $('.budgets-content').hide();
+    $('.charges-content').hide();
+    $('.expenses-content').hide();
+    $('.credits-content').hide();
+  }
+
+  showPart(element) {
+    let id = element.split('-')[1];
+    this.hideParts();
+    $('.' + id + '-content').show();
+  }
+
+  deleteElement(deletePath) {
+    this.ajaxBuilder
+        .send(deletePath, 'DELETE')
+        .then(accountData => this.accountPageBuilder.buildPage());
   }
 }

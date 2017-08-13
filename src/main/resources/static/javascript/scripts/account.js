@@ -3,6 +3,7 @@
 import AjaxBuilder from './utils/AjaxBuilder';
 import AccountPage from './components/AccountPage';
 import MenuBuilder from './components/MenuBuilder';
+import AccountPageBuilder from './components/AccountPageBuilder';
 
 import { HOST } from './config/config';
 
@@ -12,7 +13,8 @@ $(document).ready(() => {
 
   let ajaxBuilder = new AjaxBuilder();
   let menuBuilder = new MenuBuilder();
-  let accountPage = new AccountPage(ajaxBuilder, menuBuilder);
+  let accountPageBuilder = new AccountPageBuilder();
+  let accountPage = new AccountPage(ajaxBuilder, menuBuilder, accountPageBuilder);
 
   accountPage.getAccountDataFromServer(HOST + 'api/accounts/' + currentSlug);
-})
+});
