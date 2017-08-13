@@ -1,7 +1,6 @@
 package com.banana.utils;
 
 import org.junit.Test;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -175,10 +174,10 @@ public class MomentTests {
 
   @Test
   public void should_get_end_of_preceding_month() {
-    Moment dateOne = new Moment("2017-08-10").getLastDayOfPrecedingMonth();
-    Moment dateTwo = new Moment("2017-01-12").getLastDayOfPrecedingMonth();
-    Moment dateThree = new Moment("2016-03-12").getLastDayOfPrecedingMonth();
-    Moment dateFour = new Moment("2017-07-31").getLastDayOfPrecedingMonth();
+    Moment dateOne = new Moment("2017-08-10").getLastDayOfPreviousMonth();
+    Moment dateTwo = new Moment("2017-01-12").getLastDayOfPreviousMonth();
+    Moment dateThree = new Moment("2016-03-12").getLastDayOfPreviousMonth();
+    Moment dateFour = new Moment("2017-07-31").getLastDayOfPreviousMonth();
 
     assertThat(dateOne.getDayOfMonth()).isEqualTo(31);
     assertThat(dateOne.getMonthNumber()).isEqualTo(7);

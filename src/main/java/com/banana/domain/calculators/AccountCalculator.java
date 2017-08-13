@@ -6,7 +6,6 @@ import com.banana.domain.exceptions.NoElementFoundException;
 import com.banana.domain.helpers.AmountCalculator;
 import com.banana.domain.models.*;
 import com.banana.domain.ports.AccountPort;
-import com.banana.domain.validators.AccountVerifier;
 import com.banana.utils.Moment;
 import com.github.slugify.Slugify;
 
@@ -109,7 +108,7 @@ public class AccountCalculator implements AccountPort {
   public double calculateGivenMonthStartAmount(Account account, Date month) {
     Moment askedDate = new Moment();
     if (month != null) askedDate = new Moment(month);
-    final Moment calculationMonth = askedDate.getLastDayOfPrecedingMonth();
+    final Moment calculationMonth = askedDate.getLastDayOfPreviousMonth();
     return this.calculateAmounts(account, calculationMonth);
   }
 
@@ -168,7 +167,7 @@ public class AccountCalculator implements AccountPort {
     startAmount -= calculator.calculateGivenMonthCharges(calculationMonth.getDate());
     startAmount -= calculator.calculateGivenMonthExpenses(calculationMonth.getDate());
     startAmount += calculator.calculateGivenMonthCredits(calculationMonth.getDate());
-    startAmount -= calculator.calculateGivenMonthFreeAmountForBudgets(calculationMonth.getLastDayOfPrecedingMonth().getDate());
+    startAmount -= calculator.calculateGivenMonthFreeAmountForBudgets(calculationMonth.getLastDayOfPreviousMonth().getDate());
 
     return startAmount;
   }

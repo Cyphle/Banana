@@ -103,7 +103,7 @@ public class ChargeService {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
     Charge charge = this.getCharge(accountId, chargeId);
     if (endDate != null && endDate.length() > 0) charge.setEndDate(new Moment(endDate).getDate());
-    else charge.setEndDate(new Moment().getLastDayOfPrecedingMonth().getDate());
+    else charge.setEndDate(new Moment().getLastDayOfPreviousMonth().getDate());
     Charge deletedCharge = this.chargePort.deleteCharge(user, accountId, charge);
     if (deletedCharge != null)
       return true;

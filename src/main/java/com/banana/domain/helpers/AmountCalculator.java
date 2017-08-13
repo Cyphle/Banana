@@ -42,7 +42,7 @@ public class AmountCalculator {
     double startAmount = 0.0;
     for (Charge charge : account.getCharges()) {
       if (charge.getEndDate() != null && calculationMonth.compareTo(new Moment(charge.getEndDate()).getLastDateOfMonth()) > 0) {
-        // If calculation month is before end date, multiply by number of month
+        // If calculation month is after end date, multiply by number of month
         startAmount += (new Moment(charge.getEndDate()).getNumberOfMonthsBetweenExcludingCurrent(new Moment(charge.getStartDate())) + 1) * charge.getAmount();
       } else {
         // If charge is still active

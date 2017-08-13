@@ -52,12 +52,14 @@ public class AccountServiceTests {
     this.suser = new SUser("Doe", "John", "john@doe.fr", "johndoe");
     this.accounts = new ArrayList<>();
     SAccount accountOne = new SAccount("Account one", 1000.0, new Moment("2016-01-01").getDate());
+    accountOne.setSlug("account-one");
     accountOne.setId(1);
     accountOne.setUser(this.suser);
     this.accounts.add(accountOne);
     SAccount accountTwo = new SAccount("Account two", 2000.0, new Moment("2016-01-01").getDate());
     accountTwo.setId(2);
     accountTwo.setUser(this.suser);
+    accountTwo.setSlug("account-two");
     this.accounts.add(accountTwo);
 
     this.account = new SAccount(this.suser, "My account", "my-account", 2000, new Moment("2013-01-01").getDate());
@@ -104,6 +106,7 @@ public class AccountServiceTests {
   public void should_get_accounts_from_domain() {
     given(this.userService.getAuthenticatedUser()).willReturn(this.suser);
     given(this.sAccountRepository.findByUserUsername(any(String.class))).willReturn(this.accounts);
+    given(this.sAccountRepository.findByUserUsernameAndSlug(any(String.class), any(String.class))).willReturn(this.accounts.get(0));
 
     List<AccountView> fetchedAccounts = this.accountService.getAccountsOfUser();
 

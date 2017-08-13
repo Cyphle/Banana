@@ -2,12 +2,14 @@ package com.banana.view.controllers;
 
 import com.banana.BananaApplication;
 import com.banana.domain.models.*;
+import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.utils.Moment;
 import com.banana.view.forms.BudgetForm;
 import com.banana.view.forms.ChargeForm;
 import com.banana.view.services.BudgetService;
 import com.banana.view.services.ChargeService;
 import com.banana.view.services.ExpenseService;
+import com.banana.view.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +44,9 @@ public class ChargeControllerTests {
   private WebApplicationContext context;
 
   @MockBean
+  private UserService userService;
+
+  @MockBean
   private ChargeService chargeService;
 
   private User user;
@@ -57,13 +62,14 @@ public class ChargeControllerTests {
     this.user = new User(1, "John", "Doe", "john@doe.fr");
     this.account = new Account(1, this.user, "My account", "my-account", 2000, new Moment("2013-01-01").getDate());
     this.charge = new Charge(1, "Loyer", 1200, new Moment("2013-01-01").getDate());
+    given(this.userService.getAuthenticatedUser()).willReturn(UserPivot.fromDomainToInfrastructure(this.user));
   }
 
   @Test
   public void should_get_charge_creation_page() throws  Exception {
     this.mvc.perform(get("/charges/create/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("charge/create-charge"));
+            .andExpect(view().name("charge/form-create"));
   }
 
   @Test
@@ -86,7 +92,7 @@ public class ChargeControllerTests {
 
     this.mvc.perform(get("/charges/update/1/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("charge/update-charge"));
+            .andExpect(view().name("charge/form-update"));
   }
 
   @Test

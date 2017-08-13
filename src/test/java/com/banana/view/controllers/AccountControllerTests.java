@@ -3,11 +3,13 @@ package com.banana.view.controllers;
 import com.banana.BananaApplication;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.User;
+import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.utils.Moment;
 import com.banana.view.forms.AccountForm;
 import com.banana.view.models.AccountView;
 import com.banana.view.pivots.AccountViewPivot;
 import com.banana.view.services.AccountService;
+import com.banana.view.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +48,9 @@ public class AccountControllerTests {
   private WebApplicationContext context;
 
   @MockBean
+  private UserService userService;
+
+  @MockBean
   private AccountService accountService;
 
   private User user;
@@ -65,6 +70,8 @@ public class AccountControllerTests {
     this.accounts.add(new Account(2, this.user, "Account two", "account-two", 2000.0, new Moment("2016-01-01").getDate()));
     this.account = new Account(1, this.user, "My account", "my-account", 2000, new Moment("2017-01-01").getDate());
     this.accountViews = AccountViewPivot.fromDomainToView(this.accounts);
+
+    given(this.userService.getAuthenticatedUser()).willReturn(UserPivot.fromDomainToInfrastructure(this.user));
   }
 
   @Test
@@ -81,7 +88,7 @@ public class AccountControllerTests {
   public void should_get_creation_page_for_account() throws Exception {
     this.mvc.perform(get("/accounts/create"))
             .andExpect(status().isOk())
-            .andExpect(view().name("account/create-account"));
+            .andExpect(view().name("account/form-create"));
   }
 
   @Test
@@ -102,7 +109,7 @@ public class AccountControllerTests {
 
     this.mvc.perform(get("/accounts/update/my-account"))
             .andExpect(status().isOk())
-            .andExpect(view().name("account/update-account"));
+            .andExpect(view().name("account/form-update"));
   }
 
   @Test

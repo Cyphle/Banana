@@ -92,7 +92,7 @@ public class ChargePortITests {
     assertThat(createdCharge.getId()).isGreaterThan(0);
     assertThat(createdCharge.getDescription()).isEqualTo("Loyer");
     assertThat(createdCharge.getAmount()).isEqualTo(1200);
-    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getDayOfMonth()).isEqualTo(13);
     assertThat(startDate.getMonthNumber()).isEqualTo(2);
     assertThat(startDate.getYear()).isEqualTo(2013);
   }
@@ -140,7 +140,7 @@ public class ChargePortITests {
     List<Charge> charges = this.chargeFetcher.getChargesOfUserAndAccount(this.user, myAccount.getId());
 
     assertThat(charges.size()).isEqualTo(1);
-    assertThat(startDate.getDayOfMonth()).isEqualTo(1);
+    assertThat(startDate.getDayOfMonth()).isEqualTo(3);
     assertThat(startDate.getMonthNumber()).isEqualTo(3);
     assertThat(startDate.getYear()).isEqualTo(2017);
     assertThat(endDate.getDayOfMonth()).isEqualTo(30);

@@ -5,10 +5,12 @@ import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
+import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.utils.Moment;
 import com.banana.view.forms.ExpenseForm;
 import com.banana.view.services.BudgetService;
 import com.banana.view.services.ExpenseService;
+import com.banana.view.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +45,9 @@ public class ExpenseControllerTests {
   private WebApplicationContext context;
 
   @MockBean
+  private UserService userService;
+
+  @MockBean
   private ExpenseService expenseService;
 
   private User user;
@@ -58,13 +63,14 @@ public class ExpenseControllerTests {
     this.user = new User(1, "John", "Doe", "john@doe.fr");
     this.account = new Account(1, this.user, "My account", "my-account", 2000, new Moment("2013-01-01").getDate());
     this.expense = new Expense(1, "Bar", 40, new Moment("2017-07-03").getDate());
+    given(this.userService.getAuthenticatedUser()).willReturn(UserPivot.fromDomainToInfrastructure(this.user));
   }
 
   @Test
   public void should_get_expense_creation_page() throws  Exception {
     this.mvc.perform(get("/expenses/create/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("expense/create-expense"));
+            .andExpect(view().name("expense/form-create"));
   }
 
   @Test
@@ -88,7 +94,7 @@ public class ExpenseControllerTests {
 
     this.mvc.perform(get("/expenses/update/1/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("expense/update-expense"));
+            .andExpect(view().name("expense/form-update"));
   }
 
   @Test

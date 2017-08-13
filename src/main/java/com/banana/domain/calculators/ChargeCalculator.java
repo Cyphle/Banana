@@ -67,7 +67,7 @@ public class ChargeCalculator implements ChargePort {
   }
 
   private Charge updateChargeAmount(long accountId, Charge charge, Charge oldCharge) {
-    Moment oldChargeEndDate = new Moment(charge.getStartDate()).getLastDayOfPrecedingMonth();
+    Moment oldChargeEndDate = new Moment(charge.getStartDate()).getLastDayOfPreviousMonth();
     oldCharge.setEndDate(oldChargeEndDate.getDate());
     this.chargeFetcher.updateCharge(accountId, oldCharge);
     Charge newCharge = new Charge(charge.getDescription(), Math.abs(charge.getAmount()), new Moment(charge.getStartDate()).getFirstDateOfMonth().getDate());

@@ -86,7 +86,7 @@ public class Moment implements IMoment {
     return true;
   }
 
-  public Moment getLastDayOfPrecedingMonth() {
+  public Moment getLastDayOfPreviousMonth() {
     int year = this.getYear();
     int month = this.getMonthNumber();
     if (this.getMonthNumber() == 1) {

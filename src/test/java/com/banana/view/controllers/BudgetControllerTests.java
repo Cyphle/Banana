@@ -5,12 +5,14 @@ import com.banana.domain.models.Account;
 import com.banana.domain.models.Budget;
 import com.banana.domain.models.Expense;
 import com.banana.domain.models.User;
+import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.utils.Moment;
 import com.banana.view.forms.BudgetForm;
 import com.banana.view.forms.ExpenseForm;
 import com.banana.view.services.AccountService;
 import com.banana.view.services.BudgetService;
 import com.banana.view.services.ExpenseService;
+import com.banana.view.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,6 +52,9 @@ public class BudgetControllerTests {
   private BudgetService budgetService;
 
   @MockBean
+  private UserService userService;
+
+  @MockBean
   private ExpenseService expenseService;
 
   private User user;
@@ -67,13 +72,14 @@ public class BudgetControllerTests {
     this.account = new Account(1, this.user, "My account", "my-account", 2000, new Moment("2013-01-01").getDate());
     this.budget = new Budget(1, "Manger", 300, new Moment("2017-01-01").getDate());
     this.expense = new Expense(1, "G20", 30, new Moment("2017-07-01").getDate());
+    given(this.userService.getAuthenticatedUser()).willReturn(UserPivot.fromDomainToInfrastructure(this.user));
   }
 
   @Test
   public void should_get_budget_creation_page() throws  Exception {
     this.mvc.perform(get("/budgets/create/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("budget/create-budget"));
+            .andExpect(view().name("budget/form-create"));
   }
 
   @Test
@@ -96,7 +102,7 @@ public class BudgetControllerTests {
 
     this.mvc.perform(get("/budgets/update/1/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("budget/update-budget"));
+            .andExpect(view().name("budget/form-update"));
   }
 
   @Test
@@ -119,7 +125,7 @@ public class BudgetControllerTests {
   public void should_get_budget_expense_creation_page() throws  Exception {
     this.mvc.perform(get("/budgets/expenses/create/1/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("expense/create-expense"))
+            .andExpect(view().name("expense/form-create"))
             .andExpect(content().string(containsString("<input type=\"hidden\" name=\"accountId\" value=\"1\" />")));
   }
 
@@ -144,7 +150,7 @@ public class BudgetControllerTests {
 
     this.mvc.perform(get("/budgets/expenses/update/1/1/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("expense/update-expense"));
+            .andExpect(view().name("expense/form-update"));
   }
 
   @Test

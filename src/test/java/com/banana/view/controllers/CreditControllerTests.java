@@ -4,9 +4,11 @@ import com.banana.BananaApplication;
 import com.banana.domain.models.Account;
 import com.banana.domain.models.Credit;
 import com.banana.domain.models.User;
+import com.banana.infrastructure.connector.pivots.UserPivot;
 import com.banana.utils.Moment;
 import com.banana.view.forms.CreditForm;
 import com.banana.view.services.CreditService;
+import com.banana.view.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +43,9 @@ public class CreditControllerTests {
   private WebApplicationContext context;
 
   @MockBean
+  private UserService userService;
+
+  @MockBean
   private CreditService creditService;
 
   private User user;
@@ -56,13 +61,14 @@ public class CreditControllerTests {
     this.user = new User(1, "John", "Doe", "john@doe.fr");
     this.account = new Account(1, this.user, "My account", "my-account", 2000, new Moment("2013-01-01").getDate());
     this.credit = new Credit(1, "Salaire", 2400, new Moment("2017-07-31").getDate());
+    given(this.userService.getAuthenticatedUser()).willReturn(UserPivot.fromDomainToInfrastructure(this.user));
   }
 
   @Test
   public void should_get_credit_creation_page() throws  Exception {
     this.mvc.perform(get("/credits/create/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("credit/create-credit"));
+            .andExpect(view().name("credit/form-create"));
   }
 
   @Test
@@ -85,7 +91,7 @@ public class CreditControllerTests {
 
     this.mvc.perform(get("/credits/update/1/1"))
             .andExpect(status().isOk())
-            .andExpect(view().name("credit/update-credit"));
+            .andExpect(view().name("credit/form-update"));
   }
 
   @Test

@@ -106,7 +106,7 @@ public class BudgetService {
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
     Budget budget = this.getBudget(accountId, budgetId);
     if (endDate != null && endDate.length() > 0) budget.setEndDate(new Moment(endDate).getDate());
-    else budget.setEndDate(new Moment().getLastDayOfPrecedingMonth().getDate());
+    else budget.setEndDate(new Moment().getLastDayOfPreviousMonth().getDate());
     Budget deletedBudget = this.budgetPort.deleteBudget(user, accountId, budget);
     if (deletedBudget != null)
       return true;

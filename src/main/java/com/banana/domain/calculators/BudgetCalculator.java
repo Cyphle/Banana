@@ -95,7 +95,7 @@ public class BudgetCalculator implements BudgetPort {
   }
 
   private Budget updateBudgetAmount(Budget budget, Account account, Budget oldBudget) {
-    Moment oldBudgetEndDate = (new Moment(budget.getStartDate())).getLastDayOfPrecedingMonth();
+    Moment oldBudgetEndDate = (new Moment(budget.getStartDate())).getLastDayOfPreviousMonth();
     oldBudget.setEndDate(oldBudgetEndDate.getDate());
     this.budgetFetcher.updateBudget(account.getId(), oldBudget);
     Budget newBudget = new Budget(budget.getName(), budget.getInitialAmount(), new Moment(budget.getStartDate()).getFirstDateOfMonth().getDate());

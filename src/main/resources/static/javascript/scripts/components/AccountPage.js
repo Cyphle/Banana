@@ -15,6 +15,7 @@ export default class AccountPage {
 
   dispatchDataOnView(accountData) {
     this.accountData = accountData;
+    console.log(JSON.stringify(this.accountData));
     this.populateMenu(accountData.id);
   }
 

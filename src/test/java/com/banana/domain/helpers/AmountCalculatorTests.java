@@ -71,84 +71,84 @@ public class AmountCalculatorTests {
 
   @Test
   public void should_calculate_start_amount_of_today_month_for_budgets() {
-    Moment today = new Moment("2017-08-06").getLastDayOfPrecedingMonth();
+    Moment today = new Moment("2017-08-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthBudgetExpenses(today.getDate());
     assertThat(startAmount).isEqualTo(310);
   }
 
   @Test
   public void should_calculate_start_amount_of_given_month_after_today_for_budgets() {
-    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPrecedingMonth();
+    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthBudgetExpenses(nextMonth.getDate());
     assertThat(startAmount).isEqualTo(360);
   }
 
   @Test
   public void should_calculate_start_amount_of_given_month_before_today_for_budgets() {
-    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPrecedingMonth();
+    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthBudgetExpenses(previousMonth.getDate());
     assertThat(startAmount).isEqualTo(200);
   }
 
   @Test
   public void should_calculate_start_amount_of_today_month_for_credits() {
-    Moment today = new Moment("2017-08-06").getLastDayOfPrecedingMonth();
+    Moment today = new Moment("2017-08-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthCredits(today.getDate());
     assertThat(startAmount).isEqualTo(2900);
   }
 
   @Test
   public void should_calculate_start_amount_of_given_month_after_today_for_credits() {
-    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPrecedingMonth();
+    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthCredits(nextMonth.getDate());
     assertThat(startAmount).isEqualTo(5300);
   }
 
   @Test
   public void should_calculate_start_amount_of_given_month_before_today_for_credits() {
-    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPrecedingMonth();
+    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthCredits(previousMonth.getDate());
     assertThat(startAmount).isEqualTo(2900);
   }
 
   @Test
   public void should_calculate_start_amount_of_today_month_for_charges() {
-    Moment today = new Moment("2017-08-06").getLastDayOfPrecedingMonth();
+    Moment today = new Moment("2017-08-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthCharges(today.getDate());
     assertThat(startAmount).isEqualTo(8820);
   }
 
   @Test
   public void should_calculate_start_amount_of_given_month_after_today_for_charges() {
-    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPrecedingMonth();
+    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthCharges(nextMonth.getDate());
     assertThat(startAmount).isEqualTo(10020);
   }
 
   @Test
   public void should_calculate_start_amount_of_given_month_before_today_for_charges() {
-    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPrecedingMonth();
+    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthCharges(previousMonth.getDate());
     assertThat(startAmount).isEqualTo(7620);
   }
 
   @Test
   public void should_calculate_start_amount_of_today_month_for_expenses() {
-    Moment today = new Moment("2017-08-06").getLastDayOfPrecedingMonth();
+    Moment today = new Moment("2017-08-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthExpenses(today.getDate());
     assertThat(startAmount).isEqualTo(150);
   }
 
   @Test
   public void should_calculate_start_amount_of_given_month_after_today_for_expenses() {
-    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPrecedingMonth();
+    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthExpenses(nextMonth.getDate());
     assertThat(startAmount).isEqualTo(210);
   }
 
   @Test
   public void should_calculate_start_amount_of_given_month_before_today_for_expenses() {
-    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPrecedingMonth();
+    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthExpenses(previousMonth.getDate());
     assertThat(startAmount).isEqualTo(150);
   }
@@ -239,21 +239,21 @@ public class AmountCalculatorTests {
 
   @Test
   public void should_calculate_free_amount_of_today_month_for_budgets() {
-    Moment today = new Moment("2017-08-06").getLastDayOfPrecedingMonth();
+    Moment today = new Moment("2017-08-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthFreeAmountForBudgets(today.getDate());
     assertThat(startAmount).isEqualTo(1010);
   }
 
   @Test
   public void should_calculate_free_amount_of_given_month_after_today_for_budgets() {
-    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPrecedingMonth();
+    Moment nextMonth = new Moment("2017-09-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthFreeAmountForBudgets(nextMonth.getDate());
     assertThat(startAmount).isEqualTo(1060);
   }
 
   @Test
   public void should_calculate_free_amount_of_given_month_before_today_for_budgets() {
-    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPrecedingMonth();
+    Moment previousMonth = new Moment("2017-07-06").getLastDayOfPreviousMonth();
     double startAmount = this.amountCalculator.calculateGivenMonthFreeAmountForBudgets(previousMonth.getDate());
     assertThat(startAmount).isEqualTo(900);
   }
