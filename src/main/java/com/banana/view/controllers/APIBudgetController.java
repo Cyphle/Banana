@@ -26,7 +26,7 @@ public class APIBudgetController {
    * @param date in format yyyy-MM-dd
    * @return Status
    */
-  @RequestMapping(value = "/{accountId}/{budgetId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/delete/{accountId}/{budgetId}", method = RequestMethod.GET)
   public Status deleteBudget(@PathVariable long accountId, @PathVariable long budgetId, @RequestParam(required = false) String date) {
     return new Status(this.budgetService.deleteBudget(accountId, budgetId, date), "Delete budget of id : " + budgetId);
   }

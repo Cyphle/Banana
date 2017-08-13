@@ -3,10 +3,12 @@ package com.banana.view.controllers;
 import com.banana.BananaApplication;
 import com.banana.config.WebSecurityConfig;
 import com.banana.infrastructure.orm.models.SAccount;
-import com.banana.infrastructure.orm.models.SCharge;
 import com.banana.infrastructure.orm.models.SCredit;
 import com.banana.infrastructure.orm.models.SUser;
-import com.banana.infrastructure.orm.repositories.*;
+import com.banana.infrastructure.orm.repositories.SAccountRepository;
+import com.banana.infrastructure.orm.repositories.SCreditRepository;
+import com.banana.infrastructure.orm.repositories.SUserRepository;
+import com.banana.infrastructure.orm.repositories.SUserRoleRepository;
 import com.banana.utilities.TestUtil;
 import com.banana.utils.Moment;
 import com.banana.view.services.AccountService;
@@ -28,10 +30,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {BananaApplication.class, WebSecurityConfig.class})
@@ -99,7 +99,7 @@ public class APICreditControllerTests {
     SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
     SCredit sCredit = this.creditRepository.findByUserUsernameAndAccountId(this.fakeUser.getUsername(), sAccount.getId()).get(0);
 
-    this.mvc.perform(delete("/api/credits/" + sAccount.getId() + "/" + sCredit.getId()))
+    this.mvc.perform(get("/api/credits/delete/" + sAccount.getId() + "/" + sCredit.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));

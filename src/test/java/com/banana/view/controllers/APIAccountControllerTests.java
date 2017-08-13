@@ -143,7 +143,7 @@ public class APIAccountControllerTests {
 
   @Test
   public void should_get_an_account_in_json_format() throws Exception {
-    this.mvc.perform(get("/api/accounts/my-account").with(user("john@doe.fr")))
+    this.mvc.perform(get("/api/accounts/?slug=my-account").with(user("john@doe.fr")))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.user.username", is("john@doe.fr")))
@@ -179,7 +179,7 @@ public class APIAccountControllerTests {
   public void should_delete_an_account() throws Exception {
     SAccount myAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
 
-    this.mvc.perform(delete("/api/accounts/" + myAccount.getId()))
+    this.mvc.perform(get("/api/accounts/delete/" + myAccount.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));

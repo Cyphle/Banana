@@ -2,12 +2,14 @@ package com.banana.view.controllers;
 
 import com.banana.BananaApplication;
 import com.banana.config.WebSecurityConfig;
-import com.banana.infrastructure.orm.models.*;
+import com.banana.infrastructure.orm.models.SAccount;
+import com.banana.infrastructure.orm.models.SBudget;
+import com.banana.infrastructure.orm.models.SExpense;
+import com.banana.infrastructure.orm.models.SUser;
 import com.banana.infrastructure.orm.repositories.*;
 import com.banana.utilities.TestUtil;
 import com.banana.utils.Moment;
 import com.banana.view.services.AccountService;
-import com.banana.view.services.BudgetService;
 import com.banana.view.services.UserService;
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,11 +28,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {BananaApplication.class, WebSecurityConfig.class})
@@ -113,7 +111,7 @@ public class APIBudgetControllerTests {
     SAccount sAccount = this.accountRepository.findByUserUsernameAndSlug(this.fakeUser.getUsername(), "my-account");
     SBudget sBudget = this.budgetRepository.findByUserUsernameAndAccountId(this.fakeUser.getUsername(), sAccount.getId()).get(0);
 
-    this.mvc.perform(delete("/api/budgets/" + sAccount.getId() + "/" + sBudget.getId()))
+    this.mvc.perform(get("/api/budgets/delete/" + sAccount.getId() + "/" + sBudget.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));
@@ -125,7 +123,7 @@ public class APIBudgetControllerTests {
     SBudget sBudget = this.budgetRepository.findByUserUsernameAndAccountId(this.fakeUser.getUsername(), sAccount.getId()).get(0);
     SExpense sExpense = this.expenseRepository.findByBudgetId(sBudget.getId()).get(0);
 
-    this.mvc.perform(delete("/api/budgets/expenses/" + sAccount.getId() + "/" + sBudget.getId() + "/" + sExpense.getId()))
+    this.mvc.perform(get("/api/budgets/expenses/delete/" + sAccount.getId() + "/" + sBudget.getId() + "/" + sExpense.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.status", is(200)));
