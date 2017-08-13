@@ -6,6 +6,7 @@ import com.banana.view.services.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/api/budgets")
 public class APIBudgetController {
@@ -30,7 +31,7 @@ public class APIBudgetController {
     return new Status(this.budgetService.deleteBudget(accountId, budgetId, date), "Delete budget of id : " + budgetId);
   }
 
-  @RequestMapping(value = "/expenses/{accountId}/{budgetId}/{expenseId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/expenses/delete/{accountId}/{budgetId}/{expenseId}", method = RequestMethod.GET)
   public Status deleteBudgetExpense(@PathVariable long accountId, @PathVariable long budgetId, @PathVariable long expenseId) {
     return new Status(this.expenseService.deleteExpense(accountId, budgetId, expenseId), "Delete expense of id : " + expenseId);
   }

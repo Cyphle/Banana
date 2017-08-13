@@ -26,6 +26,13 @@ public class FakeExpenseRepository implements IExpenseRepository {
     return expense;
   }
 
+  @Override
+  public SExpense getExpenseById(long id) {
+    SExpense sExpenseOne = new SExpense("Courses", 24, (new Moment("2017-07-14")).getDate());
+    sExpenseOne.setId(id);
+    return sExpenseOne;
+  }
+
   private List<SExpense> getsExpenses() {
     SExpense sExpenseOne = new SExpense("Courses", 24, (new Moment("2017-07-14")).getDate());
     sExpenseOne.setId(1);

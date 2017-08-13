@@ -35,4 +35,9 @@ public class ExpenseRepository implements IExpenseRepository {
     expense.setUpdateDate(today.getDate());
     return this.expenseRepository.save(expense);
   }
+
+  @Override
+  public SExpense getExpenseById(long id) {
+    return this.expenseRepository.findOne(id);
+  }
 }

@@ -84,4 +84,20 @@ public class SExpense {
   public void setDeleted(boolean deleted) {
     this.isDeleted = deleted;
   }
+
+  @Override
+  public String toString() {
+    return "SExpense{" +
+            "id=" + id +
+            ", account=" + account +
+            ", budget=" + budget +
+            ", description='" + description + '\'' +
+            ", amount=" + amount +
+            ", expenseDate=" + expenseDate +
+            ", debitDate=" + debitDate +
+            ", creationDate=" + creationDate +
+            ", updateDate=" + updateDate +
+            ", isDeleted=" + isDeleted +
+            '}';
+  }
 }

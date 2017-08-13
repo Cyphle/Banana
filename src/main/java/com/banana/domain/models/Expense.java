@@ -37,4 +37,15 @@ public class Expense {
   public Date getDebitDate() { return this.debitDate; }
 
   public void setDebitDate(Date debitDate) { this.debitDate = debitDate; }
+
+  @Override
+  public String toString() {
+    return "Expense{" +
+            "id=" + id +
+            ", description='" + description + '\'' +
+            ", amount=" + amount +
+            ", expenseDate=" + expenseDate +
+            ", debitDate=" + debitDate +
+            '}';
+  }
 }

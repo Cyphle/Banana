@@ -1,7 +1,9 @@
 'use strict';
 
 $(document).ready(() => {
-  $(".button-collapse").sideNav();
+  $(".button-collapse").sideNav({
+    edge: 'right'
+  });
 
   $('.datepicker').pickadate({
     selectMonths: true, // Creates a dropdown to control month

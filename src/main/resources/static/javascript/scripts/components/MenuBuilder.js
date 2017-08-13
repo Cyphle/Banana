@@ -1,16 +1,21 @@
 'use strict';
 
 export default class MenuBuilder {
-  buildMenuLinks(accountId) {
-    let menuLinks = this.buildBudgetCreateLink(accountId);
+  buildMenuLinks(accountId, accountSlug) {
+    let menuLinks = this.buildAccountViewLink(accountSlug);
+    menuLinks += this.buildBudgetCreateLink(accountId);
     menuLinks += this.buildChargeCreateLink(accountId);
     menuLinks += this.buildExpenseCreateLink(accountId);
     menuLinks += this.buildCreditCreateLink(accountId);
     return menuLinks;
   }
 
+  buildAccountViewLink(accountSlug) {
+    return '<li><a href="/accounts/' + accountSlug + '" class="waves-effect">Voir le compte</a></li>';
+  }
+
   buildBudgetCreateLink(accountId) {
-    return '<li><a href="/budgets/create/' + accountId + '" class="waves-effect">Créer un budget</a></li>';
+    return '<li><a href="/budgets/create/' + accountId + '" class="waves-effect">Ajouter un budget</a></li>';
   }
 
   buildChargeCreateLink(accountId) {

@@ -7,7 +7,9 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface SAccountRepository extends CrudRepository<SAccount, Long> {
+  @Query("Select a from SAccount a where a.user.id = ?1 and a.isDeleted = false")
   List<SAccount> findByUserId(long userId);
+  @Query("Select a from SAccount a where a.user.username = ?1 and a.isDeleted = false")
   List<SAccount> findByUserUsername(String username);
   @Query("Select a from SAccount a where a.user.username = ?1 and a.id = ?2 and a.isDeleted = false")
   SAccount findByUserUsernameAndId(String username, long id);

@@ -35,7 +35,7 @@ export default class AccountPageBuilder {
     currentMonthData.budgets.forEach(budget => {
       budget.expenses.forEach(expense => formattedDataForTableAll.push({
         updateLink: '/budgets/expenses/update/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
-        deleteLink: '/api/budgets/expenses/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
+        deleteLink: '/api/budgets/expenses/delete/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
         firstDate: expense.expenseDate.toShortString(),
         secondDate: expense.debitDate !== null ? expense.debitDate.toShortString() : '',
         type: 'Budget',
@@ -45,7 +45,7 @@ export default class AccountPageBuilder {
     });
     currentMonthData.charges.forEach(charge => formattedDataForTableAll.push({
       updateLink: '/charges/update/' + currentMonthData.accountId + '/' + charge.id,
-      deleteLink: '/api/charges/' + currentMonthData.accountId + '/' + charge.id,
+      deleteLink: '/api/charges/delete/' + currentMonthData.accountId + '/' + charge.id,
       firstDate: (charge.startDate.getDayNumber() < 10 ? '0' + charge.startDate.getDayNumber() : charge.startDate.getDayNumber()) + '/' + (this.currentMonth.getMonthNumber() < 10 ? '0' + this.currentMonth.getMonthNumber() : this.currentMonth.getMonthNumber()) + '/' + this.currentMonth.getYear(),
       secondDate: charge.endDate !== null ? charge.endDate.toShortString() : '',
       type: 'Charge',
@@ -54,7 +54,7 @@ export default class AccountPageBuilder {
     }));
     currentMonthData.expenses.forEach(expense => formattedDataForTableAll.push({
       updateLink: '/expenses/update/' + currentMonthData.accountId + '/' + expense.id,
-      deleteLink: '/api/expenses/' + currentMonthData.accountId + '/' + expense.id,
+      deleteLink: '/api/expenses/delete/' + currentMonthData.accountId + '/' + expense.id,
       firstDate: expense.expenseDate.toShortString(),
       secondDate: expense.debitDate !== null ? expense.debitDate.toShortString() : '',
       type: 'Dépense',
@@ -63,7 +63,7 @@ export default class AccountPageBuilder {
     }));
     currentMonthData.credits.forEach(credit => formattedDataForTableAll.push({
       updateLink: '/credits/update/' + currentMonthData.accountId + '/' + credit.id,
-      deleteLink: '/api/credits/' + currentMonthData.accountId + '/' + credit.id,
+      deleteLink: '/api/credits/delete/' + currentMonthData.accountId + '/' + credit.id,
       firstDate: credit.creditDate.toShortString(),
       secondDate: credit.creditDate.toShortString(),
       type: 'Crédit',
@@ -102,7 +102,11 @@ export default class AccountPageBuilder {
             <div class="row">
               <div class="col s4"><b>Montant initial :</b> ${budget.initialAmount}€</div>
               <div class="col s4"><b>Montant actuel :</b> ${budgetExpensesAmount}€</div>
-              <div class="col s4"><a href="/budgets/update/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/budgets/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">delete</i></button></div>
+              <div class="col s4">
+                <a href="/budgets/expenses/create/${currentMonthData.accountId}/${budget.id}" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a> 
+                <a href="/budgets/update/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">mode_edit</i></a> 
+                <button class="delete-button btn-flat" data-link="/api/budgets/delete/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">delete</i></button>
+              </div>
             </div>
           </div>
           <table id="budget-table-${budget.id}" class="striped centered tablesorter">
@@ -129,7 +133,7 @@ export default class AccountPageBuilder {
 						<td>${expense.debitDate !== null ? expense.debitDate.toShortString() : ''}</td>
 						<td>${expense.description}</td>
 						<td>${expense.amount}€</td>
-						<td><a href="/budgets/expenses/update/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/budgets/expenses/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">delete</i></button></td>
+						<td><a href="/budgets/expenses/update/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/budgets/expenses/delete/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">delete</i></button></td>
 					</tr>`
         );
       });
@@ -147,7 +151,7 @@ export default class AccountPageBuilder {
 					<td>${charge.startDate.getDayNumber() + '/' + (this.currentMonth.getMonthNumber() < 10 ? '0' + this.currentMonth.getMonthNumber() : this.currentMonth.getMonthNumber()) + '/' + this.currentMonth.getYear()}</td>
 					<td>${charge.description}</td>
 					<td>${charge.amount}€</td>
-					<td><a href="/charges/update/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/charges/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">delete</i></button></td>
+					<td><a href="/charges/update/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/charges/delete/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">delete</i></button></td>
 				</tr>`
       );
     });
@@ -164,7 +168,7 @@ export default class AccountPageBuilder {
 					<td>${expense.debitDate !== null ? expense.debitDate.toShortString() : ''}</td>
 					<td>${expense.description}</td>
 					<td>${expense.amount}€</td>
-					<td><a href="/expenses/update/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/expenses/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">delete</i></button></td>
+					<td><a href="/expenses/update/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/expenses/delete/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">delete</i></button></td>
 				</tr>`
       );
     });
@@ -180,7 +184,7 @@ export default class AccountPageBuilder {
 						<td>${credit.creditDate.toShortString()}</td>
 						<td>${credit.description}</td>
 						<td>${credit.amount}€</td>
-						<td><a href="/credits/update/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/credits/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">delete</i></button></td>
+						<td><a href="/credits/update/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/credits/delete/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">delete</i></button></td>
 					</tr>`
       );
     });

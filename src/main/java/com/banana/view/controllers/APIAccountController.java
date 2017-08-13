@@ -17,13 +17,15 @@ public class APIAccountController {
     this.accountService = accountService;
   }
 
-  @RequestMapping(value = "/{accountSlug}", method = RequestMethod.GET)
-  public Account getAccount(@PathVariable String accountSlug) {
-    Account account = this.accountService.getAccountBySlug(accountSlug);
+  @RequestMapping(method = RequestMethod.GET)
+  public Account getAccount(@RequestParam(required = false) String slug, @RequestParam(required = false) String id) {
+    Account account = null;
+    if (slug != null) account = this.accountService.getAccountBySlug(slug);
+    if (id != null) account = this.accountService.getAccountById(Integer.parseInt(id));
     return account;
   }
 
-  @RequestMapping(value = "/{accountId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/delete/{accountId}", method = RequestMethod.GET)
   public Status deleteAccount(@PathVariable long accountId) {
     return new Status(this.accountService.deleteAccount(accountId), "Delete account of id : " + accountId);
   }

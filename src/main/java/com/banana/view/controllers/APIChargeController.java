@@ -23,7 +23,7 @@ public class APIChargeController {
    * @param date in format yyyy-MM-dd
    * @return Status
    */
-  @RequestMapping(value = "/{accountId}/{chargeId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/delete/{accountId}/{chargeId}", method = RequestMethod.GET)
   public Status deleteCharge(@PathVariable long accountId, @PathVariable long chargeId, @RequestParam(required = false) String date) {
     return new Status(this.chargeService.deleteCharge(accountId, chargeId, date), "Delete charge of id : " + chargeId);
   }

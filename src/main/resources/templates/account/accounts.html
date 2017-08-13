@@ -17,20 +17,24 @@
             <div class="card-content white-text">
               <span class="card-title" th:text="${account.name}"></span>
               <p>
-                <b>Montant début de mois : </b><span th:text="${#numbers.formatDecimal(account.beginMonthAmount, 0, 'COMMA', 2, 'POINT')}">€</span><br/>
-                <b>Montant actuel : </b> <span th:text="${#numbers.formatDecimal(account.currentAmount, 0, 'COMMA', 2, 'POINT')}">€</span><br/>
-                <b>Montant libre : </b><span th:text="${#numbers.formatDecimal(account.freeAmount, 0, 'COMMA', 2, 'POINT')}">€</span>
+                <b>Montant début de mois : </b><span th:text="${#numbers.formatDecimal(account.beginMonthAmount, 0, 'COMMA', 2, 'POINT')}"></span>€<br/>
+                <b>Montant actuel : </b> <span th:text="${#numbers.formatDecimal(account.currentAmount, 0, 'COMMA', 2, 'POINT')}"></span>€<br/>
+                <b>Montant libre : </b><span th:text="${#numbers.formatDecimal(account.freeAmount, 0, 'COMMA', 2, 'POINT')}"></span>€
               </p>
             </div>
             <div class="card-action">
               <a th:href="@{/accounts/{slug}(slug=${account.slug})}">Consulter</a>
               <a th:href="@{/accounts/update/{slug}(slug=${account.slug})}">Modifier</a>
-              <button class="button-delete" th:attr="data-slug=${account.slug}">Supprimer</button>
+              <button class="button-delete" th:attr="data-id=${account.id}">Supprimer</button>
             </div>
           </div>
         </div>
       </div>
   </div>
 </section>
+
+<div layout:fragment="scripts">
+  <script th:src="@{/javascript/dist/accounts.bundle.min.js}"></script>
+</div>
 </body>
 </html>

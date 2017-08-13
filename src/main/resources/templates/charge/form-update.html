@@ -8,7 +8,7 @@
 </head>
 <body>
 <section layout:fragment="content" class="creation-form">
-  <h1>Création de charge</h1>
+  <h1>Edition de charge</h1>
 
   <div class="form-wrapper container">
     <div class="col s10 offset-s1">
@@ -45,5 +45,9 @@
     </div>
   </div>
 </section>
+
+<div layout:fragment="scripts">
+  <script th:src="@{/javascript/dist/update-page.bundle.min.js}"></script>
+</div>
 </body>
 </html>

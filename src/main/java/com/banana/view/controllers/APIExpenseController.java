@@ -18,7 +18,7 @@ public class APIExpenseController {
     this.expenseService = expenseService;
   }
 
-  @RequestMapping(value = "/{accountId}/{expenseId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/delete/{accountId}/{expenseId}", method = RequestMethod.GET)
   public Status deleteBudgetExpense(@PathVariable long accountId, @PathVariable long expenseId) {
     return new Status(this.expenseService.deleteExpense(accountId, -1, expenseId), "Delete expense of id : " + expenseId);
   }

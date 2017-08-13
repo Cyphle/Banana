@@ -69,6 +69,9 @@ public class ExpenseFetcher implements IExpenseFetcher {
 
   public boolean deleteExpense(Expense expense) {
     SExpense sExpense = ExpensePivot.fromDomainToInfrastructure(expense);
+    SExpense fetchedExpense = this.expenseRepository.getExpenseById(sExpense.getId());
+    if (fetchedExpense.getAccount() != null) sExpense.setAccount(fetchedExpense.getAccount());
+    if (fetchedExpense.getBudget() != null) sExpense.setBudget(fetchedExpense.getBudget());
     sExpense.setDeleted(true);
     SExpense deletedExpense = this.expenseRepository.updateExpense(sExpense);
     if (deletedExpense != null && deletedExpense.isDeleted())

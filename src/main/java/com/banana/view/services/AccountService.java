@@ -97,6 +97,11 @@ public class AccountService {
     return this.accountPort.getAccountByUserAndAccountSlug(user, slug);
   }
 
+  public Account getAccountById(long accountId) {
+    User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());
+    return this.accountPort.getAccountByUserAndAccountId(user, accountId);
+  }
+
   public Account createAccount(AccountForm accountForm) {
     if (accountForm.getStartDate() == null) accountForm.setStartDate(new Moment().getFirstDateOfMonth().getDate());
     User user = UserPivot.fromInfrastructureToDomain(this.userService.getAuthenticatedUser());

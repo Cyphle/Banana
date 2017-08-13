@@ -16,5 +16,5 @@ $(document).ready(() => {
   let accountPageBuilder = new AccountPageBuilder();
   let accountPage = new AccountPage(ajaxBuilder, menuBuilder, accountPageBuilder);
 
-  accountPage.getAccountDataFromServer(HOST + 'api/accounts/' + currentSlug);
+  accountPage.getAccountDataFromServer(HOST + 'api/accounts/?slug=' + currentSlug);
 });

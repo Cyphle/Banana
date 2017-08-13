@@ -15,7 +15,7 @@ public class APICreditController {
     this.creditService = creditService;
   }
 
-  @RequestMapping(value = "/{accountId}/{creditId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/delete/{accountId}/{creditId}", method = RequestMethod.GET)
   public Status deleteCredit(@PathVariable long accountId, @PathVariable long creditId) {
     return new Status(this.creditService.deleteCredit(accountId, creditId), "Delete credit of id : " + creditId);
   }
