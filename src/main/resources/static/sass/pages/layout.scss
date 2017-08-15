@@ -1,11 +1,25 @@
 @import "../common/variables.scss";
 
+body {
+  color: $main-grey;
+}
+
 .side-menu-button {
   display: block !important;
 }
 
 nav {
   background-color: $main-blue;
+
+  .brand-logo {
+    img {
+      margin-top: 10px;
+
+      @media screen and (min-width: $media-smartphone) {
+        margin-left: 20px;
+      }
+    }
+  }
 }
 
 .side-menu {
@@ -15,6 +29,35 @@ nav {
         margin-left: 10%;
       }
     }
+  }
+}
+
+nav, .side-menu {
+  form {
+    margin: 0 !important;
+
+    input[type="submit"] {
+      background-color: transparent;
+      border: none;
+      color: rgba(0,0,0,0.87);
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      height: 48px;
+      line-height: 48px;
+      padding: 0 32px;
+      width: 100%;
+      text-align: left;
+
+      &:hover {
+        background-color: $light-grey-2;
+      }
+    }
+  }
+
+  .side-menu-button {
+    margin: 0;
+    width: 100%;
   }
 }
 
@@ -32,4 +75,36 @@ nav {
   &:hover {
     background-color: $dark-green-1;
   }
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 5%;
+  font-size: 2.5em;
+}
+
+thead {
+  background-color: $main-grey;
+  color: $main-white;
+
+  th {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+form {
+  margin-top: 8%;
+  margin-bottom: 10%;
+
+  .offset-l5 {
+    @media screen and (max-width: $media-smartphone) {
+      text-align: center;
+    }
+  }
+}
+
+.date-label {
+  top: -25px !important;
 }

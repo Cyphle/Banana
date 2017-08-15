@@ -16,28 +16,28 @@
         <input type="hidden" name="accountId" th:value="${chargeForm.accountId > 0 ? chargeForm.accountId : -1}" />
         <input type="hidden" name="id" th:value="${chargeForm.id}" />
         <div class="row">
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="date" name="startDate" id="start-date" th:value="${chargeForm != null and chargeForm.startDate != null ? #dates.format(chargeForm.startDate, 'yyyy-MM-dd') : ''}" />
-            <label for="start-date">Nom du compte</label>
+            <label for="start-date">Date de début</label>
           </div>
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="date" name="endDate" id="end-date" th:value="${chargeForm != null and chargeForm.endDate != null ? #dates.format(chargeForm.endDate, 'yyyy-MM-dd') : ''}" />
-            <label for="end-date">Nom du compte</label>
+            <label for="end-date" class="date-label">Date de fin</label>
           </div>
         </div>
         <div class="row">
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="text" name="description" id="description" th:value="${chargeForm != null ? chargeForm.description : ''}" />
             <label for="description">Description</label>
           </div>
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="text" name="amount" id="amount" th:value="${chargeForm != null ? chargeForm.amount : ''}" />
             <label for="amount">Montant</label>
           </div>
         </div>
 
         <div class="row">
-          <div class="col s2 offset-s5">
+          <div class="col s12 l2 offset-l5">
             <input class="waves-effect waves-light btn" type="submit" value="Valider"/>
           </div>
         </div>

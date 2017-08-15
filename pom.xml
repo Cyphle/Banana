@@ -5,7 +5,7 @@
 
     <groupId>com.banana</groupId>
     <artifactId>banana</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>war</packaging>
 
     <name>banana</name>

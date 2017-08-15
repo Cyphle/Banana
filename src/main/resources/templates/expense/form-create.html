@@ -16,28 +16,28 @@
         <input type="hidden" name="accountId" th:value="${expenseForm.accountId > 0 ? expenseForm.accountId : -1}" />
         <input type="hidden" name="budgetId" th:value="${expenseForm.budgetId > 0 ? expenseForm.budgetId : -1}" />
         <div class="row">
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="date" name="expenseDate" id="expense-date" />
-            <label for="expense-date">Date de dépense</label>
+            <label for="expense-date" class="date-label">Date de dépense</label>
           </div>
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="date" name="debitDate" id="debit-date" />
-            <label for="debit-date">Date de débit</label>
+            <label for="debit-date" class="date-label">Date de débit</label>
           </div>
         </div>
         <div class="row">
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="text" name="description" id="description" />
             <label for="description">Description</label>
           </div>
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="text" name="amount" id="amount" />
             <label for="amount">Montant</label>
           </div>
         </div>
 
         <div class="row">
-          <div class="col s2 offset-s5">
+          <div class="col s12 l2 offset-l5">
             <input class="waves-effect waves-light btn" type="submit" value="Valider"/>
           </div>
         </div>

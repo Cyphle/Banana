@@ -5,26 +5,24 @@ export default class AccountPage {
     this.ajaxBuilder = ajaxBuilder;
     this.menuBuilder = menuBuilder;
     this.accountPageBuilder = accountPageBuilder;
-    this.accountURL = '';
   }
 
   getAccountDataFromServer(accountURL) {
-    this.accountURL = accountURL;
     this.ajaxBuilder
         .send(accountURL, 'GET')
         .then(accountData => this.dispatchDataOnView(accountData));
   }
 
   dispatchDataOnView(accountData) {
-    this.populateMenu(accountData.id, accountData.slug);
+    this.populateMenu(accountData.id);
     this.accountPageBuilder.setAccountData(accountData);
     this.accountPageBuilder.buildPage();
     this.initListeners();
   }
 
-  populateMenu(accountId, accountSlug) {
+  populateMenu(accountId) {
     let sideMenu = $('.side-nav');
-    sideMenu.append(this.menuBuilder.buildMenuLinks(accountId, accountSlug));
+    sideMenu.append(this.menuBuilder.buildMenuLinks(accountId));
   }
 
   initListeners() {
@@ -63,7 +61,7 @@ export default class AccountPage {
 
   deleteElement(deletePath) {
     this.ajaxBuilder
-        .send(deletePath, 'GET')
-        .then(accountData => this.getAccountDataFromServer(this.accountURL));
+        .send(deletePath, 'DELETE')
+        .then(accountData => this.accountPageBuilder.buildPage());
   }
 }

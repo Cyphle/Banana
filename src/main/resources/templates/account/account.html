@@ -2,7 +2,7 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorator="layout">
 <head>
-  <title th:text="${'Compte' + accountSlug}"></title>
+  <title th:text="${'Compte ' + accountSlug}"></title>
   <link rel="stylesheet" th:href="@{/css/dist/account.min.css}"/>
 </head>
 <body>
@@ -14,13 +14,13 @@
 
   <div class="switch-button container">
     <div class="row">
-      <div class="col s1"><button id="previous-month" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">keyboard_arrow_left</i></button></div>
-      <div class="col s2"><button id="button-allaccount" class="waves-effect waves-light btn">Tout voir</button></div>
-      <div class="col s2"><button id="button-budgets" class="waves-effect waves-light btn">Budgets</button></div>
-      <div class="col s2"><button id="button-charges" class="waves-effect waves-light btn">Charges</button></div>
-      <div class="col s2"><button id="button-expenses" class="waves-effect waves-light btn">Dépenses</button></div>
-      <div class="col s2"><button id="button-credits" class="waves-effect waves-light btn">Crédits</button></div>
-      <div class="col s1"><button id="next-month" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">chevron_right</i></button></div>
+      <div class="col s12 l1"><button id="previous-month" class="btn-floating btn-large waves-effect waves-light"><i class="material-icons">keyboard_arrow_left</i></button></div>
+      <div class="col s12 l2"><button id="button-allaccount" class="waves-effect waves-light btn">Tout voir</button></div>
+      <div class="col s12 l2"><button id="button-budgets" class="waves-effect waves-light btn">Budgets</button></div>
+      <div class="col s12 l2"><button id="button-charges" class="waves-effect waves-light btn">Charges</button></div>
+      <div class="col s12 l2"><button id="button-expenses" class="waves-effect waves-light btn">Dépenses</button></div>
+      <div class="col s12 l2"><button id="button-credits" class="waves-effect waves-light btn">Crédits</button></div>
+      <div class="col s12 l1"><button id="next-month" class="btn-floating btn-large waves-effect waves-light"><i class="material-icons">chevron_right</i></button></div>
     </div>
   </div>
 
@@ -34,7 +34,8 @@
 
   <div class="account-infos-wrapper">
     <div class="allaccount-content">
-      <table id="all-account-table" class="striped centered tablesorter">
+      <h2>Toutes les transactions</h2>
+      <table id="all-account-table" class="striped centered tablesorter responsive-table">
         <thead>
         <tr>
           <th>Date dépense</th>
@@ -45,17 +46,20 @@
           <th>Actions</th>
         </tr>
         </thead>
-
+        <tfoot></tfoot>
         <tbody>
         </tbody>
       </table>
     </div>
 
     <div id="budgets-container" class="budgets-content">
+      <h2>Budgets</h2>
+      <div id="budgets-wrapper"></div>
     </div>
 
     <div class="charges-content">
-      <table id="charge-table" class="striped centered tablesorter">
+      <h2>Charges</h2>
+      <table id="charge-table" class="striped centered tablesorter responsive-table">
         <thead>
         <tr>
           <th>Date débit</th>
@@ -64,14 +68,15 @@
           <th>Actions</th>
         </tr>
         </thead>
-
+        <tfoot></tfoot>
         <tbody>
         </tbody>
       </table>
     </div>
 
     <div class="expenses-content">
-      <table id="expenses-table" class="striped centered tablesorter">
+      <h2>Dépenses</h2>
+      <table id="expenses-table" class="striped centered tablesorter responsive-table">
         <thead>
         <tr>
           <th>Date dépense</th>
@@ -81,14 +86,15 @@
           <th>Actions</th>
         </tr>
         </thead>
-
+        <tfoot></tfoot>
         <tbody>
         </tbody>
       </table>
     </div>
 
     <div class="credits-content">
-      <table id="credits-table" class="striped centered tablesorter">
+      <h2>Crédits</h2>
+      <table id="credits-table" class="striped centered tablesorter responsive-table">
         <thead>
         <tr>
           <th>Date de crédit</th>
@@ -97,7 +103,7 @@
           <th>Actions</th>
         </tr>
         </thead>
-
+        <tfoot></tfoot>
         <tbody>
         </tbody>
       </table>

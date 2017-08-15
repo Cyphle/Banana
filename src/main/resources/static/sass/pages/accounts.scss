@@ -1,0 +1,52 @@
+@import "../common/variables.scss";
+
+.btn {
+  background-color: $main-red;
+
+  &:hover {
+    background-color: $dark-red-1;
+  }
+}
+
+.page-accounts {
+  .accounts-list {
+    margin-top: 8%;
+    margin-bottom: 10%;
+  }
+
+  .card {
+    background-color: $light-grey-2;
+    color: $main-grey;
+
+    .card-title {
+      color: $main-blue;
+    }
+
+    .container {
+      width: 100%;
+      margin: 0;
+
+      .row {
+        margin-bottom: 0;
+      }
+    }
+
+    .card-action {
+      a {
+        color: $main-green !important;
+
+        &:hover {
+          color: $dark-green-1 !important;
+        }
+      }
+
+      button {
+        color: red;
+
+        @media screen and (max-width: $media-smartphone) {
+          padding: 0;
+        }
+      }
+    }
+  }
+}

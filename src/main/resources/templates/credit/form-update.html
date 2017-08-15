@@ -22,18 +22,18 @@
           </div>
         </div>
         <div class="row">
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="date" name="creditDate" id="credit-date" th:value="${creditForm != null and creditForm.creditDate != null ? #dates.format(creditForm.creditDate, 'yyyy-MM-dd') : ''}" />
-            <label for="credit-date">Date de crédit</label>
+            <label for="credit-date" class="date-label">Date de crédit</label>
           </div>
-          <div class="input-field col s6">
+          <div class="input-field col s12 l6">
             <input type="text" name="amount" id="amount" th:value="${creditForm != null ? creditForm.amount : ''}" />
             <label for="amount">Montant</label>
           </div>
         </div>
 
         <div class="row">
-          <div class="col s2 offset-s5">
+          <div class="col s12 l2 offset-l5">
             <input class="waves-effect waves-light btn" type="submit" value="Valider"/>
           </div>
         </div>

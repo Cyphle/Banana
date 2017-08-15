@@ -35,7 +35,7 @@ export default class AccountPageBuilder {
     currentMonthData.budgets.forEach(budget => {
       budget.expenses.forEach(expense => formattedDataForTableAll.push({
         updateLink: '/budgets/expenses/update/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
-        deleteLink: '/api/budgets/expenses/delete/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
+        deleteLink: '/api/budgets/expenses/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
         firstDate: expense.expenseDate.toShortString(),
         secondDate: expense.debitDate !== null ? expense.debitDate.toShortString() : '',
         type: 'Budget',
@@ -45,7 +45,7 @@ export default class AccountPageBuilder {
     });
     currentMonthData.charges.forEach(charge => formattedDataForTableAll.push({
       updateLink: '/charges/update/' + currentMonthData.accountId + '/' + charge.id,
-      deleteLink: '/api/charges/delete/' + currentMonthData.accountId + '/' + charge.id,
+      deleteLink: '/api/charges/' + currentMonthData.accountId + '/' + charge.id,
       firstDate: (charge.startDate.getDayNumber() < 10 ? '0' + charge.startDate.getDayNumber() : charge.startDate.getDayNumber()) + '/' + (this.currentMonth.getMonthNumber() < 10 ? '0' + this.currentMonth.getMonthNumber() : this.currentMonth.getMonthNumber()) + '/' + this.currentMonth.getYear(),
       secondDate: charge.endDate !== null ? charge.endDate.toShortString() : '',
       type: 'Charge',
@@ -54,7 +54,7 @@ export default class AccountPageBuilder {
     }));
     currentMonthData.expenses.forEach(expense => formattedDataForTableAll.push({
       updateLink: '/expenses/update/' + currentMonthData.accountId + '/' + expense.id,
-      deleteLink: '/api/expenses/delete/' + currentMonthData.accountId + '/' + expense.id,
+      deleteLink: '/api/expenses/' + currentMonthData.accountId + '/' + expense.id,
       firstDate: expense.expenseDate.toShortString(),
       secondDate: expense.debitDate !== null ? expense.debitDate.toShortString() : '',
       type: 'Dépense',
@@ -63,7 +63,7 @@ export default class AccountPageBuilder {
     }));
     currentMonthData.credits.forEach(credit => formattedDataForTableAll.push({
       updateLink: '/credits/update/' + currentMonthData.accountId + '/' + credit.id,
-      deleteLink: '/api/credits/delete/' + currentMonthData.accountId + '/' + credit.id,
+      deleteLink: '/api/credits/' + currentMonthData.accountId + '/' + credit.id,
       firstDate: credit.creditDate.toShortString(),
       secondDate: credit.creditDate.toShortString(),
       type: 'Crédit',
@@ -74,21 +74,35 @@ export default class AccountPageBuilder {
     allAccountTableBody.empty();
     formattedDataForTableAll.forEach(data => {
       allAccountTableBody.append(
-        `<tr>
+          `<tr>
            <td>${data.firstDate}</td>
            <td>${data.secondDate}</td>
            <td>${data.type}</td>
            <td>${data.description}</td>
            <td>${data.amount}€</td>
-           <td><a href="${data.updateLink}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="${data.deleteLink}"><i class="material-icons">delete</i></button></td>
+           <td>
+             <div class="container">
+              <div class="row valign-wrapper">
+                <div class="col s5"> </div>
+                <div class="col s1"><a href="${data.updateLink}"><i class="material-icons">mode_edit</i></a></div>
+                <div class="col s1"><button class="delete-button btn-flat" data-link="${data.deleteLink}"><i class="material-icons">delete</i></button></div>
+                <div class="col s5"> </div>
+              </div>
+             </div>
+           </td>
          </tr>`
       );
     });
     $('#all-account-table').tablesorter();
+
+    let allAccountTableFoot = $('#all-account-table tfoot');
+    allAccountTableFoot.empty();
+    let totalTransactions = formattedDataForTableAll.map(transaction => transaction.amount).reduce((a, b) => a + b, 0);
+    allAccountTableFoot.append(`<tr><td></td><td></td><td></td><td>Total</td><td>${totalTransactions}€</td><td></td></tr>`);
   }
 
   buildBudgetsPart(currentMonthData) {
-    let budgetsContainer = $('#budgets-container');
+    let budgetsContainer = $('#budgets-wrapper');
     budgetsContainer.empty();
     currentMonthData.budgets.forEach(budget => {
       let budgetExpensesAmount = budget.expenses
@@ -97,19 +111,29 @@ export default class AccountPageBuilder {
 
       budgetsContainer.append(`
         <div id="budget-wrapper-${budget.id}" class="budget-wrapper">
-          <h2>Nom : ${budget.name}</h2>
+          <h3>
+            <div class="container">
+              <div class="row valign-wrapper">
+                <div class="col s8">
+                  Nom : ${budget.name}
+                </div>
+                <div class="col s1">
+                  <a href="/budgets/update/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">mode_edit</i></a>
+                </div>
+                <div class="col s1">
+                  <button class="delete-button btn-flat" data-link="/api/budgets/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">delete</i></button>
+                </div>
+                <div class="col s2"> </div>
+              </div>
+             </div>
+          </h3>
           <div class="budget-amounts container">
             <div class="row">
-              <div class="col s4"><b>Montant initial :</b> ${budget.initialAmount}€</div>
-              <div class="col s4"><b>Montant actuel :</b> ${budgetExpensesAmount}€</div>
-              <div class="col s4">
-                <a href="/budgets/expenses/create/${currentMonthData.accountId}/${budget.id}" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a> 
-                <a href="/budgets/update/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">mode_edit</i></a> 
-                <button class="delete-button btn-flat" data-link="/api/budgets/delete/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">delete</i></button>
-              </div>
+              <div class="col s12 l6"><b>Montant initial :</b> ${budget.initialAmount}€</div>
+              <div class="col s12 l6"><b>Montant actuel :</b> ${budget.initialAmount - budgetExpensesAmount}€</div>
             </div>
           </div>
-          <table id="budget-table-${budget.id}" class="striped centered tablesorter">
+          <table id="budget-table-${budget.id}" class="striped centered tablesorter responsive-table">
             <thead>
               <tr>
                 <th>Date dépense</th>
@@ -119,6 +143,7 @@ export default class AccountPageBuilder {
                 <th>Actions</th>
               </tr>
             </thead>
+            <tfoot></tfoot>
             <tbody>
             </tbody>
           </table>
@@ -133,12 +158,25 @@ export default class AccountPageBuilder {
 						<td>${expense.debitDate !== null ? expense.debitDate.toShortString() : ''}</td>
 						<td>${expense.description}</td>
 						<td>${expense.amount}€</td>
-						<td><a href="/budgets/expenses/update/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/budgets/expenses/delete/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">delete</i></button></td>
+						<td>
+              <div class="container">
+                <div class="row valign-wrapper">
+                  <div class="col s5"> </div>
+                  <div class="col s1"><a href="/budgets/expenses/update/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">mode_edit</i></a></div>
+                  <div class="col s1"><button class="delete-button btn-flat" data-link="/api/budgets/expenses/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">delete</i></button></div>
+                  <div class="col s5"> </div>
+                </div>
+              </div>
+						</td>
 					</tr>`
         );
       });
 
       $('#budget-table-' + budget.id).tablesorter();
+
+      let budgetTableFoot = $('#budget-table-' + budget.id + ' tfoot');
+      budgetTableFoot.empty();
+      budgetTableFoot.append(`<tr><td></td><td></td><td>Total</td><td>${budgetExpensesAmount}€</td><td></td></tr>`);
     });
   }
 
@@ -151,11 +189,25 @@ export default class AccountPageBuilder {
 					<td>${charge.startDate.getDayNumber() + '/' + (this.currentMonth.getMonthNumber() < 10 ? '0' + this.currentMonth.getMonthNumber() : this.currentMonth.getMonthNumber()) + '/' + this.currentMonth.getYear()}</td>
 					<td>${charge.description}</td>
 					<td>${charge.amount}€</td>
-					<td><a href="/charges/update/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/charges/delete/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">delete</i></button></td>
+					<td>
+					  <div class="container">
+              <div class="row valign-wrapper">
+                <div class="col s5"> </div>
+                <div class="col s1"><a href="/charges/update/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">mode_edit</i></a></div>
+                <div class="col s1"><button class="delete-button btn-flat" data-link="/api/charges/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">delete</i></button></div>
+                <div class="col s5"> </div>
+              </div>
+            </div>
+					</td>
 				</tr>`
       );
     });
     $('#charge-table').tablesorter();
+
+    let chargeTableFoot = $('#charge-table tfoot');
+    chargeTableFoot.empty();
+    let totalCharges = currentMonthData.charges.map(charge => charge.amount).reduce((a, b) => a + b, 0);
+    chargeTableFoot.append(`<tr><td></td><td>Total</td><td>${totalCharges}€</td><td></td></tr>`);
   }
 
   buildExpensesPart(currentMonthData) {
@@ -168,11 +220,25 @@ export default class AccountPageBuilder {
 					<td>${expense.debitDate !== null ? expense.debitDate.toShortString() : ''}</td>
 					<td>${expense.description}</td>
 					<td>${expense.amount}€</td>
-					<td><a href="/expenses/update/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/expenses/delete/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">delete</i></button></td>
+					<td>
+					  <div class="container">
+              <div class="row valign-wrapper">
+                <div class="col s5"> </div>
+                <div class="col s1"><a href="/expenses/update/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">mode_edit</i></a></div>
+                <div class="col s1"><button class="delete-button btn-flat" data-link="/api/expenses/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">delete</i></button></div>
+                <div class="col s5"> </div>
+              </div>
+            </div>
+					</td>
 				</tr>`
       );
     });
     $('#expenses-table').tablesorter();
+
+    let expenseTableFoot = $('#expenses-table tfoot');
+    expenseTableFoot.empty();
+    let totalExpenses = currentMonthData.expenses.map(expense => expense.amount).reduce((a, b) => a + b, 0);
+    expenseTableFoot.append(`<tr><td></td><td></td><td>Total</td><td>${totalExpenses}€</td><td></td></tr>`);
   }
 
   buildCreditsPart(currentMonthData) {
@@ -184,11 +250,25 @@ export default class AccountPageBuilder {
 						<td>${credit.creditDate.toShortString()}</td>
 						<td>${credit.description}</td>
 						<td>${credit.amount}€</td>
-						<td><a href="/credits/update/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">mode_edit</i></a> <button class="delete-button btn-flat" data-link="/api/credits/delete/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">delete</i></button></td>
+						<td>
+              <div class="container">
+                <div class="row valign-wrapper">
+                  <div class="col s5"> </div>
+                  <div class="col s1"><a href="/credits/update/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">mode_edit</i></a></div>
+                  <div class="col s1"><button class="delete-button btn-flat" data-link="/api/credits/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">delete</i></button></div>
+                  <div class="col s5"> </div>
+                </div>
+              </div>
+            </td>
 					</tr>`
       );
     });
     $('#credits-table').tablesorter();
+
+    let creditTableFoot = $('#credits-table tfoot');
+    creditTableFoot.empty();
+    let totalCredits = currentMonthData.credits.map(credit => credit.amount).reduce((a, b) => a + b, 0);
+    creditTableFoot.append(`<tr><td></td><td>Total</td><td>${totalCredits}€</td><td></td></tr>`);
   }
 
   changeToNextMonth() {

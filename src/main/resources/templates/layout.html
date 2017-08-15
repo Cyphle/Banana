@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="robots" content="noindex,nofollow"/>
   <meta charset="UTF-8"/>
+  <link rel="icon" type="image/png" th:href="@{/images/BananaLogo.png}" />
   <link rel="stylesheet" th:href="@{/vendors/css/normalize.css}"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css"/>
-  <!--<link rel="stylesheet" th:href="@{/vendors/css/materialize.css}"/>-->
   <link rel="stylesheet" th:href="@{/css/dist/layout.min.css}"/>
   <script th:src="@{/vendors/javascript/modernizr.js}"></script>
 </head>
@@ -17,11 +17,26 @@
   <nav>
     <div class="nav-wrapper">
       <a th:href="@{/}" class="brand-logo"><img th:src="@{/images/BananaLogo.png}" alt="Logo"/></a>
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
         <li>
           <a href="#!user"><i class="material-icons">mail_outline</i></a>
         </li>
         <li><a href="#" data-activates="slide-out" class="button-collapse side-menu-button"><i class="material-icons">menu</i></a></li>
+      </ul>
+      <ul class="side-nav" id="mobile-demo">
+        <li><a href="#!user">Contact</a></li>
+        <li sec:authorize="isAuthenticated()"><a th:href="@{/profile}" class="waves-effect">Mon profil</a></li>
+        <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}">Connexion</a></li>
+        <li sec:authorize="!isAuthenticated()"><a th:href="@{/register}">Inscription</a></li>
+        <li sec:authorize="isAuthenticated()">
+          <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Déconnexion"/>
+          </form>
+        </li>
+        <li>
+          <a href="#" data-activates="slide-out" class="button-collapse side-menu-button">Account menu</a>
+        </li>
       </ul>
     </div>
   </nav>
@@ -47,7 +62,7 @@
     <li sec:authorize="!isAuthenticated()"><a th:href="@{/register}">Inscription</a></li>
     <li sec:authorize="isAuthenticated()">
       <form th:action="@{/logout}" method="post">
-        <input class="waves-effect waves-light btn" type="submit" value="Déconnexion"/>
+        <input type="submit" value="Déconnexion"/>
       </form>
     </li>
     <li>

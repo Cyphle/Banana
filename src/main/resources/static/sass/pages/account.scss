@@ -1,0 +1,129 @@
+@import "../common/variables.scss";
+
+.switch-button {
+  .btn-floating {
+    background-color: $main-white;
+
+    i {
+      color: $main-grey;
+    }
+
+    &:hover {
+      background-color: $light-grey-1;
+    }
+
+    @media screen and (max-width: $media-smartphone) {
+      margin-left: 40%;
+    }
+  }
+
+  .l1 {
+    @media screen and (min-width: $media-smartphone) {
+      margin-top: -10px;
+    }
+  }
+
+  button {
+    width: 100%;
+
+    @media screen and (max-width: $media-smartphone) {
+      margin-top: 2%;
+      margin-bottom: 2%;
+    }
+  }
+}
+
+.amounts-wrapper {
+  margin-top: 5%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+#account-initial-amount {
+  color: $main-blue;
+}
+
+#account-free-amount {
+  color: $dark-green-1;
+}
+
+#account-current-amount {
+  color: $dark-red-1;
+}
+
+.account-infos-wrapper {
+  margin-top: 5%;
+  margin-bottom: 5%;
+
+  h2 {
+    font-size: 1.5em;
+    text-align: center;
+    color: $main-blue;
+    font-weight: bold;
+  }
+
+  tfoot {
+    background-color: $light-blue-2;
+    font-weight: bold;
+
+    td {
+      text-align: center;
+    }
+  }
+
+  .valign-wrapper {
+    margin-bottom: 0;
+
+    i {
+      color: $main-grey;
+    }
+
+    a {
+      i:hover {
+        color: $main-blue;
+      }
+    }
+
+    button {
+      i:hover {
+        color: $main-red;
+      }
+    }
+  }
+
+  .budgets-content {
+    text-align: center;
+
+    h3 {
+      font-size: 1.3em;
+      color: $light-blue-1;
+    }
+  }
+
+  .budget-wrapper {
+    margin-top: 3%;
+
+    .budget-amounts {
+      .row {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  thead {
+    th {
+      &:last-child {
+        @media screen and (max-width: $media-smartphone) {
+          padding: 22px 0;
+        }
+      }
+    }
+  }
+  
+  tfoot {
+    @media screen and (max-width: $media-smartphone) {
+      display: none;
+    }
+  }
+}
