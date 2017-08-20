@@ -5,7 +5,7 @@ import AccountPage from './components/AccountPage';
 import MenuBuilder from './components/MenuBuilder';
 import AccountPageBuilder from './components/AccountPageBuilder';
 
-import { HOST } from './config/config';
+import {CONFIG, CURRENT_ENVIRONMENT} from './config/config';
 
 $(document).ready(() => {
   let currentURLParts = window.location.href.split('?');
@@ -16,5 +16,5 @@ $(document).ready(() => {
   let accountPageBuilder = new AccountPageBuilder();
   let accountPage = new AccountPage(ajaxBuilder, menuBuilder, accountPageBuilder);
 
-  accountPage.getAccountDataFromServer(HOST + 'api/accounts/?slug=' + currentSlug);
+  accountPage.getAccountDataFromServer(CONFIG[CURRENT_ENVIRONMENT].host + 'api/accounts/?slug=' + currentSlug);
 });

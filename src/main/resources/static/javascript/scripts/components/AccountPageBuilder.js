@@ -2,6 +2,7 @@
 
 import AccountDataSorter from "./AccountDataSorter";
 import {Instant} from "../utils/Instant";
+import {CONFIG, CURRENT_ENVIRONMENT} from "../config/config";
 
 export default class AccountPageBuilder {
   constructor() {
@@ -34,8 +35,8 @@ export default class AccountPageBuilder {
     let formattedDataForTableAll = [];
     currentMonthData.budgets.forEach(budget => {
       budget.expenses.forEach(expense => formattedDataForTableAll.push({
-        updateLink: '/budgets/expenses/update/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
-        deleteLink: '/api/budgets/expenses/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
+        updateLink: CONFIG[CURRENT_ENVIRONMENT].context + '/budgets/expenses/update/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
+        deleteLink: CONFIG[CURRENT_ENVIRONMENT].context + '/api/budgets/expenses/' + currentMonthData.accountId + '/' + budget.id + '/' + expense.id,
         firstDate: expense.expenseDate.toShortString(),
         secondDate: expense.debitDate !== null ? expense.debitDate.toShortString() : '',
         type: 'Budget',
@@ -44,8 +45,8 @@ export default class AccountPageBuilder {
       }));
     });
     currentMonthData.charges.forEach(charge => formattedDataForTableAll.push({
-      updateLink: '/charges/update/' + currentMonthData.accountId + '/' + charge.id,
-      deleteLink: '/api/charges/' + currentMonthData.accountId + '/' + charge.id,
+      updateLink: CONFIG[CURRENT_ENVIRONMENT].context + '/charges/update/' + currentMonthData.accountId + '/' + charge.id,
+      deleteLink: CONFIG[CURRENT_ENVIRONMENT].context + '/api/charges/' + currentMonthData.accountId + '/' + charge.id,
       firstDate: (charge.startDate.getDayNumber() < 10 ? '0' + charge.startDate.getDayNumber() : charge.startDate.getDayNumber()) + '/' + (this.currentMonth.getMonthNumber() < 10 ? '0' + this.currentMonth.getMonthNumber() : this.currentMonth.getMonthNumber()) + '/' + this.currentMonth.getYear(),
       secondDate: charge.endDate !== null ? charge.endDate.toShortString() : '',
       type: 'Charge',
@@ -53,8 +54,8 @@ export default class AccountPageBuilder {
       amount: -charge.amount
     }));
     currentMonthData.expenses.forEach(expense => formattedDataForTableAll.push({
-      updateLink: '/expenses/update/' + currentMonthData.accountId + '/' + expense.id,
-      deleteLink: '/api/expenses/' + currentMonthData.accountId + '/' + expense.id,
+      updateLink: CONFIG[CURRENT_ENVIRONMENT].context + '/expenses/update/' + currentMonthData.accountId + '/' + expense.id,
+      deleteLink: CONFIG[CURRENT_ENVIRONMENT].context + '/api/expenses/' + currentMonthData.accountId + '/' + expense.id,
       firstDate: expense.expenseDate.toShortString(),
       secondDate: expense.debitDate !== null ? expense.debitDate.toShortString() : '',
       type: 'Dépense',
@@ -62,8 +63,8 @@ export default class AccountPageBuilder {
       amount: -expense.amount
     }));
     currentMonthData.credits.forEach(credit => formattedDataForTableAll.push({
-      updateLink: '/credits/update/' + currentMonthData.accountId + '/' + credit.id,
-      deleteLink: '/api/credits/' + currentMonthData.accountId + '/' + credit.id,
+      updateLink: CONFIG[CURRENT_ENVIRONMENT].context + '/credits/update/' + currentMonthData.accountId + '/' + credit.id,
+      deleteLink: CONFIG[CURRENT_ENVIRONMENT].context + '/api/credits/' + currentMonthData.accountId + '/' + credit.id,
       firstDate: credit.creditDate.toShortString(),
       secondDate: credit.creditDate.toShortString(),
       type: 'Crédit',
@@ -118,12 +119,15 @@ export default class AccountPageBuilder {
                   Nom : ${budget.name}
                 </div>
                 <div class="col s1">
-                  <a href="/budgets/update/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">mode_edit</i></a>
+                    <a href="${CONFIG[CURRENT_ENVIRONMENT].context}/budgets/expenses/create/${currentMonthData.accountId}/${budget.id}" class="btn-floating btn-large waves-teal btn-flat waves-light"><i class="material-icons">add</i></a>
                 </div>
                 <div class="col s1">
-                  <button class="delete-button btn-flat" data-link="/api/budgets/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">delete</i></button>
+                  <a href="${CONFIG[CURRENT_ENVIRONMENT].context}/budgets/update/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">mode_edit</i></a>
                 </div>
-                <div class="col s2"> </div>
+                <div class="col s1">
+                  <button class="delete-button btn-flat" data-link="${CONFIG[CURRENT_ENVIRONMENT].context}/api/budgets/${currentMonthData.accountId}/${budget.id}"><i class="material-icons">delete</i></button>
+                </div>
+                <div class="col s1"> </div>
               </div>
              </div>
           </h3>
@@ -162,8 +166,8 @@ export default class AccountPageBuilder {
               <div class="container">
                 <div class="row valign-wrapper">
                   <div class="col s5"> </div>
-                  <div class="col s1"><a href="/budgets/expenses/update/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">mode_edit</i></a></div>
-                  <div class="col s1"><button class="delete-button btn-flat" data-link="/api/budgets/expenses/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">delete</i></button></div>
+                  <div class="col s1"><a href="${CONFIG[CURRENT_ENVIRONMENT].context}/budgets/expenses/update/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">mode_edit</i></a></div>
+                  <div class="col s1"><button class="delete-button btn-flat" data-link="${CONFIG[CURRENT_ENVIRONMENT].context}/api/budgets/expenses/${currentMonthData.accountId}/${budget.id}/${expense.id}"><i class="material-icons">delete</i></button></div>
                   <div class="col s5"> </div>
                 </div>
               </div>
@@ -193,8 +197,8 @@ export default class AccountPageBuilder {
 					  <div class="container">
               <div class="row valign-wrapper">
                 <div class="col s5"> </div>
-                <div class="col s1"><a href="/charges/update/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">mode_edit</i></a></div>
-                <div class="col s1"><button class="delete-button btn-flat" data-link="/api/charges/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">delete</i></button></div>
+                <div class="col s1"><a href="${CONFIG[CURRENT_ENVIRONMENT].context}/charges/update/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">mode_edit</i></a></div>
+                <div class="col s1"><button class="delete-button btn-flat" data-link="${CONFIG[CURRENT_ENVIRONMENT].context}/api/charges/${currentMonthData.accountId}/${charge.id}"><i class="material-icons">delete</i></button></div>
                 <div class="col s5"> </div>
               </div>
             </div>
@@ -224,8 +228,8 @@ export default class AccountPageBuilder {
 					  <div class="container">
               <div class="row valign-wrapper">
                 <div class="col s5"> </div>
-                <div class="col s1"><a href="/expenses/update/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">mode_edit</i></a></div>
-                <div class="col s1"><button class="delete-button btn-flat" data-link="/api/expenses/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">delete</i></button></div>
+                <div class="col s1"><a href="${CONFIG[CURRENT_ENVIRONMENT].context}/expenses/update/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">mode_edit</i></a></div>
+                <div class="col s1"><button class="delete-button btn-flat" data-link="${CONFIG[CURRENT_ENVIRONMENT].context}/api/expenses/${currentMonthData.accountId}/${expense.id}"><i class="material-icons">delete</i></button></div>
                 <div class="col s5"> </div>
               </div>
             </div>
@@ -254,8 +258,8 @@ export default class AccountPageBuilder {
               <div class="container">
                 <div class="row valign-wrapper">
                   <div class="col s5"> </div>
-                  <div class="col s1"><a href="/credits/update/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">mode_edit</i></a></div>
-                  <div class="col s1"><button class="delete-button btn-flat" data-link="/api/credits/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">delete</i></button></div>
+                  <div class="col s1"><a href="${CONFIG[CURRENT_ENVIRONMENT].context}/credits/update/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">mode_edit</i></a></div>
+                  <div class="col s1"><button class="delete-button btn-flat" data-link="${CONFIG[CURRENT_ENVIRONMENT].context}/api/credits/${currentMonthData.accountId}/${credit.id}"><i class="material-icons">delete</i></button></div>
                   <div class="col s5"> </div>
                 </div>
               </div>

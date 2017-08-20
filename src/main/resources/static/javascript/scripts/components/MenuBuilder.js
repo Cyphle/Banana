@@ -1,4 +1,5 @@
 'use strict';
+import {CONFIG, CURRENT_ENVIRONMENT} from "../config/config";
 
 export default class MenuBuilder {
   buildMenuLinks(accountId, accountSlug) {
@@ -11,22 +12,22 @@ export default class MenuBuilder {
   }
 
   buildAccountViewLink(accountSlug) {
-    return '<li><a href="/accounts/' + accountSlug + '" class="waves-effect">Voir le compte</a></li>';
+    return '<li><a href="' + CONFIG[CURRENT_ENVIRONMENT].context + '/accounts/' + accountSlug + '" class="waves-effect">Voir le compte</a></li>';
   }
 
   buildBudgetCreateLink(accountId) {
-    return '<li><a href="/budgets/create/' + accountId + '" class="waves-effect">Ajouter un budget</a></li>';
+    return '<li><a href="' + CONFIG[CURRENT_ENVIRONMENT].context + '/budgets/create/' + accountId + '" class="waves-effect">Ajouter un budget</a></li>';
   }
 
   buildChargeCreateLink(accountId) {
-    return '<li><a href="/charges/create/' + accountId + '" class="waves-effect">Ajouter une charge</a></li>';
+    return '<li><a href="' + CONFIG[CURRENT_ENVIRONMENT].context + '/charges/create/' + accountId + '" class="waves-effect">Ajouter une charge</a></li>';
   }
 
   buildExpenseCreateLink(accountId) {
-    return '<li><a href="/expenses/create/' + accountId + '" class="waves-effect">Ajouter une dépense</a></li>';
+    return '<li><a href="' + CONFIG[CURRENT_ENVIRONMENT].context + '/expenses/create/' + accountId + '" class="waves-effect">Ajouter une dépense</a></li>';
   }
 
   buildCreditCreateLink(accountId) {
-    return '<li><a href="/credits/create/' + accountId + '" class="waves-effect">Ajouter un crédit</a></li>';
+    return '<li><a href="' + CONFIG[CURRENT_ENVIRONMENT].context + '/credits/create/' + accountId + '" class="waves-effect">Ajouter un crédit</a></li>';
   }
 }

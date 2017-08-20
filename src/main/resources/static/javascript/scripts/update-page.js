@@ -3,7 +3,7 @@
 import AjaxBuilder from './utils/AjaxBuilder';
 import MenuBuilder from './components/MenuBuilder';
 
-import {HOST} from './config/config';
+import {CONFIG, CURRENT_ENVIRONMENT} from './config/config';
 
 $(document).ready(() => {
   let currentURLParts = window.location.href.split('?');
@@ -13,7 +13,7 @@ $(document).ready(() => {
   let menuBuilder = new MenuBuilder();
 
   ajaxBuilder
-      .send(HOST + 'api/accounts/?id=' + currentId, 'GET')
+      .send(CONFIG[CURRENT_ENVIRONMENT].host + 'api/accounts/?id=' + currentId, 'GET')
       .then(accountData => {
         let sideMenu = $('.side-nav');
         sideMenu.append(menuBuilder.buildMenuLinks(accountData.id, accountData.slug));
